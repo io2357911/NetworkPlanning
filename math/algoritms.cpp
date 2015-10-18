@@ -2,15 +2,17 @@
 
 using namespace std;
 
-bool PlanningAlgoritms::HungarianAlgorithm::compute(Matrix &ma, QVector<int> &result)
+Matrix PlanningAlgoritms::HungarianAlgorithm::compute(Matrix &ma)
 {
+    Matrix result(ma.rows(), 1);
+
     int n = ma.rows(); // кол-во рабочих
-    if (!n) return false;
+    if (!n) return result;
 
     int m = ma.cols(); // кол-во заданий
-    if (!m) return false;
+    if (!m) return result;
 
-    if (!(n <= m)) return false;
+    if (!(n <= m)) return result;
 
     Matrix a = ma.extend();
 
@@ -45,20 +47,19 @@ bool PlanningAlgoritms::HungarianAlgorithm::compute(Matrix &ma, QVector<int> &re
         } while (j0);
     }
 
-    result.resize(n);
     for (int j=1; j <= m; j++)
-        result[p[j]-1] = j-1;
+        result[p[j]-1][0] = j-1;
 
-    return true;
+    return result;
 }
 
-bool PlanningAlgoritms::DPCPAlgoritm::compute(Graph &graph, double &pathLength)
+double PlanningAlgoritms::DPCPAlgoritm::compute(Graph &graph)
 {
     B.clear();
     this->graph = &graph;
 
     QVector<int> vertices = graph.vertices();
-    if (!vertices.size()) return false;
+    if (!vertices.size()) return -1;
 
     B[vertices.last()] = 0;
     for (int i = vertices.size() - 2; i > -1; i--) {
@@ -66,14 +67,13 @@ bool PlanningAlgoritms::DPCPAlgoritm::compute(Graph &graph, double &pathLength)
         int vertex = vertices[i];
         QVector<int> neighbours = graph.neighbours(vertex);
 
-        if (!neighbours.size()) return false;
+        if (!neighbours.size()) return -1;
 
         B[vertex] = maxLength(vertex, neighbours);
         //qDebug("B(%d) = %f", vertex, B(vertex));
     }
 
-    pathLength = B[vertices[0]];
-    return true;
+    return B[vertices[0]];
 }
 
 double PlanningAlgoritms::DPCPAlgoritm::maxLength(int vertex, QVector<int> neighbours)

@@ -24,11 +24,9 @@ int main(int argc, char *argv[])
 
     Matrix m((double*)a, 3, 3);
 
-    QVector<int> result;
-    if (alg->compute(m, result)) {
-        for (int j = 0; j < result.size(); j++) {
-            qDebug("n: %d m: %d", result[j], j);
-        }
+    QVector<int> result = alg->compute(m);
+    for (int j = 0; j < result.size(); j++) {
+        qDebug("n: %d m: %d", result[j], j);
     }
 
     delete alg;*/
@@ -46,9 +44,9 @@ int main(int argc, char *argv[])
     };
 
     Matrix m((double*)a, 6, 6);
-    */
 
-    /*double a[10][10] = {
+
+    double a[10][10] = {
       //{0,1,2,3,4,5,6,7,8,9},
         {0,1,5,4,0,0,0,0,0,0},// 0
         {0,0,6,0,0,0,9,0,0,0},// 1
@@ -62,16 +60,12 @@ int main(int argc, char *argv[])
         {0,0,0,0,0,0,0,0,0,0} // 9
     };
 
-    Matrix m((double*)a, 10, 10);
 
-    Graph g(m);
+    Graph g(Matrix((double*)a, 10, 10));
+    double result = alg->compute(g);
+    qDebug("maxLength: %f", result);
 
-    double result;
-    if (alg->compute(g, result)) {
-        qDebug("maxLength: %f", result);
-    }
+    delete alg;*/
 
-    delete alg;
-
-    return 0;*/
+    return 0;
 }

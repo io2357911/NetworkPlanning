@@ -6,31 +6,42 @@
 
 namespace PlanningAlgoritms {
 
+static double calcCost(Matrix costs, Matrix asignments) {
+    double cost;
+
+    for (int i = 0; i < asignments.rows(); i++) {
+        cost += costs[i][asignments[i][0]];
+    }
+
+    return cost;
+
+}
+
 // Алгоритм решения задачи о назначениях
 class AssignmentAlgoritm {
 public:
     virtual ~AssignmentAlgoritm() {}
-    virtual bool compute(Matrix &a, QVector<int> &result) = 0;
+    virtual Matrix compute(Matrix &a) = 0;
 };
 
 // Венгерский алгоритм
 class HungarianAlgorithm : public AssignmentAlgoritm {
 public:
-    bool compute(Matrix &a, QVector<int> &result);
+    Matrix compute(Matrix &a);
 };
 
 // Алгоритм нахождения критического пути
 class CriticalPathAlgoritm {
 public:
     virtual ~CriticalPathAlgoritm() {}
-    virtual bool compute(Graph &graph, double &pathLength) = 0;
+    virtual double compute(Graph &graph) = 0;
 };
 
 // Нахождение критического пути методом динамического программирования
 // Dynamic Programming Critical Path (DPCP)
 class DPCPAlgoritm : public CriticalPathAlgoritm {
 public:
-    bool compute(Graph &graph, double &pathLength);
+    double compute(Graph &graph);
 private:
     QMap<int, double> B; // Функция Беллмана динамического программирования
     Graph *graph;
