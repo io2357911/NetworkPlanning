@@ -33,8 +33,8 @@ MainWindow::MainWindow(QWidget *parent) :
     resizeTable(ui->twAssesments,
                 ui->sbWorkersCount->value(),
                 1,
-                "Исполнитель",
-                "Работа");
+                "Работа",
+                "Исполнитель");
 }
 
 MainWindow::~MainWindow()
@@ -57,10 +57,10 @@ void MainWindow::on_sbWorkersCount_valueChanged(int val)
                 "Работа");
 
     resizeTable(ui->twAssesments,
-                val,
+                ui->sbWorkersCount->value(),
                 1,
-                "Исполнитель",
-                "Работа");
+                "Работа",
+                "Исполнитель");
 }
 
 void MainWindow::on_sbStageCount_valueChanged(int val)
@@ -77,7 +77,7 @@ void MainWindow::on_pbCalcExpenses_clicked()
     Matrix costs = values(ui->twCost);
     Matrix assignments = values(ui->twAssesments, true);
 
-    ui->lCost->setText(QString::number(calcCost(costs, assignments)));
+    ui->lCost->setText(QString::number(projectCost(costs, assignments)));
 }
 
 void MainWindow::countAsignments(bool)
@@ -90,37 +90,23 @@ void MainWindow::countAsignments(bool)
 
 void MainWindow::countCriticalPath(bool)
 {
+    Matrix adjacency = values(ui->twNet, true, false);
+    Matrix asignments = values(ui->twAssesments, true);
     Matrix times = values(ui->twTime);
-    Matrix adjacency = values(ui->twNet, true);
-    Matrix assignments = values(ui->twAssesments, true);
 
-    QMap<int, int> taskToWorker;
-    for (int i = 0; i < assignments.rows(); i++)
-        taskToWorker[(int)assignments[i][0]] = i;
+    ProjectGraph graph(adjacency, &asignments, &times);
 
-    for (int i = 0; i < adjacency.rows(); i++) {
-        for (int j = 0; j < adjacency.cols(); j++) {
-
-            int task = adjacency[i][j];
-            int worker = taskToWorker[task];
-            adjacency[i][j] = times[worker][task];
-        }
-    }
-
-    Graph graph(adjacency);
-
-    DPCPAlgoritm alg;
-    ui->lTime->setText(QString::number(alg.compute(graph)));
+    ui->lTime->setText(QString::number(DPCPAlgoritm().compute(graph)));
 }
 
-Matrix MainWindow::values(QTableWidget *table, bool zeroFirst)
+Matrix MainWindow::values(QTableWidget *table, bool zeroFirst, bool greaterZero)
 {
     Matrix m(table->rowCount(), table->columnCount());
 
     for (int i = 0; i < m.rows(); i++) {
         for (int j = 0; j < m.cols(); j++) {
             double val = table->item(i, j)->text().toDouble();
-            if (!val) continue;
+            if (greaterZero && !val) continue;
             m[i][j] = zeroFirst ? val - 1 : val;
         }
     }

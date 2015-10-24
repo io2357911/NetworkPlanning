@@ -30,6 +30,11 @@ int Matrix::cols()
     return rows() ? _m[0].size() : 0;
 }
 
+double Matrix::get(int row, int col)
+{
+    return _m[row][col];
+}
+
 Matrix Matrix::extend()
 {
     Matrix a(rows()+1, cols()+1);
@@ -53,7 +58,7 @@ QVector<int> Graph::neighbours(int vertex)
 {
     QVector<int> neigs;
     for (int j = 0; j < adjacencyMatrix.cols(); j++) {
-        if (adjacencyMatrix[vertex][j] > 0)
+        if (adjacencyMatrix[vertex][j] > -1)
         neigs.append(j);
     }
     return neigs;
@@ -66,4 +71,12 @@ QVector<int> Graph::vertices()
         vert.append(i);
     }
     return vert;
+}
+
+double ProjectGraph::edgeWeight(int v1, int v2)
+{
+    int task = adjacencyMatrix[v1][v2];
+    int worker = (*asignments)[task][0];
+    double weight = (*times)[worker][task];
+    return weight;
 }

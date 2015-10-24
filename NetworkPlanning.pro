@@ -11,7 +11,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = NetworkPlanning
 TEMPLATE = app
 
-
 SOURCES += main.cpp\
         mainwindow.cpp \
     math/algoritms.cpp \

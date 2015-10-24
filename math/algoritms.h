@@ -6,7 +6,7 @@
 
 namespace PlanningAlgoritms {
 
-static double calcCost(Matrix costs, Matrix asignments) {
+static double projectCost(Matrix costs, Matrix asignments) {
     double cost;
 
     for (int i = 0; i < asignments.rows(); i++) {
@@ -14,18 +14,17 @@ static double calcCost(Matrix costs, Matrix asignments) {
     }
 
     return cost;
-
 }
 
 // Алгоритм решения задачи о назначениях
-class AssignmentAlgoritm {
+class AsignmentAlgoritm {
 public:
-    virtual ~AssignmentAlgoritm() {}
+    virtual ~AsignmentAlgoritm() {}
     virtual Matrix compute(Matrix &a) = 0;
 };
 
 // Венгерский алгоритм
-class HungarianAlgorithm : public AssignmentAlgoritm {
+class HungarianAlgorithm : public AsignmentAlgoritm {
 public:
     Matrix compute(Matrix &a);
 };
@@ -47,6 +46,35 @@ private:
     Graph *graph;
 
     double maxLength(int vertex, QVector<int> neighbours);
+};
+
+class NetworkPlanningAlgorithm {
+public:
+    NetworkPlanningAlgorithm(AsignmentAlgoritm *algAssigns = new HungarianAlgorithm,
+                             CriticalPathAlgoritm *algCritPath = new DPCPAlgoritm)
+        : algAssigns(algAssigns),
+          algCritPath(algCritPath)
+    {}
+    ~NetworkPlanningAlgorithm() {
+        if (algAssigns) delete algAssigns;
+        if (algCritPath) delete algCritPath;
+    }
+
+    Matrix compute(int workersCount,
+                   double maxTime,
+                   Matrix costs,
+                   Matrix times,
+                   Matrix netAdjecency);
+
+private:
+    AsignmentAlgoritm *algAssigns;
+    CriticalPathAlgoritm *algCritPath;
+
+    bool isCorrectInput(int workersCount,
+                      double maxTime,
+                      Matrix &costs,
+                      Matrix &times,
+                      Matrix &netAdjecency);
 };
 
 }

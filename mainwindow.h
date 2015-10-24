@@ -17,7 +17,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    Matrix values(QTableWidget *table, bool zeroFirst = false);
+    Matrix values(QTableWidget *table, bool zeroFirst = false, bool greaterZero = true);
     void setValues(QTableWidget *table, Matrix values, bool zeroFirst = true);
 
     void resizeTable(QTableWidget *table,

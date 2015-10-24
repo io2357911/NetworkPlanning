@@ -4,7 +4,7 @@ using namespace std;
 
 Matrix PlanningAlgoritms::HungarianAlgorithm::compute(Matrix &ma)
 {
-    Matrix result(ma.rows(), 1);
+    Matrix result(ma.cols(), 1);
 
     int n = ma.rows(); // кол-во рабочих
     if (!n) return result;
@@ -48,7 +48,7 @@ Matrix PlanningAlgoritms::HungarianAlgorithm::compute(Matrix &ma)
     }
 
     for (int j=1; j <= m; j++)
-        result[p[j]-1][0] = j-1;
+        result[j-1][0] = p[j]-1;
 
     return result;
 }
@@ -70,7 +70,7 @@ double PlanningAlgoritms::DPCPAlgoritm::compute(Graph &graph)
         if (!neighbours.size()) return -1;
 
         B[vertex] = maxLength(vertex, neighbours);
-        //qDebug("B(%d) = %f", vertex, B(vertex));
+        qDebug("B(%d) = %f", vertex, B[vertex]);
     }
 
     return B[vertices[0]];
@@ -87,5 +87,27 @@ double PlanningAlgoritms::DPCPAlgoritm::maxLength(int vertex, QVector<int> neigh
         }
     }
     return maxLen;
+}
+
+
+
+Matrix PlanningAlgoritms::NetworkPlanningAlgorithm::compute(int workersCount, double maxTime, Matrix costs, Matrix times, Matrix netAdjecency)
+{
+    /*if (!isCorrectInput(workersCount, maxTime, costs, times, netAdjecency)) return Matrix;
+
+    Matrix asigns = algAssigns->compute(costs);
+
+    QVector<int> checkedWorkers;
+    QVector<int> checkedJobs;
+    while (!checkedWorkers.isEmpty()) {
+        algCritPath->compute();
+    }
+
+    return assigns;*/
+}
+
+bool PlanningAlgoritms::NetworkPlanningAlgorithm::isCorrectInput(int workersCount, double maxTime, Matrix &costs, Matrix &times, Matrix &netAdjecency)
+{
+
 }
 
