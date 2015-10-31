@@ -12,9 +12,23 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
 
-
-
     return a.exec();
+
+    /*double a[3][1] = {
+        {1},
+        {2},
+        {3},
+    };
+
+    Matrix m((double*)a, 3, 1);
+
+    AssignsIterator iter(m);
+    while (iter.next()) {
+        for (int i = 0; i < m.rows(); i++) {
+            std::cout << m[i][0] << " ";
+        }
+        std::cout << std::endl;
+    }*/
 
     /*AssignmentAlgoritm *alg(new HungarianAlgorithm);
 

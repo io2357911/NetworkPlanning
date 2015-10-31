@@ -9,8 +9,10 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(ui->aCountAssesments, SIGNAL(triggered(bool)), this, SLOT(countAsignments(bool)));
-    connect(ui->aCountCriticalPath, SIGNAL(triggered(bool)), this, SLOT(countCriticalPath(bool)));
+    connect(ui->aCountAssesments, SIGNAL(triggered(bool)),
+            this, SLOT(countAsignments(bool)));
+    connect(ui->aCountAssignmentsWithTime, SIGNAL(triggered(bool)),
+            this, SLOT(countAsignmentsWithTime(bool)));
 
     resizeTable(ui->twCost,
                 ui->sbWorkersCount->value(),
@@ -78,6 +80,13 @@ void MainWindow::on_pbCalcExpenses_clicked()
     Matrix assignments = values(ui->twAssesments, true);
 
     ui->lCost->setText(QString::number(projectCost(costs, assignments)));
+
+    Matrix adjacency = values(ui->twNet, true, false);
+    Matrix times = values(ui->twTime);
+
+    ProjectGraph graph(adjacency, &assignments, &times);
+
+    ui->lTime->setText(QString::number(DPCPAlgoritm().compute(graph)));
 }
 
 void MainWindow::countAsignments(bool)
@@ -86,17 +95,29 @@ void MainWindow::countAsignments(bool)
 
     HungarianAlgorithm alg;
     setValues(ui->twAssesments, alg.compute(costs), false);
+
+    on_pbCalcExpenses_clicked();
 }
 
-void MainWindow::countCriticalPath(bool)
+void MainWindow::countAsignmentsWithTime(bool)
 {
-    Matrix adjacency = values(ui->twNet, true, false);
-    Matrix asignments = values(ui->twAssesments, true);
+    int workersCount = ui->sbWorkersCount->value();
+    int maxTime = ui->sbDirTime->value();
+    Matrix costs = values(ui->twCost);
     Matrix times = values(ui->twTime);
+    Matrix adjacency = values(ui->twNet, true, false);
 
-    ProjectGraph graph(adjacency, &asignments, &times);
+    NetworkPlanningAlgorithm alg;
+    Matrix assigns = alg.compute(workersCount, maxTime, costs, times, adjacency);
+    if (!assigns.isNull()) {
+        setValues(ui->twAssesments, assigns, false);
 
-    ui->lTime->setText(QString::number(DPCPAlgoritm().compute(graph)));
+        on_pbCalcExpenses_clicked();
+
+    } else {
+        QMessageBox::warning(this, "Нахождение назначений",
+                             "Задача не имеет решения при заданом директивном времени выполнения проекта");
+    }
 }
 
 Matrix MainWindow::values(QTableWidget *table, bool zeroFirst, bool greaterZero)

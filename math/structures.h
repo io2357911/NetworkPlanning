@@ -7,33 +7,6 @@
 
 #define INF INT_MAX
 
-struct Job {
-    int id;
-};
-
-struct Worker {
-    int id;
-
-    double cost(Job job);
-    double time(Job job);
-};
-
-struct Assinment {
-    Worker worker;
-    Job job;
-};
-
-
-template <typename F, typename S>
-class TwoWayMapping {
-public:
-    F direct(S s);
-    S inverse(F s);
-};
-
-typedef TwoWayMapping<Job, Worker> JobWorkerMapping;
-
-
 class Matrix {
 public:
     Matrix(int n=0, int m=0);
@@ -83,6 +56,59 @@ public:
 private:
     Matrix *asignments;
     Matrix *times;
+};
+
+// оценка назначений
+class AssingsEstimation {
+public:
+    AssingsEstimation() {}
+    AssingsEstimation(Matrix &assigns, double cost, double time)
+        : assigns(assigns),
+          cost(cost),
+          time(time)
+    {}
+
+    Matrix assigns;
+
+    double cost;
+    double time;
+};
+
+// относительная оценка назначений
+class RelativeAssingsEstimation {
+public:
+    RelativeAssingsEstimation()
+        : dcost(0.0), dtime(0.0)
+    {}
+    RelativeAssingsEstimation(AssingsEstimation &estBase, AssingsEstimation &estNew)
+        : baseEstimation(estBase),
+          newEstimation(estNew),
+          dcost(estNew.cost - estBase.cost),
+          dtime(estNew.time - estBase.time)
+    {}
+
+    AssingsEstimation baseEstimation;
+    AssingsEstimation newEstimation;
+
+
+    bool isNull() { return dtime == 0 && dcost == 0; }
+
+    bool isBetter(RelativeAssingsEstimation &other) {
+        if (other.isNull()) return true;
+
+        if (dcost == 0 || other.dcost == 0) {
+            return dtime <= other.dtime;
+
+        } else {
+            return (dtime / dcost) < (other.dtime / other.dcost);
+        }
+
+        //return dtime < other.dtime;
+    }
+
+private:
+    double dcost;
+    double dtime;
 };
 
 #endif // STUCTURES

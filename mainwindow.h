@@ -4,6 +4,7 @@
 #include "math/algoritms.h"
 #include <QMainWindow>
 #include <QTableWidget>
+#include <QMessageBox>
 
 namespace Ui {
 class MainWindow;
@@ -35,7 +36,7 @@ private slots:
     void on_pbCalcExpenses_clicked();
 
     void countAsignments(bool);
-    void countCriticalPath(bool);
+    void countAsignmentsWithTime(bool);
 
 private:
     Ui::MainWindow *ui;

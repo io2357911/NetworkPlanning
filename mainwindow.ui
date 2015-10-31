@@ -37,7 +37,7 @@
           <number>1</number>
          </property>
          <property name="value">
-          <number>5</number>
+          <number>3</number>
          </property>
         </widget>
        </item>
@@ -335,7 +335,7 @@
      <string>Рассчет</string>
     </property>
     <addaction name="aCountAssesments"/>
-    <addaction name="aCountCriticalPath"/>
+    <addaction name="aCountAssignmentsWithTime"/>
    </widget>
    <addaction name="menuHfccxtn"/>
   </widget>
@@ -356,6 +356,11 @@
   <action name="aCountCriticalPath">
    <property name="text">
     <string>Критического пути</string>
+   </property>
+  </action>
+  <action name="aCountAssignmentsWithTime">
+   <property name="text">
+    <string>Назначений с учетом времени</string>
    </property>
   </action>
  </widget>
