@@ -14,7 +14,6 @@ int main(int argc, char *argv[])
 
     return a.exec();
 
-    // some changes
 
     /*double a[3][1] = {
         {1},
