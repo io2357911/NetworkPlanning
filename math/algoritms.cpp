@@ -70,7 +70,7 @@ double PlanningAlgoritms::DPCPAlgoritm::compute(Graph &graph)
         if (!neighbours.size()) return -1;
 
         B[vertex] = maxLength(vertex, neighbours);
-        qDebug("B(%d) = %f", vertex, B[vertex]);
+        //qDebug("B(%d) = %f", vertex, B[vertex]);
     }
 
     return B[vertices[0]];
