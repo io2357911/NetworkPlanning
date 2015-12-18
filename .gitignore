@@ -1,7 +1,20 @@
 Makefile
-*.pro.user
+build/
+#*.pro.user
 *.ini
 moc_*
 ui_*
 *.o
+*.a
+*.mk
+*.d
+.settings*
+makefile
+.project
+.cproject
+*~
+*.orig
+*.log
+/docs/html/*
+
 

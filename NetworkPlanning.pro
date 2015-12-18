@@ -1,23 +1,12 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2015-10-18T13:51:52
-#
-#-------------------------------------------------
+TEMPLATE = subdirs
 
-QT       += core gui
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-QMAKE_CXXFLAGS += -std=c++0x
+EXTRAS += \
+    NetworkPlanning \
+    NetworkCalc
 
-TARGET = NetworkPlanning
-TEMPLATE = app
+for(dir, EXTRAS) {
+    exists($$dir) {
+        SUBDIRS += $$dir
+    }
+}
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
-    math/algoritms.cpp \
-    math/structures.cpp
-
-HEADERS  += mainwindow.h \
-    math/algoritms.h \
-    math/structures.h
-
-FORMS    += mainwindow.ui
