@@ -7,9 +7,9 @@ Debug::Debug()
 void Debug::printEdgesInfo(QVector<NetworkGraph::Edge *> edges) {
     for (int j = 0; j < edges.size(); j++) {
         qDebug("Edge: %d v1: %d v2: %d",
-               edges[j]->value()->number,
-               edges[j]->vertex1()->value()->number,
-               edges[j]->vertex2()->value()->number);
+               edges[j]->value()->getID(),
+               edges[j]->vertex1()->value()->getID(),
+               edges[j]->vertex2()->value()->getID());
     }
 }
 
@@ -24,7 +24,7 @@ void Debug::printGraph(NetworkGraph &graph) {
     for (int i = 0; i < vertices.size(); i++) {
 
         qDebug("\nVertex: %d first: %d last: %d",
-               vertices[i]->value()->number,
+               vertices[i]->value()->getID(),
                vertices[i]->isFirst(),
                vertices[i]->isLast());
 
@@ -45,19 +45,19 @@ void Debug::printEvents(NetworkGraph &graph) {
     QVector<NetworkGraph::Vertex*> vertices = graph.vertices();
 
     for (int i = 0; i < vertices.size(); i++) {
-        Event *event = vertices[i]->value();
+        IEvent *event = vertices[i]->value();
         qDebug("Event: %d earlyTime: %d lateTime: %d reserve: %d",
-               event->number,
-               event->earlyTime,
-               event->lateTime,
-               event->reserve);
+               event->getID(),
+               event->getEarlyTime(),
+               event->getLateTime(),
+               event->getReserve());
     }
 }
 
 void Debug::printCriticalPath(const QVector<NetworkGraph::Edge *> &path) {
     QString sPath = "Critical path: ";
     for (int i = 0; i < path.size(); i++) {
-        sPath += QString("%1-").arg(path[i]->value()->number);
+        sPath += QString("%1-").arg(path[i]->value()->getID());
     }
     qDebug(sPath.toStdString().c_str());
 }

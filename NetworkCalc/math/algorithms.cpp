@@ -10,9 +10,9 @@ void PlanningAlgoritms::NetworkGraphAlgoritm::compute(NetworkGraph *graph) {
     reset(graph);
     vertex = nextForward(graph);
     while (vertex != NULL) {
-        Event *event = vertex->value();
-        event->earlyTime = maxEarlyTime(vertex);
-        event->isCalculated = true;
+        IEvent *event = vertex->value();
+        event->setEarlyTime(maxEarlyTime(vertex));
+        event->setIsCalculated(true);
 
         vertex = nextForward(graph);
     }
@@ -21,10 +21,10 @@ void PlanningAlgoritms::NetworkGraphAlgoritm::compute(NetworkGraph *graph) {
     reset(graph);
     vertex = nextBackward(graph);
     while (vertex != NULL) {
-        Event *event = vertex->value();
-        event->lateTime = minLateTime(vertex);
-        event->reserve = event->lateTime - event->earlyTime;
-        event->isCalculated = true;
+        IEvent *event = vertex->value();
+        event->setLateTime(minLateTime(vertex));
+        event->setReserve(event->getLateTime() - event->getEarlyTime());
+        event->setIsCalculated(true);
 
         vertex = nextBackward(graph);
     }
@@ -33,7 +33,7 @@ void PlanningAlgoritms::NetworkGraphAlgoritm::compute(NetworkGraph *graph) {
 bool PlanningAlgoritms::NetworkGraphAlgoritm::reset(NetworkGraph *graph) {
     QVector<NetworkGraph::Vertex*> vertices = graph->vertices();
     for (int i = 0; i < vertices.size(); i++) {
-        vertices[i]->value()->isCalculated = false;
+        vertices[i]->value()->setIsCalculated(false);
     }
 }
 
@@ -43,7 +43,7 @@ NetworkGraph::Vertex *PlanningAlgoritms::NetworkGraphAlgoritm::nextForward(Netwo
     for (int i = 0; i < vertices.size(); i++) {
         NetworkGraph::Vertex *vertex = vertices[i];
 
-        if (vertex->value()->isCalculated)
+        if (vertex->value()->getIsCalculated())
             continue;
 
         if (vertex->isFirst())
@@ -62,7 +62,7 @@ NetworkGraph::Vertex *PlanningAlgoritms::NetworkGraphAlgoritm::nextBackward(Netw
     for (int i = 0; i < vertices.size(); i++) {
         NetworkGraph::Vertex *vertex = vertices[i];
 
-        if (vertex->value()->isCalculated)
+        if (vertex->value()->getIsCalculated())
             continue;
 
         if (vertex->isLast())
@@ -82,10 +82,10 @@ int PlanningAlgoritms::NetworkGraphAlgoritm::maxEarlyTime(NetworkGraph::Vertex *
     int maxTime = 0;
     QVector<NetworkGraph::Edge*> edges = vertex->previousEdges();
     for (int i = 0; i < edges.size(); i++) {
-        Work *prevWork = edges[i]->value();
-        Event *prevEvent = edges[i]->vertex1()->value();
+        IWork *prevWork = edges[i]->value();
+        IEvent *prevEvent = edges[i]->vertex1()->value();
 
-        int time = prevEvent->earlyTime + prevWork->time;
+        int time = prevEvent->getEarlyTime() + prevWork->getTime();
         if (time > maxTime)
             maxTime = time;
     }
@@ -94,15 +94,15 @@ int PlanningAlgoritms::NetworkGraphAlgoritm::maxEarlyTime(NetworkGraph::Vertex *
 
 int PlanningAlgoritms::NetworkGraphAlgoritm::minLateTime(NetworkGraph::Vertex *vertex) {
     if (vertex->isLast())
-        return vertex->value()->earlyTime;
+        return vertex->value()->getEarlyTime();
 
     int minTime = pow(2, 8 * sizeof(int)) / 2 - 1;
     QVector<NetworkGraph::Edge*> edges = vertex->nextEdges();
     for (int i = 0; i < edges.size(); i++) {
-        Work *nextWork = edges[i]->value();
-        Event *nextEvent = edges[i]->vertex2()->value();
+        IWork *nextWork = edges[i]->value();
+        IEvent *nextEvent = edges[i]->vertex2()->value();
 
-        int time = nextEvent->lateTime - nextWork->time;
+        int time = nextEvent->getLateTime() - nextWork->getTime();
         if (time < minTime)
             minTime = time;
     }
@@ -111,7 +111,7 @@ int PlanningAlgoritms::NetworkGraphAlgoritm::minLateTime(NetworkGraph::Vertex *v
 
 bool PlanningAlgoritms::NetworkGraphAlgoritm::allAreCalculated(const QVector<NetworkGraph::Vertex *> &vertices) {
     for (int i = 0; i < vertices.size(); i++) {
-        if (!vertices[i]->value()->isCalculated)
+        if (!vertices[i]->value()->getIsCalculated())
             return false;
     }
     return true;
@@ -132,13 +132,13 @@ QVector<NetworkGraph::Edge*> PlanningAlgoritms::CriticalPathAlgorithm::compute(N
         QVector<NetworkGraph::Edge*> nextEdges = vertex->nextEdges();
         for (int i = 0; i < nextEdges.size(); i++) {
 
-            Event *firstEvent = nextEdges[i]->vertex1()->value();
-            Event *secondEvent = nextEdges[i]->vertex2()->value();
-            Work *work = nextEdges[i]->value();
+            IEvent *firstEvent = nextEdges[i]->vertex1()->value();
+            IEvent *secondEvent = nextEdges[i]->vertex2()->value();
+            IWork *work = nextEdges[i]->value();
 
-            int fullReserve = secondEvent->lateTime - firstEvent->earlyTime - work->time;
+            int fullReserve = secondEvent->getLateTime() - firstEvent->getEarlyTime() - work->getTime();
 
-            if (firstEvent->reserve == 0 && secondEvent->reserve == 0 && fullReserve == 0) {
+            if (firstEvent->getReserve() == 0 && secondEvent->getReserve() == 0 && fullReserve == 0) {
                 critPath.append(nextEdges[i]);
                 vertex = nextEdges[i]->vertex2();
                 break;

@@ -12,8 +12,8 @@ int main(int argc, char *argv[])
     /*Work w1(1,1,4), w2(2,1,6), w3(3,1,7), w4(4,1,3), w5(5,1,4), w6(6,1,5), w7(7,1,3), pw(8,0,0);
     Event e1(1), e2(2), e3(3), e4(4), e5(5), e6(6), e7(7);
 
-    QVector<Event*> events = {&e1, &e2, &e3, &e4, &e5, &e6, &e7};
-    QVector<Work*> works = {&w1, &w2, &w3, &w4, &w5, &w6, &w7, &pw};
+    QVector<IEvent*> events = {&e1, &e2, &e3, &e4, &e5, &e6, &e7};
+    QVector<IWork*> works = {&w1, &w2, &w3, &w4, &w5, &w6, &w7, &pw};
 
     int n = -1;
     int a[7][7] = {

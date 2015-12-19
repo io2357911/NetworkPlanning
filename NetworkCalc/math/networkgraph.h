@@ -3,30 +3,86 @@
 
 #include "graph.h"
 
-class Work {
+class IWork {
 public:
-    Work(int number, int cost, int time)
-        : number(number),
+    virtual int getID() const = 0;
+    virtual void setID(int value) = 0;
+
+    virtual int getCost() const = 0;
+    virtual void setCost(int value) = 0;
+
+    virtual int getTime() const = 0;
+    virtual void setTime(int value) = 0;
+};
+
+class IEvent {
+public:
+    virtual int getID() const = 0;
+    virtual void setID(int value) = 0;
+
+    virtual int getEarlyTime() const = 0;
+    virtual void setEarlyTime(int value) = 0;
+
+    virtual int getLateTime() const = 0;
+    virtual void setLateTime(int value) = 0;
+
+    virtual int getReserve() const = 0;
+    virtual void setReserve(int value) = 0;
+
+    virtual bool getIsCalculated() const = 0;
+    virtual void setIsCalculated(bool value) = 0;
+};
+
+class Work : public IWork {
+public:
+    Work(int id, int cost, int time)
+        : id(id),
           cost(cost),
           time(time)
     {}
 
-    int number;
+    int getID() const;
+    void setID(int value);
+
+    int getCost() const;
+    void setCost(int value);
+
+    int getTime() const;
+    void setTime(int value);
+
+private:
+    int id;
     int cost;
     int time;
 };
 
-class Event {
+class Event : public IEvent {
 public:
-    Event(int number, int earlyTime = 0, int lateTime = 0, int reserve = 0, bool isCalculated = false)
-        : number(number),
+    Event(int id, int earlyTime = 0, int lateTime = 0, int reserve = 0, bool isCalculated = false)
+        : id(id),
           earlyTime(earlyTime),
           lateTime(lateTime),
           reserve(reserve),
           isCalculated(isCalculated)
     {}
 
-    int number;
+    int getID() const;
+    void setID(int value);
+
+    int getEarlyTime() const;
+    void setEarlyTime(int value);
+
+    int getLateTime() const;
+    void setLateTime(int value);
+
+    int getReserve() const;
+    void setReserve(int value);
+
+    bool getIsCalculated() const;
+    void setIsCalculated(bool value);
+
+private:
+    int id;
     int earlyTime;
     int lateTime;
     int reserve;
@@ -34,6 +90,6 @@ public:
     bool isCalculated;
 };
 
-typedef Graph<Event, Work> NetworkGraph;
+typedef Graph<IEvent, IWork> NetworkGraph;
 
 #endif // NETWORKGRAPH_H
