@@ -4,12 +4,13 @@
 #include <QWidget>
 #include <QPainter>
 #include "eventwidget.h"
+#include "../math/networkgraph.h"
 
 namespace Ui {
 class WorkWidget;
 }
 
-class WorkWidget : public QWidget
+class WorkWidget : public QWidget, public NetworkGraph::Edge, public IWork
 {
     Q_OBJECT
 
@@ -24,6 +25,9 @@ public:
 
     EventWidget *getSecondEvent() const;
     void setSecondEvent(EventWidget *value);
+
+    void store(QString fileName);
+    void restore(QString fileName);
 
     void contextMenuEvent(QContextMenuEvent *event);
 
@@ -44,6 +48,33 @@ private:
 
     QAction *aProperties;
     QAction *aDelete;
+
+    int id;
+    int cost;
+    int fullReserve;
+    bool m_isCritical;
+    bool m_isVirtual;
+    //int time;
+
+    // IWork interface
+public:
+    int getID() const;
+    void setID(int value);
+
+    int getCost() const;
+    void setCost(int value);
+
+    int getTime() const;
+    void setTime(int value);
+
+    int getFullReserve() const { return fullReserve; }
+    void setFullReserve(int value) { fullReserve = value; }
+
+    bool isCritical() const;
+    void setIsCritical(bool value);
+
+    bool isVirtual() const;
+    void setIsVirtual(bool value);
 };
 
 #endif // WORKWIDGET_H

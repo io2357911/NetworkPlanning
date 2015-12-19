@@ -16,6 +16,11 @@ public:
     ~MainWindow();
 
     void keyPressEvent(QKeyEvent *event);
+
+private slots:
+    void onOpenGraph();
+    void onSaveGraph();
+
 private:
     Ui::MainWindow *ui;
 };

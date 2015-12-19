@@ -13,6 +13,15 @@ public:
 
     virtual int getTime() const = 0;
     virtual void setTime(int value) = 0;
+
+    virtual int getFullReserve() const = 0;
+    virtual void setFullReserve(int value) = 0;
+
+    virtual bool isCritical() const = 0;
+    virtual void setIsCritical(bool value) = 0;
+
+    virtual bool isVirtual() const = 0;
+    virtual void setIsVirtual(bool value) = 0;
 };
 
 class IEvent {
@@ -35,10 +44,14 @@ public:
 
 class Work : public IWork {
 public:
-    Work(int id, int cost, int time)
+    Work(int id = 0, int cost = 0, int time = 0,
+         bool isCritical = false, bool isVirtual = false, int fullReserve = 0)
         : id(id),
           cost(cost),
-          time(time)
+          time(time),
+          fullReserve(fullReserve),
+          m_isCritical(isCritical),
+          m_isVirtual(isVirtual)
     {}
 
     int getID() const;
@@ -50,15 +63,27 @@ public:
     int getTime() const;
     void setTime(int value);
 
+    int getFullReserve() const { return fullReserve; }
+    void setFullReserve(int value) { fullReserve = value; }
+
+    bool isCritical() const;
+    void setIsCritical(bool value);
+
+    bool isVirtual() const { return m_isVirtual; }
+    void setIsVirtual(bool value) { m_isVirtual = value; }
+
 private:
     int id;
     int cost;
     int time;
+    int fullReserve;
+    bool m_isCritical;
+    bool m_isVirtual;
 };
 
 class Event : public IEvent {
 public:
-    Event(int id, int earlyTime = 0, int lateTime = 0, int reserve = 0, bool isCalculated = false)
+    Event(int id = 0, int earlyTime = 0, int lateTime = 0, int reserve = 0, bool isCalculated = false)
         : id(id),
           earlyTime(earlyTime),
           lateTime(lateTime),

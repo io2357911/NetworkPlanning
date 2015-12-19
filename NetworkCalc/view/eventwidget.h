@@ -3,12 +3,14 @@
 
 #include <QWidget>
 #include <QMouseEvent>
+#include "../tools/ini.h"
+#include "../math/networkgraph.h"
 
 namespace Ui {
 class EventWidget;
 }
 
-class EventWidget : public QWidget
+class EventWidget : public QWidget, public NetworkGraph::Vertex, public IEvent
 {
     Q_OBJECT
 
@@ -21,6 +23,9 @@ public:
     void wheelEvent(QWheelEvent * event);
 
     void paintEvent(QPaintEvent *evt);
+
+    void store(QString fileName);
+    void restore(QString fileName);
 
     void contextMenuEvent(QContextMenuEvent *event);
 
@@ -42,11 +47,28 @@ private slots:
 private:
     Ui::EventWidget *ui;
 
+    //Event m_event;
+
     QAction *aConnection;
     QAction *aProperties;
     QAction *aDelete;
 
     QPoint offset;
+
+    bool isCalculated;
+
+    // IEvent interface
+public:
+    int getID() const;
+    void setID(int value);
+    int getEarlyTime() const;
+    void setEarlyTime(int value);
+    int getLateTime() const;
+    void setLateTime(int value);
+    int getReserve() const;
+    void setReserve(int value);
+    bool getIsCalculated() const;
+    void setIsCalculated(bool value);
 };
 
 #endif // EVENTWIDGET_H

@@ -18,25 +18,32 @@ SOURCES += main.cpp\
     math/matrix.cpp \
     math/graph.cpp \
     math/algorithms.cpp \
-    tools/tools.cpp \
     view/eventwidget.cpp \
     view/networkgraphwidget.cpp \
-    view/workwidget.cpp
+    view/workwidget.cpp \
+    view/eventpropertiesdialog.cpp \
+    view/workpropertiesdialog.cpp \
+    tools/debug.cpp
 
 HEADERS  += mainwindow.h \
     math/graph.h \
     math/networkgraph.h \
     math/matrix.h \
     math/algorithms.h \
-    tools/tools.h \
     view/eventwidget.h \
     view/networkgraphwidget.h \
-    view/workwidget.h
+    view/workwidget.h \
+    view/eventpropertiesdialog.h \
+    view/workpropertiesdialog.h \
+    tools/ini.h \
+    tools/debug.h
 
 FORMS    += mainwindow.ui \
     view/eventwidget.ui \
     view/networkgraphwidget.ui \
-    view/workwidget.ui
+    view/workwidget.ui \
+    view/eventpropertiesdialog.ui \
+    view/workpropertiesdialog.ui
 
 RESOURCES += \
     pics.qrc

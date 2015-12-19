@@ -23,6 +23,12 @@ EventWidget::EventWidget(QWidget *parent) :
     aDelete->setShortcuts(QKeySequence::Delete);
     aDelete->setStatusTip(tr("Удалить событие"));
     connect(aDelete, SIGNAL(triggered()), this, SLOT(onDelete()));
+
+    setValue(this);
+}
+
+EventWidget::~EventWidget() {
+    delete ui;
 }
 
 void EventWidget::paintEvent(QPaintEvent *evt)
@@ -31,22 +37,42 @@ void EventWidget::paintEvent(QPaintEvent *evt)
     painter.drawPixmap(rect(), QPixmap(":/pics/event.png"));
 }
 
+void EventWidget::store(QString fileName)
+{
+    INI::Settings setts;
+    setts["widget_pos_x"] = pos().x();
+    setts["widget_pos_y"] = pos().y();
+    setts["widget_width"] = width();
+    setts["widget_height"] = height();
+
+    INI::store(setts, fileName, QString("Event_%1").arg(getID()));
+}
+
+void EventWidget::restore(QString fileName)
+{
+    QStringList keys = {
+        "widget_pos_x",
+        "widget_pos_y",
+        "widget_width",
+        "widget_height"
+    };
+
+    INI::Settings setts = INI::restore(keys, fileName, QString("Event_%1").arg(getID()));
+
+    if (setts["widget_width"].isValid() && setts["widget_height"].isValid())
+        move(setts["widget_width"].toInt(), setts["widget_height"].toInt());
+
+    if (setts["widget_pos_x"].isValid() && setts["widget_pos_y"].isValid())
+        move(setts["widget_pos_x"].toInt(), setts["widget_pos_y"].toInt());
+}
+
 void EventWidget::contextMenuEvent(QContextMenuEvent *event)
 {
     QMenu menu(this);
-    menu.addAction(aConnection);
     menu.addAction(aProperties);
+    menu.addAction(aConnection);
     menu.addAction(aDelete);
     menu.exec(event->globalPos());
-}
-
-QPoint EventWidget::center()
-{
-    return QPoint(pos().x() + width()/2, pos().y() + height()/2);
-}
-
-EventWidget::~EventWidget() {
-    delete ui;
 }
 
 void EventWidget::mousePressEvent(QMouseEvent *event) {
@@ -72,6 +98,61 @@ void EventWidget::wheelEvent(QWheelEvent *event)
     resize(width() + step, height() + step);
 
     move(pos() - QPoint(step/2, step/2));
+}
+
+QPoint EventWidget::center()
+{
+    return QPoint(pos().x() + width()/2, pos().y() + height()/2);
+}
+
+int EventWidget::getID() const
+{
+    return ui->lID->text().toInt();
+}
+
+void EventWidget::setID(int value)
+{
+    ui->lID->setText(QString::number(value));
+}
+
+int EventWidget::getEarlyTime() const
+{
+    return ui->lEarlyTime->text().toInt();
+}
+
+void EventWidget::setEarlyTime(int value)
+{
+    ui->lEarlyTime->setText(QString::number(value));
+}
+
+int EventWidget::getLateTime() const
+{
+    return ui->lLateTime->text().toInt();
+}
+
+void EventWidget::setLateTime(int value)
+{
+    ui->lLateTime->setText(QString::number(value));
+}
+
+int EventWidget::getReserve() const
+{
+    return ui->lReserve->text().toInt();
+}
+
+void EventWidget::setReserve(int value)
+{
+    ui->lReserve->setText(QString::number(value));
+}
+
+bool EventWidget::getIsCalculated() const
+{
+    return isCalculated;
+}
+
+void EventWidget::setIsCalculated(bool value)
+{
+    isCalculated = value;
 }
 
 

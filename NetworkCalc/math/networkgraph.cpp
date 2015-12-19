@@ -76,4 +76,8 @@ void Work::setTime(int value)
     time = value;
 }
 
+bool Work::isCritical() const { return m_isCritical; }
+
+void Work::setIsCritical(bool value) { m_isCritical = value; }
+
 

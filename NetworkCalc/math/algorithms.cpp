@@ -128,17 +128,26 @@ QVector<NetworkGraph::Edge*> PlanningAlgoritms::CriticalPathAlgorithm::compute(N
     NetworkGraph::Vertex *lastVertex = graph->lastVertex();
     if (!lastVertex) return critPath;
 
+    QVector<NetworkGraph::Edge*> edges = graph->edges();
+    for (int i = 0; i < edges.size(); i++) {
+        IEvent *firstEvent = edges[i]->vertex1()->value();
+        IEvent *secondEvent = edges[i]->vertex2()->value();
+        IWork *work = edges[i]->value();
+
+        int fullReserve = secondEvent->getLateTime() - firstEvent->getEarlyTime() - work->getTime();
+
+        work->setFullReserve(fullReserve);
+        work->setIsCritical(firstEvent->getReserve() == 0 &&
+                            secondEvent->getReserve() == 0 &&
+                            work->getFullReserve() == 0);
+    }
+
     while (vertex != lastVertex) {
         QVector<NetworkGraph::Edge*> nextEdges = vertex->nextEdges();
         for (int i = 0; i < nextEdges.size(); i++) {
-
-            IEvent *firstEvent = nextEdges[i]->vertex1()->value();
-            IEvent *secondEvent = nextEdges[i]->vertex2()->value();
             IWork *work = nextEdges[i]->value();
 
-            int fullReserve = secondEvent->getLateTime() - firstEvent->getEarlyTime() - work->getTime();
-
-            if (firstEvent->getReserve() == 0 && secondEvent->getReserve() == 0 && fullReserve == 0) {
+            if (work->isCritical()) {
                 critPath.append(nextEdges[i]);
                 vertex = nextEdges[i]->vertex2();
                 break;
