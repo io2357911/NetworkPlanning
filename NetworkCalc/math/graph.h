@@ -5,54 +5,57 @@
 
 #include "matrix.h"
 
-/*template <typename V, typename E>
-class IGraphVertex;
+template <typename V, typename E>
+class GraphVertex;
 
 template <typename V, typename E>
-class IGraphEdge {
+class GraphEdge {
 public:
-    IGraphEdge(E *value = NULL) : m_value(value) {}
-    IGraphEdge(E *value, IGraphVertex<V,E> *vertex1, IGraphVertex<V,E> *vertex2)
-        : m_value(value),
-        m_vertex1(vertex1),
-        m_vertex2(vertex2) {
-      vertex1->addNextEdge(this);
-      vertex2->addPreviousEdge(this);
+    GraphEdge(V *vertex1 = NULL, V *vertex2 = NULL)
+        : m_vertex1(vertex1),
+          m_vertex2(vertex2)
+    {
+        if (vertex1) vertex1->addNextEdge((E*)this);
+        if (vertex2) vertex2->addPreviousEdge((E*)this);
     }
 
-    E *value() { return m_value; }
-    void setValue(E *value) { m_value = value; }
-
-    virtual IGraphVertex<V,E> *vertex1() { return m_vertex1; }
-    virtual IGraphVertex<V,E> *vertex2() { return m_vertex2; }
+    V *vertex1() { return m_vertex1; }
+    void setVertex1(V *vertex) {
+        m_vertex1 = vertex;
+        m_vertex1->addNextEdge((E*)this);
+    }
+    V *vertex2() { return m_vertex2; }
+    void setVertex2(V *vertex) {
+        m_vertex2 = vertex;
+        m_vertex2->addPreviousEdge((E*)this);
+    }
 
 private:
-    E *m_value;
-    IGraphVertex<V,E> *m_vertex1;
-    IGraphVertex<V,E> *m_vertex2;
+    V *m_vertex1;
+    V *m_vertex2;
 };
 
 template <typename V, typename E>
-class IGraphVertex {
+class GraphVertex {
 public:
-    IGraphVertex(V *value = NULL) : m_value(value) {}
+    GraphVertex() {}
 
-    V *value() { return m_value; }
+    void addNextEdge(E *edge) { m_nextEdges.append(edge); }
+    void deleteNextEdge(E *edge) { m_nextEdges.removeAll(edge); }
+    void addPreviousEdge(E *edge) { m_previousEdges.append(edge); }
+    void deletePreviousEdge(E *edge) { m_previousEdges.removeAll(edge); }
 
-    void addNextEdge(IGraphEdge<V,E> *edge) { m_nextEdges.append(edge); }
-    void addPreviousEdge(IGraphEdge<V,E> *edge) { m_previousEdges.append(edge); }
+    QVector<E*> nextEdges() { return m_nextEdges; }
+    QVector<E*> previousEdges() { return m_previousEdges; }
 
-    QVector<IGraphEdge<V,E>*> nextEdges() { return m_nextEdges; }
-    QVector<IGraphEdge<V,E>*> previousEdges() { return m_previousEdges; }
-
-    QVector<IGraphVertex*> nextVertices() {
-        QVector<IGraphVertex*> next;
+    QVector<V*> nextVertices() {
+        QVector<V*> next;
         for (int i = 0; i < m_nextEdges.size(); i++) next.append(m_nextEdges[i]->vertex2());
         return next;
     }
 
-    QVector<IGraphVertex*> previousVertices() {
-        QVector<IGraphVertex*> prev;
+    QVector<V*> previousVertices() {
+        QVector<V*> prev;
         for (int i = 0; i < m_previousEdges.size(); i++) prev.append(m_previousEdges[i]->vertex1());
         return prev;
     }
@@ -61,30 +64,26 @@ public:
     bool isLast() { return m_nextEdges.isEmpty(); }
 
 private:
-    V *m_value;
-    QVector<IGraphEdge<V,E>*> m_nextEdges;
-    QVector<IGraphEdge<V,E>*> m_previousEdges;
-};*/
+    QVector<E*> m_nextEdges;
+    QVector<E*> m_previousEdges;
+};
 
 template <typename V, typename E>
 class Graph {
 public:
-    class Edge;
-    class Vertex;
-
     Graph() {}
     ~Graph() {
         //for (int i = 0; i < m_vertices.size(); i++) delete m_vertices[i];
         //for (int i = 0; i < m_edges.size(); i++) delete m_edges[i];
     }
 
-    Graph(QVector<Vertex*> vertices, QVector<Edge*> edges)
+    Graph(QVector<V*> vertices, QVector<E*> edges)
         : m_vertices(vertices),
           m_edges(edges) {
 
     }
 
-    Graph(QVector<V*> verticesValues, QVector<E*> edgesValues, Matrix<int> &adjacencyMatrix) {
+    /*Graph(QVector<V*> verticesValues, QVector<E*> edgesValues, Matrix<int> &adjacencyMatrix) {
         if (adjacencyMatrix.cols() != adjacencyMatrix.rows()) return;
         if (verticesValues.size() != adjacencyMatrix.rows()) return;
 
@@ -100,19 +99,19 @@ public:
                 }
             }
         }
-    }
+    }*/
 
-    void addVertex(Vertex* vertex) {
+    void addVertex(V* vertex) {
         m_vertices.append(vertex);
     }
 
-    void deleteVertex(Vertex* vertex) {
-        QVector<Edge*> nextEdges = vertex->nextEdges();
+    void deleteVertex(V* vertex) {
+        QVector<E*> nextEdges = vertex->nextEdges();
         for (int i = 0; i < nextEdges.size(); i++) {
             m_edges.removeAll(nextEdges[i]);
         }
 
-        QVector<Edge*> previousEdges = vertex->previousEdges();
+        QVector<E*> previousEdges = vertex->previousEdges();
         for (int i = 0; i < previousEdges.size(); i++) {
             m_edges.removeAll(previousEdges[i]);
         }
@@ -120,11 +119,11 @@ public:
         m_vertices.removeAll(vertex);
     }
 
-    void addEdge(Edge* edge) {
+    void addEdge(E* edge) {
         m_edges.append(edge);
     }
 
-    void deleteEdge(Edge* edge) {
+    void deleteEdge(E* edge) {
         edge->vertex1()->deleteNextEdge(edge);
         edge->vertex2()->deletePreviousEdge(edge);
         m_edges.removeAll(edge);
@@ -135,10 +134,10 @@ public:
         m_edges.clear();
     }
 
-    QVector<Vertex*> vertices() { return m_vertices; }
-    QVector<Edge*> edges() { return m_edges; }
+    QVector<V*> vertices() { return m_vertices; }
+    QVector<E*> edges() { return m_edges; }
 
-    Vertex *firstVertex() {
+    V *firstVertex() {
         for (int i = 0; i < m_vertices.size(); i++) {
             if (m_vertices[i]->isFirst())
                 return m_vertices[i];
@@ -146,7 +145,7 @@ public:
         return NULL;
     }
 
-    Vertex *lastVertex() {
+    V *lastVertex() {
         for (int i = 0; i < m_vertices.size(); i++) {
             if (m_vertices[i]->isLast())
                 return m_vertices[i];
@@ -157,77 +156,8 @@ public:
     bool isNull() { return m_vertices.isEmpty() && m_edges.isEmpty(); }
 
 private:
-    QVector<Vertex*> m_vertices;
-    QVector<Edge*> m_edges;
-};
-
-template <typename V, typename E>
-class Graph<V,E>::Vertex {
-public:
-    Vertex(V *value = NULL) : m_value(value) {}
-
-    V *value() { return m_value; }
-    void setValue(V *value) { m_value = value; }
-
-    void addNextEdge(Graph<V,E>::Edge *edge) { m_nextEdges.append(edge); }
-    void deleteNextEdge(Graph<V,E>::Edge *edge) { m_nextEdges.removeAll(edge); }
-    void addPreviousEdge(Graph<V,E>::Edge *edge) { m_previousEdges.append(edge); }
-    void deletePreviousEdge(Graph<V,E>::Edge *edge) { m_previousEdges.removeAll(edge); }
-
-    QVector<Graph<V,E>::Edge*> nextEdges() { return m_nextEdges; }
-    QVector<Graph<V,E>::Edge*> previousEdges() { return m_previousEdges; }
-
-    QVector<Graph<V,E>::Vertex*> nextVertices() {
-        QVector<Graph<V,E>::Vertex*> next;
-        for (int i = 0; i < m_nextEdges.size(); i++) next.append(m_nextEdges[i]->vertex2());
-        return next;
-    }
-
-    QVector<Graph<V,E>::Vertex*> previousVertices() {
-        QVector<Graph<V,E>::Vertex*> prev;
-        for (int i = 0; i < m_previousEdges.size(); i++) prev.append(m_previousEdges[i]->vertex1());
-        return prev;
-    }
-
-    bool isFirst() { return m_previousEdges.isEmpty(); }
-    bool isLast() { return m_nextEdges.isEmpty(); }
-
-private:
-    V *m_value;
-    QVector<Graph<V,E>::Edge*> m_nextEdges;
-    QVector<Graph<V,E>::Edge*> m_previousEdges;
-};
-
-template <typename V, typename E>
-class Graph<V,E>::Edge {
-public:
-    Edge(E *value = NULL) : m_value(value) {}
-    Edge(E *value, Graph<V,E>::Vertex *vertex1, Graph<V,E>::Vertex *vertex2)
-        : m_value(value),
-          m_vertex1(vertex1),
-          m_vertex2(vertex2) {
-        vertex1->addNextEdge(this);
-        vertex2->addPreviousEdge(this);
-    }
-
-    E *value() { return m_value; }
-    void setValue(E *value) { m_value = value; }
-
-    Graph<V,E>::Vertex *vertex1() { return m_vertex1; }
-    void setVertex1(Graph<V,E>::Vertex *vertex) {
-        m_vertex1 = vertex;
-        m_vertex1->addNextEdge(this);
-    }
-    Graph<V,E>::Vertex *vertex2() { return m_vertex2; }
-    void setVertex2(Graph<V,E>::Vertex *vertex) {
-        m_vertex2 = vertex;
-        m_vertex2->addPreviousEdge(this);
-    }
-
-private:
-    E *m_value;
-    Graph<V,E>::Vertex *m_vertex1;
-    Graph<V,E>::Vertex *m_vertex2;
+    QVector<V*> m_vertices;
+    QVector<E*> m_edges;
 };
 
 #endif // STRUCTURES

@@ -24,8 +24,6 @@ WorkWidget::WorkWidget(QWidget *parent) :
     aDelete->setShortcuts(QKeySequence::Delete);
     aDelete->setStatusTip(tr("Удалить работу"));
     connect(aDelete, SIGNAL(triggered()), this, SLOT(onDelete()));
-
-    setValue(this);
 }
 
 WorkWidget::~WorkWidget()

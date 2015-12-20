@@ -10,7 +10,7 @@ namespace Ui {
 class EventWidget;
 }
 
-class EventWidget : public QWidget, public NetworkGraph::Vertex, public IEvent
+class EventWidget : public QWidget, public IEvent
 {
     Q_OBJECT
 

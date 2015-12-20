@@ -50,7 +50,6 @@
      <string>Анализ</string>
     </property>
     <addaction name="aComputeNetworkGraph"/>
-    <addaction name="aComputeCriticalPath"/>
    </widget>
    <widget class="QMenu" name="menu_2">
     <property name="title">

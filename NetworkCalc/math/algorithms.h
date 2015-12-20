@@ -32,13 +32,13 @@ public:
 private:
     bool reset(NetworkGraph *graph);
 
-    NetworkGraph::Vertex *nextForward(NetworkGraph *graph);
-    NetworkGraph::Vertex *nextBackward(NetworkGraph *graph);
+    IEvent *nextForward(NetworkGraph *graph);
+    IEvent *nextBackward(NetworkGraph *graph);
 
-    int maxEarlyTime(NetworkGraph::Vertex *vertex);
-    int minLateTime(NetworkGraph::Vertex *vertex);
+    int maxEarlyTime(IEvent *vertex);
+    int minLateTime(IEvent *vertex);
 
-    bool allAreCalculated(const QVector<NetworkGraph::Vertex*> &vertices);
+    bool allAreCalculated(const QVector<IEvent*> &vertices);
 };
 
 /*!
@@ -48,7 +48,7 @@ private:
 class CriticalPathAlgorithm {
 public:
     virtual ~CriticalPathAlgorithm() {}
-    virtual QVector<NetworkGraph::Edge*> compute(NetworkGraph *graph);
+    virtual QVector<IWork*> compute(NetworkGraph *graph);
 };
 
 }

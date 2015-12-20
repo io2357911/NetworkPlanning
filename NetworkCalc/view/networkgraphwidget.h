@@ -34,7 +34,6 @@ public slots:
     void saveGraph(QString path);
 
     void computeNetworkGraph();
-    void computeCriticalPath();
 
 private slots:
     void onNewEvent();

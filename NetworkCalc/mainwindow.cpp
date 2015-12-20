@@ -13,8 +13,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->aComputeNetworkGraph, SIGNAL(triggered()),
             ui->widgetNetworkGraph, SLOT(computeNetworkGraph()));
-    connect(ui->aComputeCriticalPath, SIGNAL(triggered()),
-            ui->widgetNetworkGraph, SLOT(computeCriticalPath()));
 
     connect(ui->aGraphOpen, SIGNAL(triggered()),
             this, SLOT(onOpenGraph()));

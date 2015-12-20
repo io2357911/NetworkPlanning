@@ -11,11 +11,11 @@ private:
 
 public:
     static void printGraph(NetworkGraph &graph);
-    static void printEdgesInfo(QVector<NetworkGraph::Edge*> edges);
+    static void printEdgesInfo(QVector<IWork*> edges);
 
     static void printEvents(NetworkGraph &graph);
 
-    static void printCriticalPath(const QVector<NetworkGraph::Edge*> &path);
+    static void printCriticalPath(const QVector<IWork*> &path);
 };
 
 #endif // TOOLS_H

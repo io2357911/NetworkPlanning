@@ -173,10 +173,6 @@ void NetworkGraphWidget::saveGraph(QString fileName)
 void NetworkGraphWidget::computeNetworkGraph()
 {
     PlanningAlgoritms::NetworkGraphAlgoritm().compute(&graph);
-}
-
-void NetworkGraphWidget::computeCriticalPath()
-{
     PlanningAlgoritms::CriticalPathAlgorithm().compute(&graph);
     repaint();
 }

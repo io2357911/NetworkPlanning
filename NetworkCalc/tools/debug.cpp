@@ -4,12 +4,12 @@ Debug::Debug()
 {
 }
 
-void Debug::printEdgesInfo(QVector<NetworkGraph::Edge *> edges) {
+void Debug::printEdgesInfo(QVector<IWork *> edges) {
     for (int j = 0; j < edges.size(); j++) {
         qDebug("Edge: %d v1: %d v2: %d",
-               edges[j]->value()->getID(),
-               edges[j]->vertex1()->value()->getID(),
-               edges[j]->vertex2()->value()->getID());
+               edges[j]->getID(),
+               edges[j]->vertex1()->getID(),
+               edges[j]->vertex2()->getID());
     }
 }
 
@@ -19,20 +19,20 @@ void Debug::printGraph(NetworkGraph &graph) {
         return;
     }
 
-    QVector<NetworkGraph::Vertex*> vertices = graph.vertices();
+    QVector<IEvent*> events = graph.vertices();
 
-    for (int i = 0; i < vertices.size(); i++) {
+    for (int i = 0; i < events.size(); i++) {
 
         qDebug("\nVertex: %d first: %d last: %d",
-               vertices[i]->value()->getID(),
-               vertices[i]->isFirst(),
-               vertices[i]->isLast());
+               events[i]->getID(),
+               events[i]->isFirst(),
+               events[i]->isLast());
 
         qDebug("-------NextEdges-------");
-        printEdgesInfo(vertices[i]->nextEdges());
+        printEdgesInfo(events[i]->nextEdges());
 
         qDebug("-------PriveousEdges-------");
-        printEdgesInfo(vertices[i]->previousEdges());
+        printEdgesInfo(events[i]->previousEdges());
     }
 }
 
@@ -42,10 +42,10 @@ void Debug::printEvents(NetworkGraph &graph) {
         return;
     }
 
-    QVector<NetworkGraph::Vertex*> vertices = graph.vertices();
+    QVector<IEvent*> events = graph.vertices();
 
-    for (int i = 0; i < vertices.size(); i++) {
-        IEvent *event = vertices[i]->value();
+    for (int i = 0; i < events.size(); i++) {
+        IEvent *event = events[i];
         qDebug("Event: %d earlyTime: %d lateTime: %d reserve: %d",
                event->getID(),
                event->getEarlyTime(),
@@ -54,10 +54,10 @@ void Debug::printEvents(NetworkGraph &graph) {
     }
 }
 
-void Debug::printCriticalPath(const QVector<NetworkGraph::Edge *> &path) {
+void Debug::printCriticalPath(const QVector<IWork *> &path) {
     QString sPath = "Critical path: ";
     for (int i = 0; i < path.size(); i++) {
-        sPath += QString("%1-").arg(path[i]->value()->getID());
+        sPath += QString("%1-").arg(path[i]->getID());
     }
     qDebug(sPath.toStdString().c_str());
 }

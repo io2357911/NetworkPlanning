@@ -10,7 +10,7 @@ namespace Ui {
 class WorkWidget;
 }
 
-class WorkWidget : public QWidget, public NetworkGraph::Edge, public IWork
+class WorkWidget : public QWidget, public IWork
 {
     Q_OBJECT
 

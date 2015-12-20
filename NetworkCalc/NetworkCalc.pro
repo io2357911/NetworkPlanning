@@ -12,12 +12,13 @@ TARGET = NetworkCalc
 TEMPLATE = app
 
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
+SOURCES += \
+    main.cpp \
     math/networkgraph.cpp \
     math/matrix.cpp \
     math/graph.cpp \
     math/algorithms.cpp \
+    mainwindow.cpp \
     view/eventwidget.cpp \
     view/networkgraphwidget.cpp \
     view/workwidget.cpp \
@@ -25,11 +26,12 @@ SOURCES += main.cpp\
     view/workpropertiesdialog.cpp \
     tools/debug.cpp
 
-HEADERS  += mainwindow.h \
+HEADERS  += \
     math/graph.h \
     math/networkgraph.h \
     math/matrix.h \
     math/algorithms.h \
+    mainwindow.h \
     view/eventwidget.h \
     view/networkgraphwidget.h \
     view/workwidget.h \
@@ -38,7 +40,8 @@ HEADERS  += mainwindow.h \
     tools/ini.h \
     tools/debug.h
 
-FORMS    += mainwindow.ui \
+FORMS    += \
+    mainwindow.ui \
     view/eventwidget.ui \
     view/networkgraphwidget.ui \
     view/workwidget.ui \
