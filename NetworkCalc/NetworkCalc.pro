@@ -24,7 +24,8 @@ SOURCES += \
     view/workwidget.cpp \
     view/eventpropertiesdialog.cpp \
     view/workpropertiesdialog.cpp \
-    tools/debug.cpp
+    tools/debug.cpp \
+    view/workersdialog.cpp
 
 HEADERS  += \
     math/graph.h \
@@ -38,7 +39,8 @@ HEADERS  += \
     view/eventpropertiesdialog.h \
     view/workpropertiesdialog.h \
     tools/ini.h \
-    tools/debug.h
+    tools/debug.h \
+    view/workersdialog.h
 
 FORMS    += \
     mainwindow.ui \
@@ -46,7 +48,8 @@ FORMS    += \
     view/networkgraphwidget.ui \
     view/workwidget.ui \
     view/eventpropertiesdialog.ui \
-    view/workpropertiesdialog.ui
+    view/workpropertiesdialog.ui \
+    view/workersdialog.ui
 
 RESOURCES += \
     pics.qrc

@@ -14,6 +14,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->aComputeNetworkGraph, SIGNAL(triggered()),
             ui->widgetNetworkGraph, SLOT(computeNetworkGraph()));
 
+    connect(ui->aWorkers, SIGNAL(triggered()),
+            ui->widgetNetworkGraph, SIGNAL(showWorkers()));
+
     connect(ui->aGraphOpen, SIGNAL(triggered()),
             this, SLOT(onOpenGraph()));
     connect(ui->aGraphSave, SIGNAL(triggered()),

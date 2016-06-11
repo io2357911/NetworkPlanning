@@ -1,6 +1,8 @@
 #ifndef NETWORKGRAPH_H
 #define NETWORKGRAPH_H
 
+#include <QObject>
+#include <QMap>
 #include "graph.h"
 
 class IWork;
@@ -23,10 +25,12 @@ public:
     virtual void setIsCalculated(bool value) = 0;
 };
 
+class IWorker;
+
 class IWork : public GraphEdge<IEvent, IWork> {
 public:
     IWork(IEvent *event1 = NULL, IEvent *event2 = NULL)
-        : GraphEdge<IEvent, IWork>(event1, event2)
+        : GraphEdge<IEvent, IWork>(event1, event2), worker(NULL)
     {}
 
     virtual int getID() const = 0;
@@ -46,9 +50,107 @@ public:
 
     virtual bool isVirtual() const = 0;
     virtual void setIsVirtual(bool value) = 0;
+
+    void setWorker(IWorker *worker) { this->worker = worker; }
+    IWorker *getWorker() { return worker; }
+
+protected:
+    IWorker *worker;
 };
 
 typedef Graph<IEvent, IWork> NetworkGraph;
+
+struct IWorkerCapability {
+    IWorkerCapability(IWork *work = NULL, int cost = 0, int time = 0)
+        : work(work), cost(cost), time(time)
+    {}
+
+    IWork *work;
+    int cost;
+    int time;
+
+    bool operator==(const IWorkerCapability& other){
+        return work->getID() == other.work->getID();
+    }
+};
+
+typedef QVector<IWorkerCapability> Capabilities;
+
+class IWorker {
+public:
+    IWorker(int id = 0)
+        : id(id)
+    {}
+
+    int getID() const { return id; }
+    void setID(int value) { this->id = value; }
+
+    int getCost(IWork *work) const {
+        int ind = caps.indexOf(IWorkerCapability(work));
+        return ind != -1 ? caps[ind].cost : 0;
+    }
+
+    int getTime(IWork *work) const {
+        int ind = caps.indexOf(IWorkerCapability(work));
+        return ind != -1 ? caps[ind].time : 0;
+    }
+
+    void setCost(IWork *work, int value) {
+        IWorkerCapability cap(work, value, 0);
+        int ind = caps.indexOf(cap);
+        if (ind == -1) {
+            caps.append(cap);
+
+        } else {
+            cap.time = caps[ind].time;
+            caps.replace(ind, cap);
+        }
+    }
+
+    void setTime(IWork *work, int value) {
+        IWorkerCapability cap(work, 0, value);
+        int ind = caps.indexOf(cap);
+        if (ind == -1) {
+            caps.append(cap);
+
+        } else {
+            cap.cost = caps[ind].cost;
+            caps.replace(ind, cap);
+        }
+    }
+
+    void addWork(IWork *work) {
+        IWorkerCapability cap(work);
+        int ind = caps.indexOf(cap);
+        if (ind == -1) {
+            caps.append(cap);
+        }
+    }
+
+    void deleteWork(IWork *work) {
+        IWorkerCapability cap(work);
+        int ind = caps.indexOf(cap);
+        if (ind != -1) {
+            caps.remove(ind);
+        }
+    }
+
+    Capabilities capabilities() const { return caps; }
+
+//    void setCapability(const IWorkerCapability &cap) {
+//        int ind = caps.indexOf(cap);
+//        if (ind == -1) {
+//            caps.append(cap);
+
+//        } else {
+//            caps.replace(ind, cap);
+//        }
+//    }
+
+private:
+    int id;
+    Capabilities caps; // capabilities
+};
 
 class Event : public IEvent {
 public:

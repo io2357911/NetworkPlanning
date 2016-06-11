@@ -136,7 +136,8 @@ void WorkWidget::setID(int value)
 
 int WorkWidget::getCost() const
 {
-    return cost;
+    return worker ? worker->getCost((IWork*)this)
+                  : cost;
 }
 
 void WorkWidget::setCost(int value)
@@ -146,7 +147,8 @@ void WorkWidget::setCost(int value)
 
 int WorkWidget::getTime() const
 {
-    return ui->lTime->text().toInt();
+    return worker ? worker->getTime((IWork*)this)
+                  : ui->lTime->text().toInt();
 }
 
 void WorkWidget::setTime(int value)

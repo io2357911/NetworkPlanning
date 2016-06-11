@@ -33,6 +33,7 @@ bool PlanningAlgoritms::NetworkGraphAlgoritm::reset(NetworkGraph *graph) {
     for (int i = 0; i < vertices.size(); i++) {
         vertices[i]->setIsCalculated(false);
     }
+    return true;
 }
 
 IEvent *PlanningAlgoritms::NetworkGraphAlgoritm::nextForward(NetworkGraph *graph) {

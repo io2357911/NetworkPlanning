@@ -7,6 +7,7 @@
 #include "workwidget.h"
 #include "eventpropertiesdialog.h"
 #include "workpropertiesdialog.h"
+#include "workersdialog.h"
 #include "../tools/debug.h"
 #include "../tools/ini.h"
 #include "../math/algorithms.h"
@@ -27,6 +28,8 @@ public:
     void keyPressEvent(QKeyEvent *event);
     void wheelEvent(QWheelEvent *event);
 
+signals:
+    void showWorkers();
 
 public slots:
     void newGraph();
@@ -48,6 +51,9 @@ private slots:
     void onWorkProperties(WorkWidget *widget);
     void onWorkDelete(WorkWidget *widget);
 
+    void newWorker();
+    void deleteWorker(IWorker*);
+
 private:
     EventWidget *createEventWidget();
     WorkWidget *createWorkWidget(EventWidget *firstEvent, EventWidget *secondEvent);
@@ -55,17 +61,22 @@ private:
 private:
     Ui::NetworkGraphWidget *ui;
 
+    EventPropertiesDialog dEvent;
+    WorkPropertiesDialog dWork;
+    WorkersDialog dWorkers;
+
     NetworkGraph graph;
 
     QVector<EventWidget*> events;
     QVector<WorkWidget*> works;
+    QVector<IWorker*> workers;
 
     QAction *aNewEvent;
     QAction *aTest;
 
     EventWidget *firstConnectEvent;
 
-    int eventsCounter, worksCounter;
+    int eventsCounter, worksCounter, workerCounter;
 };
 
 #endif // NETWORKGRAPHWIDGET_H

@@ -8,7 +8,8 @@ NetworkGraphWidget::NetworkGraphWidget(QWidget *parent) :
     ui(new Ui::NetworkGraphWidget),
     firstConnectEvent(NULL),
     eventsCounter(0),
-    worksCounter(0)
+    worksCounter(0),
+    workerCounter(0)
 {
     ui->setupUi(this);
 
@@ -16,6 +17,13 @@ NetworkGraphWidget::NetworkGraphWidget(QWidget *parent) :
     aNewEvent->setShortcuts(QKeySequence::New);
     aNewEvent->setStatusTip(tr("Добавить новое событие"));
     connect(aNewEvent, SIGNAL(triggered()), this, SLOT(onNewEvent()));
+
+    dWorkers.setWorkers(&workers);
+    connect(&dWorkers, SIGNAL(newWorker()), this, SLOT(newWorker()));
+    connect(&dWorkers, SIGNAL(deleteWorker(IWorker*)), this, SLOT(deleteWorker(IWorker*)));
+    connect(this, SIGNAL(showWorkers()), &dWorkers, SLOT(show()));
+
+    dWork.setWorkers(&workers);
 
     aTest = new QAction(tr("Тест"), this);
     connect(aTest, SIGNAL(triggered()), this, SLOT(onTest()));
@@ -66,7 +74,6 @@ void NetworkGraphWidget::onEventClicked(EventWidget *event)
 {
     if (!firstConnectEvent) return;
     if (firstConnectEvent == event) return;
-
 
     WorkWidget *work = createWorkWidget(firstConnectEvent, event);
 
@@ -177,7 +184,30 @@ void NetworkGraphWidget::computeNetworkGraph()
     repaint();
 }
 
-void NetworkGraphWidget::onEventMoved(EventWidget */*widget*/)
+void NetworkGraphWidget::newWorker()
+{
+    IWorker *worker = new IWorker(++workerCounter);
+    workers.append(worker);
+    for (int i = 0; i < works.size(); i++) worker->addWork(works[i]);
+    dWorkers.updateWorkers();
+    dWork.updateWorkers();
+}
+
+void NetworkGraphWidget::deleteWorker(IWorker *worker)
+{
+    workers.removeAll(worker);
+    dWorkers.updateWorkers();
+
+    for (int i = 0; i < works.size(); i++)
+        if (works[i]->getWorker() == worker)
+            works[i]->setWorker(0);
+
+    dWork.updateWorkers();
+
+    delete worker;
+}
+
+void NetworkGraphWidget::onEventMoved(EventWidget *)
 {
     repaint();
 }
@@ -189,9 +219,8 @@ void NetworkGraphWidget::onEventStartConnect(EventWidget *widget)
 
 void NetworkGraphWidget::onEventProperties(EventWidget *widget)
 {
-    EventPropertiesDialog *dialog = new EventPropertiesDialog(this);
-    dialog->setEvent(widget);
-    dialog->show();
+    dEvent.setEvent(widget);
+    dEvent.show();
 }
 
 void NetworkGraphWidget::onEventDelete(EventWidget *widget)
@@ -203,15 +232,18 @@ void NetworkGraphWidget::onEventDelete(EventWidget *widget)
 
 void NetworkGraphWidget::onWorkProperties(WorkWidget *widget)
 {
-    WorkPropertiesDialog *dialog = new WorkPropertiesDialog(this);
-    dialog->setWork(widget);
-    dialog->show();
+    dWork.setWork(widget);
+    dWork.show();
 }
 
 void NetworkGraphWidget::onWorkDelete(WorkWidget *widget)
 {
     graph.deleteEdge(widget);
     works.removeAll(widget);
+
+    for (int i = 0; i < workers.size(); i++) workers[i]->deleteWork(widget);
+    dWorkers.updateWorks();
+
     widget->close();
     repaint();
 }
@@ -243,6 +275,9 @@ WorkWidget *NetworkGraphWidget::createWorkWidget(EventWidget *firstEvent, EventW
     work->setFirstEvent(firstEvent);
     work->setSecondEvent(secondEvent);
     work->show();
+
+    for (int i = 0; i < workers.size(); i++) workers[i]->addWork(work);
+    dWorkers.updateWorks();
 
     connect(work, SIGNAL(deleteMe(WorkWidget*)), this, SLOT(onWorkDelete(WorkWidget*)));
     connect(work, SIGNAL(properties(WorkWidget*)), this, SLOT(onWorkProperties(WorkWidget*)));
