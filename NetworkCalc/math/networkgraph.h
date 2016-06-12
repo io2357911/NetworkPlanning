@@ -56,7 +56,23 @@ protected:
     IWorker *worker;
 };
 
-typedef Graph<IEvent, IWork> NetworkGraph;
+//typedef Graph<IEvent, IWork> NetworkGraph;
+
+class NetworkGraph : public Graph<IEvent, IWork> {
+public:
+    NetworkGraph();
+    NetworkGraph(QVector<IEvent*> vertices, QVector<IWork*> edges);
+
+    int getTime() const;
+    void setTime(int value);
+
+    int getCost() const;
+    void setCost(int value);
+
+private:
+    int time;
+    int cost;
+};
 
 struct IWorkerCapability {
     IWorkerCapability(IWork *work = NULL, int cost = 0, int time = 0);

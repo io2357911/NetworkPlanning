@@ -5,22 +5,6 @@
 
 namespace PlanningAlgoritms {
 
-/*template <typename T>
-class IIterator {
-public:
-    T next() = 0;
-};*/
-
-/*static double projectCost(Matrix costs, Matrix assignments) {
-    double cost;
-
-    for (int i = 0; i < assignments.rows(); i++) {
-        cost += costs[i][assignments[i][0]];
-    }
-
-    return cost;
-}*/
-
 /*!
  * \brief Класс алгоритма для рассчета сетевого графа
  */
@@ -49,6 +33,25 @@ class CriticalPathAlgorithm {
 public:
     virtual ~CriticalPathAlgorithm() {}
     virtual QVector<IWork*> compute(NetworkGraph *graph);
+};
+
+/*!
+ * \brief Класс алгоритма нахождения стоимости проекта
+ */
+class CostAlgorithm {
+public:
+    virtual ~CostAlgorithm() {}
+    virtual void compute(NetworkGraph *graph);
+};
+
+/*!
+ * \brief Класс алгоритма нахождения времени проекта
+ * \warning Предполагается, что уже рассчитен крит. путь
+ */
+class TimeAlgorithm {
+public:
+    virtual ~TimeAlgorithm() {}
+    virtual void compute(NetworkGraph *graph);
 };
 
 }

@@ -195,6 +195,11 @@ void NetworkGraphWidget::computeNetworkGraph()
 {
     PlanningAlgoritms::NetworkGraphAlgoritm().compute(&graph);
     PlanningAlgoritms::CriticalPathAlgorithm().compute(&graph);
+    PlanningAlgoritms::CostAlgorithm().compute(&graph);
+    PlanningAlgoritms::TimeAlgorithm().compute(&graph);
+
+    emit graphComputed(&graph);
+
     repaint();
 }
 

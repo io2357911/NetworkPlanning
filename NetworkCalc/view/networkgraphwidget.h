@@ -39,6 +39,8 @@ signals:
     void workersChanged();
     void worksChanged();
 
+    void graphComputed(NetworkGraph *graph);
+
 public slots:
     void newGraph();
     void openGraph(QString path);

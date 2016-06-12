@@ -171,3 +171,29 @@ void IWorker::deleteWork(IWork *work) {
         caps.remove(ind);
     }
 }
+
+NetworkGraph::NetworkGraph() {}
+
+NetworkGraph::NetworkGraph(QVector<IEvent *> vertices, QVector<IWork *> edges)
+    : Graph(vertices, edges)
+{}
+
+int NetworkGraph::getTime() const
+{
+    return time;
+}
+
+void NetworkGraph::setTime(int value)
+{
+    time = value;
+}
+
+int NetworkGraph::getCost() const
+{
+    return cost;
+}
+
+void NetworkGraph::setCost(int value)
+{
+    cost = value;
+}

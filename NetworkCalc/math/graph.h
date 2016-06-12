@@ -80,7 +80,6 @@ public:
     Graph(QVector<V*> vertices, QVector<E*> edges)
         : m_vertices(vertices),
           m_edges(edges) {
-
     }
 
     /*Graph(QVector<V*> verticesValues, QVector<E*> edgesValues, Matrix<int> &adjacencyMatrix) {

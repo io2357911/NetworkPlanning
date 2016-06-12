@@ -158,3 +158,24 @@ QVector<IWork*> PlanningAlgoritms::CriticalPathAlgorithm::compute(NetworkGraph *
 
     return critPath;
 }
+
+void PlanningAlgoritms::CostAlgorithm::compute(NetworkGraph *graph)
+{
+    int cost = 0;
+    QVector<IWork*> works = graph->edges();
+    for (int i = 0; i < works.size(); i++) {
+        cost += works[i]->getCost();
+    }
+    graph->setCost(cost);
+}
+
+void PlanningAlgoritms::TimeAlgorithm::compute(NetworkGraph *graph)
+{
+    int time = 0;
+    QVector<IWork*> works = graph->edges();
+    for (int i = 0; i < works.size(); i++) {
+        if (works[i]->isCritical())
+            time += works[i]->getTime();
+    }
+    graph->setTime(time);
+}

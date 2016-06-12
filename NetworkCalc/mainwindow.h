@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "math/networkgraph.h"
 
 namespace Ui {
 class MainWindow;
@@ -20,6 +21,8 @@ public:
 private slots:
     void onOpenGraph();
     void onSaveGraph();
+
+    void onGraphComputed(NetworkGraph *graph);
 
 private:
     Ui::MainWindow *ui;

@@ -14,6 +14,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->aComputeNetworkGraph, SIGNAL(triggered()),
             ui->widgetNetworkGraph, SLOT(computeNetworkGraph()));
 
+    connect(ui->widgetNetworkGraph, SIGNAL(graphComputed(NetworkGraph*)),
+            this, SLOT(onGraphComputed(NetworkGraph*)));
+
     connect(ui->aWorkers, SIGNAL(triggered()),
             ui->widgetNetworkGraph, SIGNAL(showWorkers()));
 
@@ -50,6 +53,12 @@ void MainWindow::onSaveGraph()
                                                     tr("ini files (*.ini)"));
 
     if (!filePath.isNull()) ui->widgetNetworkGraph->saveGraph(filePath);
+}
+
+void MainWindow::onGraphComputed(NetworkGraph *graph)
+{
+    ui->sbCost->setValue(graph->getCost());
+    ui->sbTime->setValue(graph->getTime());
 }
 
 MainWindow::~MainWindow()
