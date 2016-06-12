@@ -1,5 +1,11 @@
 #include "algorithms.h"
 
+#include <vector>
+
+using namespace std;
+
+#define INF INT_MAX
+
 void PlanningAlgoritms::NetworkGraphAlgoritm::compute(NetworkGraph *graph) {
     if (graph->isNull()) return;
     if (!graph->firstVertex()) return;
@@ -178,4 +184,64 @@ void PlanningAlgoritms::TimeAlgorithm::compute(NetworkGraph *graph)
             time += works[i]->getTime();
     }
     graph->setTime(time);
+}
+
+void PlanningAlgoritms::HungarianAlgorithm::compute(QVector<IWorker *> workers, QVector<IWork *> works)
+{
+//    Matrix result(works.size(), 1);
+
+    int n = workers.size(); // кол-во рабочих
+    if (!n) return;
+
+    int m = works.size(); // кол-во заданий
+    if (!m) return;
+
+    if (!(n <= m)) return;
+
+    Matrix<int> ma(n, m);
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            ma[i][j] = workers[i]->getCost(works[j]);
+        }
+    }
+
+    Matrix<int> a = ma.extend();
+
+    vector<int> u (n+1), v (m+1), p (m+1), way (m+1);
+    for (int i=1; i<=n; ++i) {
+        p[0] = i;
+        int j0 = 0;
+        vector<int> minv (m+1, INF);
+        vector<char> used (m+1, false);
+        do {
+            used[j0] = true;
+            int i0 = p[j0],  delta = INF,  j1;
+            for (int j=1; j<=m; ++j)
+                if (!used[j]) {
+                    int cur = a[i0][j]-u[i0]-v[j];
+                    if (cur < minv[j])
+                        minv[j] = cur,  way[j] = j0;
+                    if (minv[j] < delta)
+                        delta = minv[j],  j1 = j;
+                }
+            for (int j=0; j<=m; ++j)
+                if (used[j])
+                    u[p[j]] += delta,  v[j] -= delta;
+                else
+                    minv[j] -= delta;
+            j0 = j1;
+        } while (p[j0] != 0);
+        do {
+            int j1 = way[j0];
+            p[j0] = p[j1];
+            j0 = j1;
+        } while (j0);
+    }
+
+//    for (int j=1; j <= m; j++)
+//        result[j-1][0] = p[j]-1;
+
+    for (int i = 1; i <= m; i++) {
+        works[i-1]->setWorker(workers[p[i]-1]);
+    }
 }

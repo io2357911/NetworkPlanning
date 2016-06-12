@@ -47,6 +47,7 @@ public slots:
     void saveGraph(QString path);
 
     void computeNetworkGraph();
+    void computeAssigns();
 
 private slots:
     void onNewEvent();

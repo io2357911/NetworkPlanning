@@ -54,6 +54,23 @@ public:
     virtual void compute(NetworkGraph *graph);
 };
 
+/**
+ * @brief The AsignmentAlgoritm class Класс алгоритма решения задачи о назначениях
+ */
+class AsignmentAlgoritm {
+public:
+    virtual ~AsignmentAlgoritm() {}
+    virtual void compute(QVector<IWorker*> workers, QVector<IWork*> works) = 0;
+};
+
+/**
+ * @brief The AsignmentAlgoritm class Класс алгоритма решения задачи о назначениях Венгерским методом
+ */
+class HungarianAlgorithm : public AsignmentAlgoritm {
+public:
+    virtual void compute(QVector<IWorker*> workers, QVector<IWork*> works);
+};
+
 }
 
 #endif // ALGORITHMS

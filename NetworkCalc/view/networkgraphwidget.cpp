@@ -203,6 +203,17 @@ void NetworkGraphWidget::computeNetworkGraph()
     repaint();
 }
 
+void NetworkGraphWidget::computeAssigns()
+{
+    QVector<IWork *> works;
+    for (int i = 0; i < this->works.size(); i++)
+        works.append(this->works[i]);
+
+    PlanningAlgoritms::HungarianAlgorithm().compute(workers, works);
+
+    emit worksChanged();
+}
+
 void NetworkGraphWidget::newWorker()
 {
     IWorker *worker = new IWorker(++workerCounter);
