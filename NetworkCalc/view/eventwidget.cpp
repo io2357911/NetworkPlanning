@@ -29,7 +29,7 @@ EventWidget::~EventWidget() {
     delete ui;
 }
 
-void EventWidget::paintEvent(QPaintEvent *evt)
+void EventWidget::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
     painter.drawPixmap(rect(), QPixmap(":/pics/event.png"));

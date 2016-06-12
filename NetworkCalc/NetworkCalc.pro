@@ -25,8 +25,8 @@ SOURCES += \
     view/eventpropertiesdialog.cpp \
     view/workpropertiesdialog.cpp \
     tools/debug.cpp \
-    view/workersdialog.cpp \
-    view/assignsdialog.cpp
+    view/assignswidget.cpp \
+    view/workerswidget.cpp
 
 HEADERS  += \
     math/graph.h \
@@ -41,8 +41,8 @@ HEADERS  += \
     view/workpropertiesdialog.h \
     tools/ini.h \
     tools/debug.h \
-    view/workersdialog.h \
-    view/assignsdialog.h
+    view/assignswidget.h \
+    view/workerswidget.h
 
 FORMS    += \
     mainwindow.ui \
@@ -51,8 +51,8 @@ FORMS    += \
     view/workwidget.ui \
     view/eventpropertiesdialog.ui \
     view/workpropertiesdialog.ui \
-    view/workersdialog.ui \
-    view/assignsdialog.ui
+    view/assignswidget.ui \
+    view/workerswidget.ui
 
 RESOURCES += \
     pics.qrc

@@ -24,6 +24,9 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(onOpenGraph()));
     connect(ui->aGraphSave, SIGNAL(triggered()),
             this, SLOT(onSaveGraph()));
+
+    ui->widgetNetworkGraph->setAssingsWidget(ui->wAssigns);
+    ui->widgetNetworkGraph->setWorkersWidget(ui->wWorkers);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)

@@ -1,22 +1,22 @@
-#ifndef ASSIGNSDIALOG_H
-#define ASSIGNSDIALOG_H
+#ifndef ASSIGNSWIDGET_H
+#define ASSIGNSWIDGET_H
 
-#include <QDialog>
+#include <QWidget>
 
 #include "../math/networkgraph.h"
 #include "workwidget.h"
 
+
 namespace Ui {
-class AssignsDialog;
+class AssignsWidget;
 }
 
-class AssignsDialog : public QDialog
+class AssignsWidget : public QWidget
 {
     Q_OBJECT
-
 public:
-    explicit AssignsDialog(QWidget *parent = 0);
-    ~AssignsDialog();
+    explicit AssignsWidget(QWidget *parent = 0);
+    ~AssignsWidget();
 
     void setWorks(QVector<WorkWidget *> *value);
     void setWorkers(QVector<IWorker *> *value);
@@ -36,10 +36,10 @@ private:
     IWorker *getWorker(QComboBox *box);
 
 private:
-    Ui::AssignsDialog *ui;
+    Ui::AssignsWidget *ui;
 
     QVector<WorkWidget*> *works;
     QVector<IWorker*> *workers;
 };
 
-#endif // ASSIGNSDIALOG_H
+#endif // ASSIGNSWIDGET_H

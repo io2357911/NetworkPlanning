@@ -18,22 +18,6 @@ NetworkGraphWidget::NetworkGraphWidget(QWidget *parent) :
     aNewEvent->setStatusTip(tr("Добавить новое событие"));
     connect(aNewEvent, SIGNAL(triggered()), this, SLOT(onNewEvent()));
 
-    dWorkers.setWorkers(&workers);
-    connect(&dWorkers, SIGNAL(newWorker()), this, SLOT(newWorker()));
-    connect(&dWorkers, SIGNAL(deleteWorker(IWorker*)), this, SLOT(deleteWorker(IWorker*)));
-    connect(this, SIGNAL(showWorkers()), &dWorkers, SLOT(show()));
-    connect(this, SIGNAL(workersChanged()), &dWorkers, SLOT(updateWorkers()));
-    connect(this, SIGNAL(worksChanged()), &dWorkers, SLOT(updateWorks()));
-
-    dAssigns.setWorkers(&workers);
-    dAssigns.setWorks(&works);
-    connect(this, SIGNAL(showAssigns()), &dAssigns, SLOT(show()));
-    connect(this, SIGNAL(workersChanged()), &dAssigns, SLOT(updateWorkers()));
-    connect(this, SIGNAL(worksChanged()), &dAssigns, SLOT(updateWorks()));
-
-    connect(&dAssigns, SIGNAL(assignChanged()), &dWork, SLOT(updateWork()));
-    connect(&dWorkers, SIGNAL(workerChanged()), &dWork, SLOT(updateWork()));
-
     aTest = new QAction(tr("Тест"), this);
     connect(aTest, SIGNAL(triggered()), this, SLOT(onTest()));
 }
@@ -98,6 +82,29 @@ void NetworkGraphWidget::wheelEvent(QWheelEvent *event)
     for (int i = 0; i < events.size(); i++) {
         events[i]->wheelEvent(event);
     }
+}
+
+void NetworkGraphWidget::setAssingsWidget(AssignsWidget *wAssigns)
+{
+    wAssigns->setWorkers(&workers);
+    wAssigns->setWorks(&works);
+    connect(this, SIGNAL(showAssigns()), wAssigns, SLOT(show()));
+    connect(this, SIGNAL(workersChanged()), wAssigns, SLOT(updateWorkers()));
+    connect(this, SIGNAL(worksChanged()), wAssigns, SLOT(updateWorks()));
+
+    connect(wAssigns, SIGNAL(assignChanged()), &dWork, SLOT(updateWork()));
+}
+
+void NetworkGraphWidget::setWorkersWidget(WorkersWidget *wWorkers)
+{
+    wWorkers->setWorkers(&workers);
+    connect(wWorkers, SIGNAL(newWorker()), this, SLOT(newWorker()));
+    connect(wWorkers, SIGNAL(deleteWorker(IWorker*)), this, SLOT(deleteWorker(IWorker*)));
+    connect(this, SIGNAL(showWorkers()), wWorkers, SLOT(show()));
+    connect(this, SIGNAL(workersChanged()), wWorkers, SLOT(updateWorkers()));
+    connect(this, SIGNAL(worksChanged()), wWorkers, SLOT(updateWorks()));
+
+    connect(wWorkers, SIGNAL(workerChanged()), &dWork, SLOT(updateWork()));
 }
 
 void NetworkGraphWidget::newGraph()
@@ -203,7 +210,6 @@ void NetworkGraphWidget::newWorker()
 void NetworkGraphWidget::deleteWorker(IWorker *worker)
 {
     workers.removeAll(worker);
-    dWorkers.updateWorkers();
 
     for (int i = 0; i < works.size(); i++)
         if (works[i]->getWorker() == worker)

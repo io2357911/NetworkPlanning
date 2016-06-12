@@ -1,35 +1,33 @@
-#include "assignsdialog.h"
-#include "ui_assignsdialog.h"
+#include "assignswidget.h"
+#include "ui_assignswidget.h"
 
-#include <QTableWidget>
-
-AssignsDialog::AssignsDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::AssignsDialog),
+AssignsWidget::AssignsWidget(QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::AssignsWidget),
     works(0),
     workers(0)
 {
     ui->setupUi(this);
 }
 
-AssignsDialog::~AssignsDialog()
+AssignsWidget::~AssignsWidget()
 {
     delete ui;
 }
 
-void AssignsDialog::setWorks(QVector<WorkWidget *> *value)
+void AssignsWidget::setWorks(QVector<WorkWidget *> *value)
 {
     works = value;
     updateWorks();
 }
 
-void AssignsDialog::setWorkers(QVector<IWorker *> *value)
+void AssignsWidget::setWorkers(QVector<IWorker *> *value)
 {
     workers = value;
     updateWorks();
 }
 
-void AssignsDialog::updateWorks()
+void AssignsWidget::updateWorks()
 {
     if (!works || !workers) return;
 
@@ -58,12 +56,12 @@ void AssignsDialog::updateWorks()
     }
 }
 
-void AssignsDialog::updateWorkers()
+void AssignsWidget::updateWorkers()
 {
     updateWorks();
 }
 
-void AssignsDialog::onWorkerChanged(int)
+void AssignsWidget::onWorkerChanged(int)
 {
     QComboBox *box = (QComboBox*)QObject::sender();
     IWork *work = getWork(box);
@@ -75,7 +73,7 @@ void AssignsDialog::onWorkerChanged(int)
     emit assignChanged();
 }
 
-IWork *AssignsDialog::getWork(QComboBox *box)
+IWork *AssignsWidget::getWork(QComboBox *box)
 {
     int index = box->property("work").toInt();
     return index > -1 && index < works->size()
@@ -83,7 +81,7 @@ IWork *AssignsDialog::getWork(QComboBox *box)
             : NULL;
 }
 
-IWorker *AssignsDialog::getWorker(QComboBox *box)
+IWorker *AssignsWidget::getWorker(QComboBox *box)
 {
     int index = box->currentIndex()-1;
     return index > -1 && index < workers->size()

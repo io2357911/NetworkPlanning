@@ -29,9 +29,7 @@ class IWorker;
 
 class IWork : public GraphEdge<IEvent, IWork> {
 public:
-    IWork(IEvent *event1 = NULL, IEvent *event2 = NULL)
-        : GraphEdge<IEvent, IWork>(event1, event2), worker(NULL)
-    {}
+    IWork(IEvent *event1 = NULL, IEvent *event2 = NULL);
 
     virtual int getID() const = 0;
     virtual void setID(int value) = 0;
@@ -51,8 +49,8 @@ public:
     virtual bool isVirtual() const = 0;
     virtual void setIsVirtual(bool value) = 0;
 
-    void setWorker(IWorker *worker) { this->worker = worker; }
-    IWorker *getWorker() { return worker; }
+    void setWorker(IWorker *worker);
+    IWorker *getWorker();
 
 protected:
     IWorker *worker;
@@ -61,17 +59,13 @@ protected:
 typedef Graph<IEvent, IWork> NetworkGraph;
 
 struct IWorkerCapability {
-    IWorkerCapability(IWork *work = NULL, int cost = 0, int time = 0)
-        : work(work), cost(cost), time(time)
-    {}
+    IWorkerCapability(IWork *work = NULL, int cost = 0, int time = 0);
 
     IWork *work;
     int cost;
     int time;
 
-    bool operator==(const IWorkerCapability& other){
-        return work->getID() == other.work->getID();
-    }
+    bool operator==(const IWorkerCapability& other);
 };
 
 typedef QVector<IWorkerCapability> Capabilities;
@@ -85,67 +79,16 @@ public:
     int getID() const { return id; }
     void setID(int value) { this->id = value; }
 
-    int getCost(IWork *work) const {
-        int ind = caps.indexOf(IWorkerCapability(work));
-        return ind != -1 ? caps[ind].cost : 0;
-    }
+    int getCost(IWork *work) const;
+    void setCost(IWork *work, int value);
 
-    int getTime(IWork *work) const {
-        int ind = caps.indexOf(IWorkerCapability(work));
-        return ind != -1 ? caps[ind].time : 0;
-    }
+    int getTime(IWork *work) const;
+    void setTime(IWork *work, int value);
 
-    void setCost(IWork *work, int value) {
-        IWorkerCapability cap(work, value, 0);
-        int ind = caps.indexOf(cap);
-        if (ind == -1) {
-            caps.append(cap);
-
-        } else {
-            cap.time = caps[ind].time;
-            caps.replace(ind, cap);
-        }
-    }
-
-    void setTime(IWork *work, int value) {
-        IWorkerCapability cap(work, 0, value);
-        int ind = caps.indexOf(cap);
-        if (ind == -1) {
-            caps.append(cap);
-
-        } else {
-            cap.cost = caps[ind].cost;
-            caps.replace(ind, cap);
-        }
-    }
-
-    void addWork(IWork *work) {
-        IWorkerCapability cap(work);
-        int ind = caps.indexOf(cap);
-        if (ind == -1) {
-            caps.append(cap);
-        }
-    }
-
-    void deleteWork(IWork *work) {
-        IWorkerCapability cap(work);
-        int ind = caps.indexOf(cap);
-        if (ind != -1) {
-            caps.remove(ind);
-        }
-    }
+    void addWork(IWork *work);
+    void deleteWork(IWork *work);
 
     Capabilities capabilities() const { return caps; }
-
-//    void setCapability(const IWorkerCapability &cap) {
-//        int ind = caps.indexOf(cap);
-//        if (ind == -1) {
-//            caps.append(cap);
-
-//        } else {
-//            caps.replace(ind, cap);
-//        }
-//    }
 
 private:
     int id;
@@ -154,13 +97,8 @@ private:
 
 class Event : public IEvent {
 public:
-    Event(int id = 0, int earlyTime = 0, int lateTime = 0, int reserve = 0, bool isCalculated = false)
-        : id(id),
-          earlyTime(earlyTime),
-          lateTime(lateTime),
-          reserve(reserve),
-          isCalculated(isCalculated)
-    {}
+    Event(int id = 0, int earlyTime = 0, int lateTime = 0,
+          int reserve = 0, bool isCalculated = false);
 
     int getID() const;
     void setID(int value);
@@ -189,15 +127,7 @@ private:
 class Work : public IWork {
 public:
     Work(Event *event1 = NULL, Event *event2 = NULL, int id = 0, int cost = 0, int time = 0,
-         bool isCritical = false, bool isVirtual = false, int fullReserve = 0)
-        : IWork(event1, event2),
-          id(id),
-          cost(cost),
-          time(time),
-          fullReserve(fullReserve),
-          m_isCritical(isCritical),
-          m_isVirtual(isVirtual)
-    {}
+         bool isCritical = false, bool isVirtual = false, int fullReserve = 0);
 
     int getID() const;
     void setID(int value);

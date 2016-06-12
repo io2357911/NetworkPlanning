@@ -102,11 +102,21 @@
        <attribute name="title">
         <string>Исполнители</string>
        </attribute>
+       <layout class="QGridLayout" name="gridLayout_5">
+        <item row="0" column="0">
+         <widget class="WorkersWidget" name="wWorkers" native="true"/>
+        </item>
+       </layout>
       </widget>
       <widget class="QWidget" name="tab_3">
        <attribute name="title">
         <string>Назначения</string>
        </attribute>
+       <layout class="QGridLayout" name="gridLayout_4">
+        <item row="0" column="0">
+         <widget class="AssignsWidget" name="wAssigns" native="true"/>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
@@ -135,15 +145,7 @@
     <addaction name="aGraphOpen"/>
     <addaction name="aGraphSave"/>
    </widget>
-   <widget class="QMenu" name="mWorkers">
-    <property name="title">
-     <string>Исполнители</string>
-    </property>
-    <addaction name="aWorkers"/>
-    <addaction name="aAssigns"/>
-   </widget>
    <addaction name="menu_2"/>
-   <addaction name="mWorkers"/>
    <addaction name="menu"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -202,6 +204,18 @@
    <class>NetworkGraphWidget</class>
    <extends>QWidget</extends>
    <header>view/networkgraphwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>AssignsWidget</class>
+   <extends>QWidget</extends>
+   <header>view/assignswidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>WorkersWidget</class>
+   <extends>QWidget</extends>
+   <header>view/workerswidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

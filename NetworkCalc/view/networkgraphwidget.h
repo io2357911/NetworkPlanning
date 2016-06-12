@@ -7,8 +7,8 @@
 #include "workwidget.h"
 #include "eventpropertiesdialog.h"
 #include "workpropertiesdialog.h"
-#include "workersdialog.h"
-#include "assignsdialog.h"
+#include "workerswidget.h"
+#include "assignswidget.h"
 #include "../tools/debug.h"
 #include "../tools/ini.h"
 #include "../math/algorithms.h"
@@ -28,6 +28,9 @@ public:
     void paintEvent(QPaintEvent *evt);
     void keyPressEvent(QKeyEvent *event);
     void wheelEvent(QWheelEvent *event);
+
+    void setAssingsWidget(AssignsWidget *w);
+    void setWorkersWidget(WorkersWidget *w);
 
 signals:
     void showWorkers();
@@ -68,8 +71,8 @@ private:
 
     EventPropertiesDialog dEvent;
     WorkPropertiesDialog dWork;
-    WorkersDialog dWorkers;
-    AssignsDialog dAssigns;
+//    WorkersWidget dWorkers;
+//    AssignsWidget dAssigns;
 
     NetworkGraph graph;
 

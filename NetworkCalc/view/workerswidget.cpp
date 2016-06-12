@@ -1,39 +1,37 @@
-#include "workersdialog.h"
-#include "ui_workersdialog.h"
+#include "workerswidget.h"
+#include "ui_workerswidget.h"
 
-#include <QSpinBox>
-
-WorkersDialog::WorkersDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::WorkersDialog),
+WorkersWidget::WorkersWidget(QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::WorkersWidget),
     workers(0)
 {
     ui->setupUi(this);
 }
 
-WorkersDialog::~WorkersDialog()
+WorkersWidget::~WorkersWidget()
 {
     delete ui;
 }
 
-void WorkersDialog::on_pbWorkerAdd_clicked()
+void WorkersWidget::on_pbWorkerAdd_clicked()
 {
     emit newWorker();
 }
 
-void WorkersDialog::on_pbWorkerDelete_clicked()
+void WorkersWidget::on_pbWorkerDelete_clicked()
 {
     IWorker *worker = currentWorker();
     if (worker) emit deleteWorker(worker);
 }
 
-void WorkersDialog::setWorkers(QVector<IWorker *> *value)
+void WorkersWidget::setWorkers(QVector<IWorker *> *value)
 {
     workers = value;
     updateWorkers();
 }
 
-void WorkersDialog::updateWorkers()
+void WorkersWidget::updateWorkers()
 {
     ui->cbWorker->clear();
     for (int i = 0; i < workers->size(); i++) {
@@ -41,7 +39,7 @@ void WorkersDialog::updateWorkers()
     }
 }
 
-void WorkersDialog::updateWorks()
+void WorkersWidget::updateWorks()
 {
     IWorker *worker = currentWorker();
     if (!worker) return;
@@ -78,36 +76,38 @@ void WorkersDialog::updateWorks()
     }
 }
 
-void WorkersDialog::on_cbWorker_currentIndexChanged(int)
+void WorkersWidget::on_cbWorker_currentIndexChanged(int)
 {
     updateWorks();
 }
 
-void WorkersDialog::onWorkCostChanged(int value)
+void WorkersWidget::onWorkCostChanged(int value)
 {
     QSpinBox *box = (QSpinBox*)QObject::sender();
     IWork *work = getWork(box);
     if (!work) return;
 
     IWorker *worker = currentWorker();
+    if (work->getWorker()) work->setCost(value);
     if (worker) worker->setCost(work, value);
 
     emit workerChanged();
 }
 
-void WorkersDialog::onWorkTimeChanged(int value)
+void WorkersWidget::onWorkTimeChanged(int value)
 {
     QSpinBox *box = (QSpinBox*)QObject::sender();
     IWork *work = getWork(box);
     if (!work) return;
 
     IWorker *worker = currentWorker();
+    if (work->getWorker()) work->setTime(value);
     if (worker) worker->setTime(work, value);
 
     emit workerChanged();
 }
 
-IWorker *WorkersDialog::currentWorker()
+IWorker *WorkersWidget::currentWorker()
 {
     int index = ui->cbWorker->currentIndex();
     return index > -1 && index < workers->size()
@@ -115,7 +115,7 @@ IWorker *WorkersDialog::currentWorker()
             : NULL;
 }
 
-IWork *WorkersDialog::getWork(QSpinBox *box)
+IWork *WorkersWidget::getWork(QSpinBox *box)
 {
     IWorker *worker = currentWorker();
     if (!worker) return NULL;

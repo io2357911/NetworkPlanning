@@ -1,23 +1,22 @@
-#ifndef WORKERSDIALOG_H
-#define WORKERSDIALOG_H
+#ifndef WORKERSWIDGET_H
+#define WORKERSWIDGET_H
 
-#include <QVector>
-#include <QDialog>
+#include <QWidget>
 #include <QSpinBox>
 
 #include "../math/networkgraph.h"
 
 namespace Ui {
-class WorkersDialog;
+class WorkersWidget;
 }
 
-class WorkersDialog : public QDialog
+class WorkersWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit WorkersDialog(QWidget *parent = 0);
-    ~WorkersDialog();
+    explicit WorkersWidget(QWidget *parent = 0);
+    ~WorkersWidget();
 
     void setWorkers(QVector<IWorker *> *value);
 
@@ -44,9 +43,9 @@ private:
     IWork *getWork(QSpinBox *box);
 
 private:
-    Ui::WorkersDialog *ui;
+    Ui::WorkersWidget *ui;
 
     QVector<IWorker*> *workers;
 };
 
-#endif // WORKERSDIALOG_H
+#endif // WORKERSWIDGET_H
