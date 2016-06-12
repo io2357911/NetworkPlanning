@@ -25,6 +25,8 @@ signals:
     void newWorker();
     void deleteWorker(IWorker*);
 
+    void workerChanged();
+
 public slots:
     void updateWorkers();
     void updateWorks();

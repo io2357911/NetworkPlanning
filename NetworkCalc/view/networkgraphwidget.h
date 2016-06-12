@@ -8,6 +8,7 @@
 #include "eventpropertiesdialog.h"
 #include "workpropertiesdialog.h"
 #include "workersdialog.h"
+#include "assignsdialog.h"
 #include "../tools/debug.h"
 #include "../tools/ini.h"
 #include "../math/algorithms.h"
@@ -30,6 +31,10 @@ public:
 
 signals:
     void showWorkers();
+    void showAssigns();
+
+    void workersChanged();
+    void worksChanged();
 
 public slots:
     void newGraph();
@@ -64,6 +69,7 @@ private:
     EventPropertiesDialog dEvent;
     WorkPropertiesDialog dWork;
     WorkersDialog dWorkers;
+    AssignsDialog dAssigns;
 
     NetworkGraph graph;
 

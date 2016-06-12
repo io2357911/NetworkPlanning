@@ -91,6 +91,8 @@ void WorkersDialog::onWorkCostChanged(int value)
 
     IWorker *worker = currentWorker();
     if (worker) worker->setCost(work, value);
+
+    emit workerChanged();
 }
 
 void WorkersDialog::onWorkTimeChanged(int value)
@@ -101,6 +103,8 @@ void WorkersDialog::onWorkTimeChanged(int value)
 
     IWorker *worker = currentWorker();
     if (worker) worker->setTime(work, value);
+
+    emit workerChanged();
 }
 
 IWorker *WorkersDialog::currentWorker()

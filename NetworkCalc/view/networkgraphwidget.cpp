@@ -22,8 +22,17 @@ NetworkGraphWidget::NetworkGraphWidget(QWidget *parent) :
     connect(&dWorkers, SIGNAL(newWorker()), this, SLOT(newWorker()));
     connect(&dWorkers, SIGNAL(deleteWorker(IWorker*)), this, SLOT(deleteWorker(IWorker*)));
     connect(this, SIGNAL(showWorkers()), &dWorkers, SLOT(show()));
+    connect(this, SIGNAL(workersChanged()), &dWorkers, SLOT(updateWorkers()));
+    connect(this, SIGNAL(worksChanged()), &dWorkers, SLOT(updateWorks()));
 
-    dWork.setWorkers(&workers);
+    dAssigns.setWorkers(&workers);
+    dAssigns.setWorks(&works);
+    connect(this, SIGNAL(showAssigns()), &dAssigns, SLOT(show()));
+    connect(this, SIGNAL(workersChanged()), &dAssigns, SLOT(updateWorkers()));
+    connect(this, SIGNAL(worksChanged()), &dAssigns, SLOT(updateWorks()));
+
+    connect(&dAssigns, SIGNAL(assignChanged()), &dWork, SLOT(updateWork()));
+    connect(&dWorkers, SIGNAL(workerChanged()), &dWork, SLOT(updateWork()));
 
     aTest = new QAction(tr("Тест"), this);
     connect(aTest, SIGNAL(triggered()), this, SLOT(onTest()));
@@ -78,7 +87,6 @@ void NetworkGraphWidget::onEventClicked(EventWidget *event)
     WorkWidget *work = createWorkWidget(firstConnectEvent, event);
 
     graph.addEdge(work);
-    works.append(work);
 
     repaint();
 
@@ -152,7 +160,6 @@ void NetworkGraphWidget::openGraph(QString fileName)
         work->restore(fileName);
 
         graph.addEdge(work);
-        works.append(work);
     }
     repaint();
 }
@@ -189,8 +196,8 @@ void NetworkGraphWidget::newWorker()
     IWorker *worker = new IWorker(++workerCounter);
     workers.append(worker);
     for (int i = 0; i < works.size(); i++) worker->addWork(works[i]);
-    dWorkers.updateWorkers();
-    dWork.updateWorkers();
+
+    emit workersChanged();
 }
 
 void NetworkGraphWidget::deleteWorker(IWorker *worker)
@@ -202,7 +209,7 @@ void NetworkGraphWidget::deleteWorker(IWorker *worker)
         if (works[i]->getWorker() == worker)
             works[i]->setWorker(0);
 
-    dWork.updateWorkers();
+    emit workersChanged();
 
     delete worker;
 }
@@ -242,7 +249,8 @@ void NetworkGraphWidget::onWorkDelete(WorkWidget *widget)
     works.removeAll(widget);
 
     for (int i = 0; i < workers.size(); i++) workers[i]->deleteWork(widget);
-    dWorkers.updateWorks();
+    if (dWork.getWork() == dynamic_cast<IWork*>(widget)) dWork.setWork(NULL);
+    emit worksChanged();
 
     widget->close();
     repaint();
@@ -276,8 +284,10 @@ WorkWidget *NetworkGraphWidget::createWorkWidget(EventWidget *firstEvent, EventW
     work->setSecondEvent(secondEvent);
     work->show();
 
+    works.append(work);
+
     for (int i = 0; i < workers.size(); i++) workers[i]->addWork(work);
-    dWorkers.updateWorks();
+    emit worksChanged();
 
     connect(work, SIGNAL(deleteMe(WorkWidget*)), this, SLOT(onWorkDelete(WorkWidget*)));
     connect(work, SIGNAL(properties(WorkWidget*)), this, SLOT(onWorkProperties(WorkWidget*)));
