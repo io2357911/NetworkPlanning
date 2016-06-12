@@ -3,7 +3,6 @@
 
 #include <QVector>
 
-#include "matrix.h"
 
 template <typename V, typename E>
 class GraphVertex;
@@ -73,32 +72,12 @@ class Graph {
 public:
     Graph() {}
     ~Graph() {
-        //for (int i = 0; i < m_vertices.size(); i++) delete m_vertices[i];
-        //for (int i = 0; i < m_edges.size(); i++) delete m_edges[i];
     }
 
     Graph(QVector<V*> vertices, QVector<E*> edges)
         : m_vertices(vertices),
           m_edges(edges) {
     }
-
-    /*Graph(QVector<V*> verticesValues, QVector<E*> edgesValues, Matrix<int> &adjacencyMatrix) {
-        if (adjacencyMatrix.cols() != adjacencyMatrix.rows()) return;
-        if (verticesValues.size() != adjacencyMatrix.rows()) return;
-
-        for (int i = 0; i < verticesValues.size(); i++) {
-            m_vertices.append(new Vertex(verticesValues[i]));
-        }
-
-        for (int i = 0; i < adjacencyMatrix.rows(); i++) {
-            for (int j = 0; j < adjacencyMatrix.cols(); j++) {
-                int edgeNum = adjacencyMatrix[i][j];
-                if (edgeNum >= 0 && edgeNum < edgesValues.size()) {
-                    m_edges.append(new Edge(edgesValues[edgeNum], m_vertices[i], m_vertices[j]));
-                }
-            }
-        }
-    }*/
 
     void addVertex(V* vertex) {
         m_vertices.append(vertex);

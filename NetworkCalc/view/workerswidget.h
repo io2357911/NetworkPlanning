@@ -38,6 +38,8 @@ private slots:
     void onWorkCostChanged(int value);
     void onWorkTimeChanged(int value);
 
+    void on_pbCapsRandom_clicked();
+
 private:
     IWorker *currentWorker();
     IWork *getWork(QSpinBox *box);

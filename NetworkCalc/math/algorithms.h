@@ -1,9 +1,30 @@
 #ifndef ALGORITHMS
 #define ALGORITHMS
 
+#include <vector>
+#include "structures.h"
 #include "networkgraph.h"
 
+using namespace std;
+
 namespace PlanningAlgoritms {
+
+struct JohnsonTrotterState
+{
+    vector<int> values_;
+    vector<int> positions_;	// size is n+1, first element is not used
+    vector<bool> directions_;
+    int sign_;
+
+    JohnsonTrotterState(int n) : values_(UpTo(n, 1)), positions_(UpTo(n + 1, -1)), directions_(n + 1, false), sign_(1) {}
+
+    int LargestMobile() const;
+    bool IsComplete() const;
+
+    void operator++();
+
+    vector<int> UpTo(int n, int offset = 0);
+};
 
 /*!
  * \brief Класс алгоритма для рассчета сетевого графа
@@ -69,6 +90,41 @@ public:
 class HungarianAlgorithm : public AsignmentAlgoritm {
 public:
     virtual void compute(QVector<IWorker*> workers, QVector<IWork*> works);
+};
+
+class AssignsIterator {
+public:
+    AssignsIterator(Assigns &assign);
+
+    bool next();
+
+private:
+    Assigns baseAssign;
+    Assigns &assign;
+    JohnsonTrotterState state;
+};
+
+
+class NetworkPlanningAlgorithm {
+public:
+    NetworkPlanningAlgorithm(NetworkGraph &graph,
+                             QVector<IWorker*> &workers,
+                             QVector<IWork*> &works,
+                             int maxTime);
+
+    bool compute();
+
+    AssingsEstimation estimate(Assigns &assigns);
+
+private:
+    Assigns toAssingsMatrix(QVector<IWork*> &works);
+    void fromAssingsMatrix(Assigns &assigns);
+
+private:
+    NetworkGraph graph;
+    QVector<IWorker*> workers;
+    QVector<IWork*> works;
+    int maxTime;
 };
 
 }

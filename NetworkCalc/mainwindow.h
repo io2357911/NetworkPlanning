@@ -22,6 +22,8 @@ private slots:
     void onOpenGraph();
     void onSaveGraph();
 
+    void onComputeAssignsWithTime();
+
     void onGraphComputed(NetworkGraph *graph);
 
 private:

@@ -245,3 +245,140 @@ void PlanningAlgoritms::HungarianAlgorithm::compute(QVector<IWorker *> workers, 
         works[i-1]->setWorker(workers[p[i]-1]);
     }
 }
+
+
+
+PlanningAlgoritms::AssignsIterator::AssignsIterator(Assigns &assign)
+    : baseAssign(assign),
+      assign(assign),
+      state(assign.rows())
+{}
+
+bool PlanningAlgoritms::AssignsIterator::next()
+{
+    if (!state.IsComplete()) {
+        ++state;
+
+        for (uint i = 0; i < state.values_.size(); i++) {
+            int index = state.values_[i] - 1;
+            assign[i][0] = baseAssign[index][0];
+        }
+
+        return true;
+
+    } else {
+        return false;
+    }
+}
+
+// returns 0 if no mobile integer exists
+int PlanningAlgoritms::JohnsonTrotterState::LargestMobile() const {
+    for (int r = values_.size(); r > 0; --r)
+    {
+        const int loc = positions_[r] + (directions_[r] ? 1 : -1);
+        if (loc >= 0 && loc < (int)values_.size() && (int)values_[loc] < r)
+            return r;
+    }
+    return 0;
+}
+
+bool PlanningAlgoritms::JohnsonTrotterState::IsComplete() const {
+    return LargestMobile() == 0;
+}
+
+// implement Johnson-Trotter algorithm
+void PlanningAlgoritms::JohnsonTrotterState::operator++() {
+    const int r = LargestMobile();
+    const int rLoc = positions_[r];
+    const int lLoc = rLoc + (directions_[r] ? 1 : -1);
+    const int l = values_[lLoc];
+    // do the swap
+    swap(values_[lLoc], values_[rLoc]);
+    swap(positions_[l], positions_[r]);
+    sign_ = -sign_;
+    // change directions
+    for (auto pd = directions_.begin() + r + 1; pd != directions_.end(); ++pd)
+        *pd = !*pd;
+}
+
+vector<int> PlanningAlgoritms::JohnsonTrotterState::UpTo(int n, int offset)
+{
+    vector<int> retval(n);
+    for (int ii = 0; ii < n; ++ii)
+        retval[ii] = ii + offset;
+    return retval;
+}
+
+PlanningAlgoritms::NetworkPlanningAlgorithm::NetworkPlanningAlgorithm(NetworkGraph &graph,
+                                                                      QVector<IWorker *> &workers,
+                                                                      QVector<IWork *> &works,
+                                                                      int maxTime)
+    : graph(graph),
+      workers(workers),
+      works(works),
+      maxTime(maxTime)
+{}
+
+bool PlanningAlgoritms::NetworkPlanningAlgorithm::compute()
+{
+    // решение классической задачи о назначениях
+    HungarianAlgorithm().compute(workers, works);
+
+    Assigns assigns = toAssingsMatrix(works);
+
+    // базовая оценка назначений
+    AssingsEstimation estBase = estimate(assigns);
+    if (estBase.time <= maxTime)
+        return true;
+
+    // сравнительная оценка назначений
+    RelativeAssingsEstimation relEstBest;
+
+    // выполняем последовательные переназначения
+    AssignsIterator assingsIter(assigns);
+    while (assingsIter.next()) {
+        AssingsEstimation estNew = estimate(assigns);
+
+        RelativeAssingsEstimation relEstNew(estBase, estNew);
+        if (relEstNew.isBetter(relEstBest)) {
+            relEstBest = relEstNew;
+        }
+    }
+
+    fromAssingsMatrix(relEstBest.newEstimation.assigns);
+
+    return relEstBest.newEstimation.time <= maxTime;
+}
+
+AssingsEstimation PlanningAlgoritms::NetworkPlanningAlgorithm::estimate(Assigns &assigns)
+{
+    fromAssingsMatrix(assigns);
+
+    NetworkGraphAlgoritm().compute(&graph);
+    CriticalPathAlgorithm().compute(&graph);
+    CostAlgorithm().compute(&graph);
+    TimeAlgorithm().compute(&graph);
+
+    return AssingsEstimation(assigns, graph.getCost(), graph.getTime());
+}
+
+Assigns PlanningAlgoritms::NetworkPlanningAlgorithm::toAssingsMatrix(QVector<IWork *> &works)
+{
+    Assigns m(works.size(), 1);
+    for (int i = 0; i < works.size(); i++) {
+        for (int j = 0; j < workers.size(); j++) {
+            IWorker *worker = works[i]->getWorker();
+            if (worker->getID() != workers[j]->getID()) continue;
+
+            m[i][0] = j;
+        }
+    }
+    return m;
+}
+
+void PlanningAlgoritms::NetworkPlanningAlgorithm::fromAssingsMatrix(Assigns &assigns)
+{
+    for (int i = 0; i < assigns.rows(); i++) {
+        works[i]->setWorker(workers.at(assigns[i][0]));
+    }
+}

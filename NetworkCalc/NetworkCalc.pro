@@ -15,9 +15,9 @@ TEMPLATE = app
 SOURCES += \
     main.cpp \
     math/networkgraph.cpp \
-    math/matrix.cpp \
     math/graph.cpp \
     math/algorithms.cpp \
+    math/structures.cpp \
     mainwindow.cpp \
     view/eventwidget.cpp \
     view/networkgraphwidget.cpp \
@@ -31,8 +31,8 @@ SOURCES += \
 HEADERS  += \
     math/graph.h \
     math/networkgraph.h \
-    math/matrix.h \
     math/algorithms.h \
+    math/structures.h \
     mainwindow.h \
     view/eventwidget.h \
     view/networkgraphwidget.h \

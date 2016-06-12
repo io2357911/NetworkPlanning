@@ -126,3 +126,18 @@ IWork *WorkersWidget::getWork(QSpinBox *box)
             ? caps[index].work
             : NULL;
 }
+
+void WorkersWidget::on_pbCapsRandom_clicked()
+{
+    IWorker *worker = currentWorker();
+    if (!worker) return;
+
+    Capabilities caps = worker->capabilities();
+    for (int i = 0; i < caps.size(); i++) {
+        IWork *work = caps[i].work;
+        worker->setCost(work, 1 + rand() % 100);
+        worker->setTime(work, 1 + rand() % 100);
+    }
+
+    updateWorks();
+}

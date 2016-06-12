@@ -48,6 +48,7 @@ public slots:
 
     void computeNetworkGraph();
     void computeAssigns();
+    void computeAssigns(int maxTime);
 
 private slots:
     void onNewEvent();

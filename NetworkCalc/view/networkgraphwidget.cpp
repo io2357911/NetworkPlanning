@@ -2,6 +2,9 @@
 #include "ui_networkgraphwidget.h"
 #include <QMenu>
 #include <QPainter>
+#include <QMessageBox>
+
+using namespace PlanningAlgoritms;
 
 NetworkGraphWidget::NetworkGraphWidget(QWidget *parent) :
     QWidget(parent),
@@ -193,10 +196,10 @@ void NetworkGraphWidget::saveGraph(QString fileName)
 
 void NetworkGraphWidget::computeNetworkGraph()
 {
-    PlanningAlgoritms::NetworkGraphAlgoritm().compute(&graph);
-    PlanningAlgoritms::CriticalPathAlgorithm().compute(&graph);
-    PlanningAlgoritms::CostAlgorithm().compute(&graph);
-    PlanningAlgoritms::TimeAlgorithm().compute(&graph);
+    NetworkGraphAlgoritm().compute(&graph);
+    CriticalPathAlgorithm().compute(&graph);
+    CostAlgorithm().compute(&graph);
+    TimeAlgorithm().compute(&graph);
 
     emit graphComputed(&graph);
 
@@ -212,6 +215,21 @@ void NetworkGraphWidget::computeAssigns()
     PlanningAlgoritms::HungarianAlgorithm().compute(workers, works);
 
     emit worksChanged();
+    computeNetworkGraph();
+}
+
+void NetworkGraphWidget::computeAssigns(int maxTime)
+{
+    QVector<IWork *> works;
+    for (int i = 0; i < this->works.size(); i++)
+        works.append(this->works[i]);
+
+    if (!NetworkPlanningAlgorithm(graph, workers, works, maxTime).compute()) {
+        QMessageBox::warning(NULL, "Ошибка рассчет назначений", "Задача не имеет решения");
+    }
+
+    emit worksChanged();
+    computeNetworkGraph();
 }
 
 void NetworkGraphWidget::newWorker()

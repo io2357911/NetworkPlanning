@@ -90,58 +90,12 @@ double PlanningAlgoritms::DPCPAlgoritm::maxLength(int vertex, QVector<int> neigh
 }
 
 
-Matrix PlanningAlgoritms::NetworkPlanningAlgorithm::compute(int workersCount, double maxTime, Matrix costs, Matrix times, Matrix netAdjecency)
-{
-    if (!isCorrectInput(workersCount, maxTime, costs, times, netAdjecency)) return Matrix();
-
-    // решение классической задачи о назначениях
-    Matrix assigns = algAssigns->compute(costs);
-
-    ProjectGraph graph(netAdjecency, &assigns, &times);
-
-    // базовая оценка назначений
-    AssingsEstimation estBase = estimate(assigns, costs, graph);
-    if (estBase.time <= maxTime)
-        return estBase.assigns;
-
-    // сравнительная оценка назначений
-    RelativeAssingsEstimation relEstBest;
-
-    // выполняем последовательные переназначения
-    AssignsIterator assingsIter(assigns);
-    while (assingsIter.next()) {
-        AssingsEstimation estNew = estimate(assigns, costs, graph);
-
-        RelativeAssingsEstimation relEstNew(estBase, estNew);
-        if (relEstNew.isBetter(relEstBest)) {
-            relEstBest = relEstNew;
-        }
-    }
-
-    if (relEstBest.newEstimation.time <= maxTime)
-        return relEstBest.newEstimation.assigns;
-    else
-        return Matrix();
-}
 
 AssingsEstimation PlanningAlgoritms::NetworkPlanningAlgorithm::estimate(Matrix &assigns, Matrix &costs, ProjectGraph &graph)
 {
     return AssingsEstimation(assigns,
                              projectCost(costs, assigns),
                              algCritPath->compute(graph));
-}
-
-bool PlanningAlgoritms::NetworkPlanningAlgorithm::isCorrectInput(int workersCount, double/* maxTime*/, Matrix &costs,
-                                                                 Matrix &times, Matrix &/*netAdjecency*/)
-{
-    bool correct = true;
-
-    correct &= workersCount == costs.rows();
-    correct &= workersCount == costs.cols();
-    correct &= workersCount == times.rows();
-    correct &= workersCount == times.rows();
-
-    return correct;
 }
 
 bool PlanningAlgoritms::AssignsIterator::next()
