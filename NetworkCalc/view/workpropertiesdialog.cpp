@@ -52,6 +52,11 @@ void WorkPropertiesDialog::updateWork()
     ui->sbFullReserve->setValue(work->getFullReserve());
     ui->cbIsVirtual->setChecked(work->isVirtual());
 
-    ui->sbCost->setEnabled(!work->getWorker());
-    ui->sbTime->setEnabled(!work->getWorker());
+    IWorker *worker = work->getWorker();
+
+    ui->lWorker->setText(worker ? QString::number(worker->getID())
+                                : "нет");
+
+    ui->sbCost->setEnabled(!worker);
+    ui->sbTime->setEnabled(!worker);
 }

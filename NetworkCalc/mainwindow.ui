@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>594</width>
-    <height>422</height>
+    <width>622</width>
+    <height>431</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,6 +21,19 @@
        <string>Параметры проекта</string>
       </property>
       <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="6">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
        <item row="0" column="1">
         <widget class="QSpinBox" name="sbTime">
          <property name="alignment">
@@ -31,6 +44,16 @@
          </property>
          <property name="buttonSymbols">
           <enum>QAbstractSpinBox::NoButtons</enum>
+         </property>
+         <property name="maximum">
+          <number>9999999</number>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="5">
+        <widget class="QSpinBox" name="sbTimeLimit">
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
          </property>
          <property name="maximum">
           <number>9999999</number>
@@ -68,17 +91,11 @@
         </widget>
        </item>
        <item row="0" column="4">
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Дир. срок:</string>
          </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -127,7 +144,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>594</width>
+     <width>622</width>
      <height>26</height>
     </rect>
    </property>
