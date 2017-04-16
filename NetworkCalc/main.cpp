@@ -1,28 +1,34 @@
-#include "mainwindow.h"
-#include <QApplication>
+//#include "mainwindow.h"
+//#include <QApplication>
 
 #include "math/networkgraph.h"
 #include "math/algorithms.h"
 #include "tools/debug.h"
 
-using namespace PlanningAlgoritms;
+using namespace Math;
+using namespace Math::Planning;
+using namespace Math::Planning::Algorithms;
 
-int main(int argc, char *argv[])
-{
-    Event e1(1), e2(2), e3(3), e4(4), e5(5), e6(6), e7(7);
-    Work    w1(&e1,&e3,1,1,4),
-            w2(&e1,&e2,2,1,6),
-            w3(&e3,&e4,3,1,7),
-            w4(&e2,&e5,4,1,3),
-            w5(&e4,&e6,5,1,4),
-            w6(&e5,&e6,6,1,5),
-            w7(&e6,&e7,7,1,3),
-            pw(&e2,&e3,8,0,0);
+int main(int argc, char *argv[]) {
+    (void)argc;
+    (void)argv;
 
-    QVector<IEvent*> events = {
+    Resourse res("People", 20, 1);
+
+    Event e1("1"), e2("2"), e3("3"), e4("4"), e5("5"), e6("6"), e7("7");
+    Work    w1(&e1,&e3,"1",&res,1,1,4,3),
+            w2(&e1,&e2,"2",&res,1,1,6,3),
+            w3(&e3,&e4,"3",&res,1,1,7,3),
+            w4(&e2,&e5,"4",&res,1,1,3,2),
+            w5(&e4,&e6,"5",&res,1,1,4,2),
+            w6(&e5,&e6,"6",&res,1,1,5,3),
+            w7(&e6,&e7,"7",&res,1,1,3,2),
+            pw(&e2,&e3,"8",&res,1,0,0,0);
+
+    QVector<Event*> events = {
         &e1, &e2, &e3, &e4, &e5, &e6, &e7,
     };
-    QVector<IWork*> works = {
+    QVector<Work*> works = {
         &w1, &w2, &w3, &w4, &w5, &w6, &w7, &pw
     };
 
@@ -33,13 +39,15 @@ int main(int argc, char *argv[])
     NetworkGraphAlgoritm().compute(&graph);
 
     Debug::printEvents(graph);
+    Debug::printEdges(graph.edges());
     Debug::printCriticalPath(CriticalPathAlgorithm().compute(&graph));
 
 
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
-    return a.exec();
+//    QApplication a(argc, argv);
+//    MainWindow w;
+//    w.show();
+//    return a.exec();
+
 
     return 0;
 }

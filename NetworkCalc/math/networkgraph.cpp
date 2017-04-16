@@ -1,199 +1,198 @@
 #include "networkgraph.h"
 
-Event::Event(int id, int earlyTime, int lateTime, int reserve, bool isCalculated)
-    : id(id),
-      earlyTime(earlyTime),
-      lateTime(lateTime),
-      reserve(reserve),
-      isCalculated(isCalculated)
+namespace Math {
+namespace Planning {
+
+QString Resourse::name() const {
+    return m_name;
+}
+
+void Resourse::setName(const QString &name) {
+    m_name = name;
+}
+
+double Resourse::quantity() const {
+    return m_quantity;
+}
+
+void Resourse::setQuantity(double quantity) {
+    m_quantity = quantity;
+}
+
+double Resourse::cost() const {
+    return m_cost;
+}
+
+void Resourse::setCost(double cost) {
+    m_cost = cost;
+}
+
+Event::Event(QString name, int earlyTime, int lateTime, int reserve, bool isCalculated)
+    : m_name(name),
+      m_earlyTime(earlyTime),
+      m_lateTime(lateTime),
+      m_reserve(reserve),
+      m_isCalculated(isCalculated)
 {}
 
-int Event::getID() const
-{
-    return id;
+QString Event::name() const {
+    return m_name;
 }
 
-void Event::setID(int value)
-{
-    id = value;
-}
-int Event::getEarlyTime() const
-{
-    return earlyTime;
+void Event::setName(int name) {
+    m_name = name;
 }
 
-void Event::setEarlyTime(int value)
-{
-    earlyTime = value;
-}
-int Event::getLateTime() const
-{
-    return lateTime;
+double Event::earlyTime() const {
+    return m_earlyTime;
 }
 
-void Event::setLateTime(int value)
-{
-    lateTime = value;
-}
-int Event::getReserve() const
-{
-    return reserve;
+void Event::setEarlyTime(double earlyTime) {
+    m_earlyTime = earlyTime;
 }
 
-void Event::setReserve(int value)
-{
-    reserve = value;
-}
-bool Event::getIsCalculated() const
-{
-    return isCalculated;
+double Event::lateTime() const {
+    return m_lateTime;
 }
 
-void Event::setIsCalculated(bool value)
-{
-    isCalculated = value;
+void Event::setLateTime(double lateTime) {
+    m_lateTime = lateTime;
+}
+
+double Event::reserve() const {
+    return m_reserve;
+}
+
+void Event::setReserve(double reserve) {
+    m_reserve = reserve;
+}
+
+bool Event::isCalculated() const {
+    return m_isCalculated;
+}
+
+void Event::setIsCalculated(bool isCalculated) {
+    m_isCalculated = isCalculated;
 }
 
 
 
-Work::Work(Event *event1, Event *event2, int id, int cost, int time, bool isCritical, bool isVirtual, int fullReserve)
-    : IWork(event1, event2),
-      id(id),
-      cost(cost),
-      time(time),
-      fullReserve(fullReserve),
+Work::Work(Event *event1,
+           Event *event2,
+           QString name,
+           Resourse *resourse,
+           double resourseCount,
+           double timeMin,
+           double timeMax,
+           double timeAvg,
+           IRandom *timeRandom,
+           IFunction *timeSpeed,
+           bool isCritical,
+           bool isVirtual,
+           double fullReserve)
+    : GraphEdge<Event, Work>(event1, event2),
+      m_name(name),
+      m_resourse(resourse),
+      m_resourseCount(resourseCount),
+      m_timeMin(timeMin),
+      m_timeMax(timeMax),
+      m_timeAvg(timeAvg),
+      m_time(timeRandom == 0 ? new Randoms::PertBeta(this) : timeRandom),
+      m_timeSpeed(timeSpeed == 0 ? new Math::Functions::Linear : timeSpeed),
+      m_fullReserve(fullReserve),
       m_isCritical(isCritical),
       m_isVirtual(isVirtual)
 {}
 
-int Work::getID() const
-{
-    return id;
+QString Work::name() const {
+    return m_name;
 }
 
-void Work::setID(int value)
-{
-    id = value;
-}
-int Work::getCost() const
-{
-    return cost;
+void Work::setName(int name) {
+    m_name = name;
 }
 
-void Work::setCost(int value)
-{
-    cost = value;
-}
-int Work::getTime() const
-{
-    return time;
+double Work::cost() {
+    if (!m_resourse) return 0;
+
+    return m_time.value() * m_resourse->cost();
 }
 
-void Work::setTime(int value)
-{
-    time = value;
+double Work::timeMin() {
+    if (m_resourseCount <= 0) return 0;
+    if (!m_timeSpeed) return 0;
+    // t = W/w(r);
+    // w(r) - скорость, в простейшем случае число - resourse
+    // W - общая трудоемкость
+    // t - время выполнения
+    return m_timeMin / m_timeSpeed->value(m_resourseCount);
 }
 
-bool Work::isCritical() const { return m_isCritical; }
-
-void Work::setIsCritical(bool value) { m_isCritical = value; }
-
-
-
-IWork::IWork(IEvent *event1, IEvent *event2)
-    : GraphEdge<IEvent, IWork>(event1, event2), worker(NULL)
-{}
-
-void IWork::setWorker(IWorker *worker) {
-    this->worker = worker;
-    if (worker) {
-        setCost(worker->getCost(this));
-        setTime(worker->getTime(this));
-    }
+double Work::timeMax() {
+    if (m_resourseCount <= 0) return 0;
+    if (!m_timeSpeed) return 0;
+    // t = W/w(r);
+    // w(r) - скорость, в простейшем случае число - resourse
+    // W - общая трудоемкость
+    // t - время выполнения
+    return m_timeMax / m_timeSpeed->value(m_resourseCount);
 }
 
-IWorker *IWork::getWorker() { return worker; }
-
-IWorkerCapability::IWorkerCapability(IWork *work, int cost, int time)
-    : work(work), cost(cost), time(time)
-{}
-
-bool IWorkerCapability::operator==(const IWorkerCapability &other){
-    return work->getID() == other.work->getID();
+double Work::timeAvg() {
+    if (m_resourseCount <= 0) return 0;
+    if (!m_timeSpeed) return 0;
+    // t = W/w(r);
+    // w(r) - скорость, в простейшем случае число - resourse
+    // W - общая трудоемкость
+    // t - время выполнения
+    return m_timeAvg / m_timeSpeed->value(m_resourseCount);
 }
 
-int IWorker::getCost(IWork *work) const {
-    int ind = caps.indexOf(IWorkerCapability(work));
-    return ind != -1 ? caps[ind].cost : 0;
+Random *Work::time() {
+    return &m_time;
 }
 
-int IWorker::getTime(IWork *work) const {
-    int ind = caps.indexOf(IWorkerCapability(work));
-    return ind != -1 ? caps[ind].time : 0;
+double Work::fullReserve() const {
+    return m_fullReserve;
 }
 
-void IWorker::setCost(IWork *work, int value) {
-    IWorkerCapability cap(work, value, 0);
-    int ind = caps.indexOf(cap);
-    if (ind == -1) {
-        caps.append(cap);
-
-    } else {
-        cap.time = caps[ind].time;
-        caps.replace(ind, cap);
-    }
+void Work::setFullReserve(double fullReserve) {
+    m_fullReserve = fullReserve;
 }
 
-void IWorker::setTime(IWork *work, int value) {
-    IWorkerCapability cap(work, 0, value);
-    int ind = caps.indexOf(cap);
-    if (ind == -1) {
-        caps.append(cap);
-
-    } else {
-        cap.cost = caps[ind].cost;
-        caps.replace(ind, cap);
-    }
+bool Work::isCritical() const {
+    return m_isCritical;
 }
 
-void IWorker::addWork(IWork *work) {
-    IWorkerCapability cap(work);
-    int ind = caps.indexOf(cap);
-    if (ind == -1) {
-        caps.append(cap);
-    }
+void Work::setIsCritical(bool value) {
+    m_isCritical = value;
 }
 
-void IWorker::deleteWork(IWork *work) {
-    IWorkerCapability cap(work);
-    int ind = caps.indexOf(cap);
-    if (ind != -1) {
-        caps.remove(ind);
-    }
+bool Work::isVirtual() const {
+    return m_isVirtual;
 }
+
 
 NetworkGraph::NetworkGraph() {}
 
-NetworkGraph::NetworkGraph(QVector<IEvent *> vertices, QVector<IWork *> edges)
+NetworkGraph::NetworkGraph(QVector<Event *> vertices, QVector<Work *> edges)
     : Graph(vertices, edges)
 {}
 
-int NetworkGraph::getTime() const
-{
-    return time;
+double NetworkGraph::getTime() const {
+    return time.value();
 }
 
-void NetworkGraph::setTime(int value)
-{
-    time = value;
+void NetworkGraph::setTime(double /*value*/) {
 }
 
-int NetworkGraph::getCost() const
-{
+double NetworkGraph::getCost() const {
     return cost;
 }
 
-void NetworkGraph::setCost(int value)
-{
+void NetworkGraph::setCost(double value) {
     cost = value;
 }
+
+} // namespace Planning
+} // namespace Math

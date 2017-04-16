@@ -1,7 +1,7 @@
 TEMPLATE = subdirs
 
 EXTRAS += \
-    NetworkPlanning \
+#    NetworkPlanning \
     NetworkCalc
 
 for(dir, EXTRAS) {

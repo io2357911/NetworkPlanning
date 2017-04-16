@@ -3,6 +3,7 @@
 
 #include <QVector>
 
+namespace Math {
 
 template <typename V, typename E>
 class GraphVertex;
@@ -137,6 +138,8 @@ private:
     QVector<V*> m_vertices;
     QVector<E*> m_edges;
 };
+
+}
 
 #endif // STRUCTURES
 

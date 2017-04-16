@@ -3,173 +3,176 @@
 
 #include <QObject>
 #include <QMap>
+
 #include "graph.h"
+#include "random.h"
+#include "function.h"
 
-class IWork;
 
-class IEvent : public GraphVertex<IEvent, IWork> {
+namespace Math {
+namespace Planning {
+
+class Work;
+class Event;
+
+class Resourse {
 public:
-    virtual int getID() const = 0;
-    virtual void setID(int value) = 0;
-
-    virtual int getEarlyTime() const = 0;
-    virtual void setEarlyTime(int value) = 0;
-
-    virtual int getLateTime() const = 0;
-    virtual void setLateTime(int value) = 0;
-
-    virtual int getReserve() const = 0;
-    virtual void setReserve(int value) = 0;
-
-    virtual bool getIsCalculated() const = 0;
-    virtual void setIsCalculated(bool value) = 0;
-};
-
-class IWorker;
-
-class IWork : public GraphEdge<IEvent, IWork> {
-public:
-    IWork(IEvent *event1 = NULL, IEvent *event2 = NULL);
-
-    virtual int getID() const = 0;
-    virtual void setID(int value) = 0;
-
-    virtual int getCost() const = 0;
-    virtual void setCost(int value) = 0;
-
-    virtual int getTime() const = 0;
-    virtual void setTime(int value) = 0;
-
-    virtual int getFullReserve() const = 0;
-    virtual void setFullReserve(int value) = 0;
-
-    virtual bool isCritical() const = 0;
-    virtual void setIsCritical(bool value) = 0;
-
-    virtual bool isVirtual() const = 0;
-    virtual void setIsVirtual(bool value) = 0;
-
-    void setWorker(IWorker *worker);
-    IWorker *getWorker();
-
-protected:
-    IWorker *worker;
-};
-
-//typedef Graph<IEvent, IWork> NetworkGraph;
-
-class NetworkGraph : public Graph<IEvent, IWork> {
-public:
-    NetworkGraph();
-    NetworkGraph(QVector<IEvent*> vertices, QVector<IWork*> edges);
-
-    int getTime() const;
-    void setTime(int value);
-
-    int getCost() const;
-    void setCost(int value);
-
-private:
-    int time;
-    int cost;
-};
-
-struct IWorkerCapability {
-    IWorkerCapability(IWork *work = NULL, int cost = 0, int time = 0);
-
-    IWork *work;
-    int cost;
-    int time;
-
-    bool operator==(const IWorkerCapability& other);
-};
-
-typedef QVector<IWorkerCapability> Capabilities;
-
-class IWorker {
-public:
-    IWorker(int id = 0)
-        : id(id)
+    Resourse(QString name = "", double quantity = 0, double cost = 0)
+        : m_name(name), m_quantity(quantity), m_cost(cost)
     {}
 
-    int getID() const { return id; }
-    void setID(int value) { this->id = value; }
+    QString name() const;
+    void setName(const QString &name);
 
-    int getCost(IWork *work) const;
-    void setCost(IWork *work, int value);
+    double quantity() const;
+    void setQuantity(double quantity);
 
-    int getTime(IWork *work) const;
-    void setTime(IWork *work, int value);
-
-    void addWork(IWork *work);
-    void deleteWork(IWork *work);
-
-    Capabilities capabilities() const { return caps; }
+    double cost() const;
+    void setCost(double cost);
 
 private:
-    int id;
-    Capabilities caps; // capabilities
+    QString m_name;       // Наименование ресурса
+    double  m_quantity;   // Доступное количество ресурса
+    double  m_cost;       // стоимость единицы ресурсов
 };
 
-class Event : public IEvent {
+class Event : public GraphVertex<Event, Work> {
 public:
-    Event(int id = 0, int earlyTime = 0, int lateTime = 0,
-          int reserve = 0, bool isCalculated = false);
+    Event(QString name = "",
+          int earlyTime = 0,
+          int lateTime = 0,
+          int reserve = 0,
+          bool isCalculated = false);
 
-    int getID() const;
-    void setID(int value);
+    QString name() const;
+    void setName(int name);
 
-    int getEarlyTime() const;
-    void setEarlyTime(int value);
+    double earlyTime() const;
+    void setEarlyTime(double earlyTime);
 
-    int getLateTime() const;
-    void setLateTime(int value);
+    double lateTime() const;
+    void setLateTime(double lateTime);
 
-    int getReserve() const;
-    void setReserve(int value);
+    double reserve() const;
+    void setReserve(double reserve);
 
-    bool getIsCalculated() const;
-    void setIsCalculated(bool value);
+    bool isCalculated() const;
+    void setIsCalculated(bool isCalculated);
 
 private:
-    int id;
-    int earlyTime;
-    int lateTime;
-    int reserve;
+    QString m_name;
+    double m_earlyTime;
+    double m_lateTime;
+    double m_reserve;
 
-    bool isCalculated;
+    bool m_isCalculated;
 };
 
-class Work : public IWork {
+class Work : public GraphEdge<Event, Work> {
 public:
-    Work(Event *event1 = NULL, Event *event2 = NULL, int id = 0, int cost = 0, int time = 0,
-         bool isCritical = false, bool isVirtual = false, int fullReserve = 0);
+    Work(Event *event1, Event *event2, QString name = "", Resourse* resourse = 0, double resourseCount = 0,
+         double timeMin = 0, double timeMax = 0, double timeAvg = 0,
+         IRandom* timeRandom = 0, IFunction* timeSpeed = 0,
+         bool isCritical = false, bool isVirtual = false, double fullReserve = 0);
 
-    int getID() const;
-    void setID(int value);
+    QString name() const;
+    void setName(int name);
 
-    int getCost() const;
-    void setCost(int value);
+    // ресурсные характеристики
+    double cost();
 
-    int getTime() const;
-    void setTime(int value);
+    // временные характеристики
+    double timeMin();
+    double timeMax();
+    double timeAvg();
+    Random* time();
 
-    int getFullReserve() const { return fullReserve; }
-    void setFullReserve(int value) { fullReserve = value; }
+    // сетевые характеристики
+    double fullReserve() const;
+    void setFullReserve(double value);
 
     bool isCritical() const;
     void setIsCritical(bool value);
 
-    bool isVirtual() const { return m_isVirtual; }
-    void setIsVirtual(bool value) { m_isVirtual = value; }
+    bool isVirtual() const;
 
 private:
-    int id;
-    int cost;
-    int time;
-    int fullReserve;
-    bool m_isCritical;
-    bool m_isVirtual;
+    QString     m_name;             // Наименование работы
+
+    // ресурсные характеристики
+    Resourse*   m_resourse;         // тип ресурса для данной работы
+    double      m_resourseCount;    // количество выделенного ресурса
+
+    // временные характеристики
+    double      m_timeMin;          // минимальная оценка времени выполнения
+    double      m_timeMax;          // максимальная оценка времени выполнения
+    double      m_timeAvg;          // ожидаемая оценка времени выполнения
+    Random      m_time;             // время выполнения с учетом ресурсов
+    IFunction*  m_timeSpeed;        // скорость выполения в зависимости от кол-ва ресурсов
+
+    // сетевые характеристики
+    double      m_fullReserve;      // полный резерв работы
+    bool        m_isCritical;       // критическая работа
+    bool        m_isVirtual;        // виртуальная работа
 };
 
+//typedef Graph<IEvent, IWork> NetworkGraph;
+
+class NetworkGraph : public Graph<Event, Work> {
+public:
+    NetworkGraph();
+    NetworkGraph(QVector<Event*> vertices, QVector<Work*> edges);
+
+    double getTime() const;
+    void setTime(double value);
+
+    double getCost() const;
+    void setCost(double value);
+
+private:
+    Random  time;
+    double  cost;
+};
+
+namespace Randoms {
+
+#define WORK_RANDOM(randomClass)  \
+class randomClass : public IRandom { \
+public: \
+    randomClass(Work* work) \
+        : m_work(work) \
+    {} \
+    IFunction *f() { \
+        if (!m_work) return 0; \
+        return Math::Randoms::randomClass(m_work->timeMin(), m_work->timeMax(), m_work->timeAvg()).f(); \
+    } \
+    IFunction *F() { \
+        if (!m_work) return 0; \
+        return Math::Randoms::randomClass(m_work->timeMin(), m_work->timeMax(), m_work->timeAvg()).F(); \
+    } \
+    double mathExpected() { \
+        if (!m_work) return 0; \
+        return Math::Randoms::randomClass(m_work->timeMin(), m_work->timeMax(), m_work->timeAvg()).mathExpected(); \
+    } \
+    double dispersion() { \
+        if (!m_work) return 0; \
+        return Math::Randoms::randomClass(m_work->timeMin(), m_work->timeMax(), m_work->timeAvg()).dispersion(); \
+    } \
+    double random() { \
+        if (!m_work) return 0; \
+        return Math::Randoms::randomClass(m_work->timeMin(), m_work->timeMax(), m_work->timeAvg()).random(); \
+    } \
+protected: \
+    Work *m_work; \
+};
+
+WORK_RANDOM(Beta)
+WORK_RANDOM(PertBeta)
+
+} // namespace Randoms
+
+} // namespace Planning
+} // namespace Math
+
 #endif // NETWORKGRAPH_H
+

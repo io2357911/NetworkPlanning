@@ -2,29 +2,14 @@
 #define ALGORITHMS
 
 #include <vector>
-#include "structures.h"
 #include "networkgraph.h"
 
 using namespace std;
 
-namespace PlanningAlgoritms {
+namespace Math {
+namespace Planning {
+namespace Algorithms {
 
-struct JohnsonTrotterState
-{
-    vector<int> values_;
-    vector<int> positions_;	// size is n+1, first element is not used
-    vector<bool> directions_;
-    int sign_;
-
-    JohnsonTrotterState(int n) : values_(UpTo(n, 1)), positions_(UpTo(n + 1, -1)), directions_(n + 1, false), sign_(1) {}
-
-    int LargestMobile() const;
-    bool IsComplete() const;
-
-    void operator++();
-
-    vector<int> UpTo(int n, int offset = 0);
-};
 
 /*!
  * \brief Класс алгоритма для рассчета сетевого графа
@@ -37,13 +22,13 @@ public:
 private:
     bool reset(NetworkGraph *graph);
 
-    IEvent *nextForward(NetworkGraph *graph);
-    IEvent *nextBackward(NetworkGraph *graph);
+    Event *nextForward(NetworkGraph *graph);
+    Event *nextBackward(NetworkGraph *graph);
 
-    int maxEarlyTime(IEvent *vertex);
-    int minLateTime(IEvent *vertex);
+    double maxEarlyTime(Event *vertex);
+    double minLateTime(Event *vertex);
 
-    bool allAreCalculated(const QVector<IEvent*> &vertices);
+    bool allAreCalculated(const QVector<Event*> &vertices);
 };
 
 /*!
@@ -53,7 +38,7 @@ private:
 class CriticalPathAlgorithm {
 public:
     virtual ~CriticalPathAlgorithm() {}
-    virtual QVector<IWork*> compute(NetworkGraph *graph);
+    virtual QVector<Work*> compute(NetworkGraph *graph);
 };
 
 /*!
@@ -75,59 +60,30 @@ public:
     virtual void compute(NetworkGraph *graph);
 };
 
-/**
- * @brief The AsignmentAlgoritm class Класс алгоритма решения задачи о назначениях
+/*!
+ * \brief Класс алгоритма нахождения
  */
-class AsignmentAlgoritm {
+class ModelingAlgorithm {
 public:
-    virtual ~AsignmentAlgoritm() {}
-    virtual void compute(QVector<IWorker*> workers, QVector<IWork*> works) = 0;
+    virtual ~ModelingAlgorithm() {}
+    virtual void compute(NetworkGraph *graph) = 0;
 };
 
-/**
- * @brief The AsignmentAlgoritm class Класс алгоритма решения задачи о назначениях Венгерским методом
+/*!
+ * \brief Класс алгоритма нахождения
  */
-class HungarianAlgorithm : public AsignmentAlgoritm {
+class MonteCarloModelingAlgorithm {
 public:
-    virtual void compute(QVector<IWorker*> workers, QVector<IWork*> works);
-};
-
-class AssignsIterator {
-public:
-    AssignsIterator(Assigns &assign);
-
-    bool next();
+    virtual ~MonteCarloModelingAlgorithm() {}
+    virtual void compute(NetworkGraph *graph);
 
 private:
-    Assigns baseAssign;
-    Assigns &assign;
-    JohnsonTrotterState state;
+    void modelWorks(NetworkGraph *graph);
 };
 
-
-class NetworkPlanningAlgorithm {
-public:
-    NetworkPlanningAlgorithm(NetworkGraph &graph,
-                             QVector<IWorker*> &workers,
-                             QVector<IWork*> &works,
-                             int maxTime);
-
-    bool compute();
-
-    AssingsEstimation estimate(Assigns &assigns);
-
-private:
-    Assigns toAssingsMatrix(QVector<IWork*> &works);
-    void fromAssingsMatrix(Assigns &assigns);
-
-private:
-    NetworkGraph graph;
-    QVector<IWorker*> workers;
-    QVector<IWork*> works;
-    int maxTime;
-};
-
-}
+} // namespace Algorithms
+} // namespace Planning
+} // namespace Math
 
 #endif // ALGORITHMS
 

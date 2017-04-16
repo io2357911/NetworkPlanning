@@ -1,5 +1,5 @@
-#ifndef STUCTURES
-#define STUCTURES
+#ifndef MATRIX_H
+#define MATRIX_H
 
 #include <climits>
 #include <QVector>
@@ -8,6 +8,8 @@
 #define INF INT_MAX
 
 #include <QVector>
+
+namespace Math {
 
 template <typename T>
 class Matrix {
@@ -56,60 +58,6 @@ private:
     QVector<QVector<T> > _m;
 };
 
-typedef Matrix<int> Assigns;
+}
 
-// оценка назначений
-class AssingsEstimation {
-public:
-    AssingsEstimation() {}
-    AssingsEstimation(Assigns &assigns, double cost, double time)
-        : assigns(assigns),
-          cost(cost),
-          time(time)
-    {}
-
-    Assigns assigns;
-
-    double cost;
-    double time;
-};
-
-// относительная оценка назначений
-class RelativeAssingsEstimation {
-public:
-    RelativeAssingsEstimation()
-        : dcost(0.0), dtime(0.0)
-    {}
-    RelativeAssingsEstimation(AssingsEstimation &estBase, AssingsEstimation &estNew)
-        : baseEstimation(estBase),
-          newEstimation(estNew),
-          dcost(estNew.cost - estBase.cost),
-          dtime(estNew.time - estBase.time)
-    {}
-
-    AssingsEstimation baseEstimation;
-    AssingsEstimation newEstimation;
-
-
-    bool isNull() { return dtime == 0 && dcost == 0; }
-
-    bool isBetter(RelativeAssingsEstimation &other) {
-        if (other.isNull()) return true;
-
-        if (dcost == 0 || other.dcost == 0) {
-            return dtime <= other.dtime;
-
-        } else {
-            return (dtime / dcost) < (other.dtime / other.dcost);
-        }
-
-        //return dtime < other.dtime;
-    }
-
-private:
-    double dcost;
-    double dtime;
-};
-
-#endif // STUCTURES
-
+#endif // MATRIX_H
