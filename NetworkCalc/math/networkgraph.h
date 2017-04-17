@@ -68,11 +68,19 @@ private:
     bool m_isCalculated;
 };
 
+/**
+ * @brief The IRandomFactory class Фабрика случайных величин
+ */
+class IRandomFactory {
+public:
+    virtual IRandom* create(Work* work) = 0;
+};
+
 class Work : public GraphEdge<Event, Work> {
 public:
     Work(Event *event1, Event *event2, QString name = "", Resourse* resourse = 0, double resourseCount = 0,
          double timeMin = 0, double timeMax = 0, double timeAvg = 0,
-         IRandom* timeRandom = 0, IFunction* timeSpeed = 0,
+         IRandomFactory* timeRandom = 0, IFunction* timeSpeed = 0,
          bool isCritical = false, bool isVirtual = false, double fullReserve = 0);
 
     QString name() const;
@@ -85,7 +93,8 @@ public:
     double timeMin();
     double timeMax();
     double timeAvg();
-    Random* time();
+    Random::Value* time();
+    void setTimeRandom(IRandomFactory* factory);
 
     // сетевые характеристики
     double fullReserve() const;
@@ -97,23 +106,23 @@ public:
     bool isVirtual() const;
 
 private:
-    QString     m_name;             // Наименование работы
+    QString         m_name;             // Наименование работы
 
     // ресурсные характеристики
-    Resourse*   m_resourse;         // тип ресурса для данной работы
-    double      m_resourseCount;    // количество выделенного ресурса
+    Resourse*       m_resourse;         // тип ресурса для данной работы
+    double          m_resourseCount;    // количество выделенного ресурса
 
     // временные характеристики
-    double      m_timeMin;          // минимальная оценка времени выполнения
-    double      m_timeMax;          // максимальная оценка времени выполнения
-    double      m_timeAvg;          // ожидаемая оценка времени выполнения
-    Random      m_time;             // время выполнения с учетом ресурсов
-    IFunction*  m_timeSpeed;        // скорость выполения в зависимости от кол-ва ресурсов
+    double          m_timeMin;          // минимальная оценка времени выполнения
+    double          m_timeMax;          // максимальная оценка времени выполнения
+    double          m_timeAvg;          // ожидаемая оценка времени выполнения
+    Random::Value   m_time;             // время выполнения с учетом ресурсов
+    IFunction*      m_timeSpeed;        // скорость выполения в зависимости от кол-ва ресурсов
 
     // сетевые характеристики
-    double      m_fullReserve;      // полный резерв работы
-    bool        m_isCritical;       // критическая работа
-    bool        m_isVirtual;        // виртуальная работа
+    double          m_fullReserve;      // полный резерв работы
+    bool            m_isCritical;       // критическая работа
+    bool            m_isVirtual;        // виртуальная работа
 };
 
 //typedef Graph<IEvent, IWork> NetworkGraph;
@@ -123,20 +132,17 @@ public:
     NetworkGraph();
     NetworkGraph(QVector<Event*> vertices, QVector<Work*> edges);
 
-    double getTime() const;
-    void setTime(double value);
-
-    double getCost() const;
-    void setCost(double value);
+    Random::Value* time();
+    Random::Value* cost();
 
     QVector<Work*> criticalPath();
 
 private:
-    Random  time;
-    double  cost;
+    Random::Value   m_time;
+    Random::Value   m_cost;
 };
 
-namespace Randoms {
+namespace Random {
 
 #define WORK_RANDOM(randomClass)  \
 class randomClass : public IRandom { \
@@ -146,26 +152,30 @@ public: \
     {} \
     IFunction *f() { \
         if (!m_work) return 0; \
-        return Math::Randoms::randomClass(m_work->timeMin(), m_work->timeMax(), m_work->timeAvg()).f(); \
+        return Math::Random::randomClass(m_work->timeMin(), m_work->timeMax(), m_work->timeAvg()).f(); \
     } \
     IFunction *F() { \
         if (!m_work) return 0; \
-        return Math::Randoms::randomClass(m_work->timeMin(), m_work->timeMax(), m_work->timeAvg()).F(); \
+        return Math::Random::randomClass(m_work->timeMin(), m_work->timeMax(), m_work->timeAvg()).F(); \
     } \
     double mathExpected() { \
         if (!m_work) return 0; \
-        return Math::Randoms::randomClass(m_work->timeMin(), m_work->timeMax(), m_work->timeAvg()).mathExpected(); \
+        return Math::Random::randomClass(m_work->timeMin(), m_work->timeMax(), m_work->timeAvg()).mathExpected(); \
     } \
     double dispersion() { \
         if (!m_work) return 0; \
-        return Math::Randoms::randomClass(m_work->timeMin(), m_work->timeMax(), m_work->timeAvg()).dispersion(); \
+        return Math::Random::randomClass(m_work->timeMin(), m_work->timeMax(), m_work->timeAvg()).dispersion(); \
     } \
     double random() { \
         if (!m_work) return 0; \
-        return Math::Randoms::randomClass(m_work->timeMin(), m_work->timeMax(), m_work->timeAvg()).random(); \
+        return Math::Random::randomClass(m_work->timeMin(), m_work->timeMax(), m_work->timeAvg()).random(); \
     } \
 protected: \
     Work *m_work; \
+}; \
+class randomClass##Factory : public IRandomFactory { \
+public: \
+    IRandom* create(Work* work) { return new randomClass(work); } \
 };
 
 WORK_RANDOM(Beta)

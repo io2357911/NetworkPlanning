@@ -12,13 +12,39 @@ namespace Math {
 namespace Planning {
 namespace Algorithms {
 
+bool PertNetworkAlgorithm::compute() {
+
+    // зададим вероятностные хар-ки
+    Random::PertBetaFactory     workRandomTime;
+    Math::Random::PertNormal*   graphRandomTime = new Math::Random::PertNormal;
+    Math::Random::PertNormal*   graphRandomCost = new Math::Random::PertNormal;
+
+    QVector<Work*> works = m_graph->edges();
+    for (int i = 0; i < works.size(); i++) {
+        works[i]->setTimeRandom(&workRandomTime);
+        works[i]->time()->random();
+    }
+    m_graph->time()->setRandom(graphRandomTime);
+    m_graph->cost()->setRandom(graphRandomCost);
+
+    // расчет сетевого графа
+    if (!NetworkAlgorithm(m_graph).compute()) return false;
+
+    // расчет крит. пути
+    if (!CriticalPathAlgorithm(m_graph).compute()) return false;
+
+    // расчет времени
+    if (!TimeAlgorithm(m_graph).compute()) return false;
+
+    // расчет стоимости
+    if (!CostAlgorithm(m_graph).compute()) return false;
+
+    return true;
+}
+
 bool NetworkAlgorithm::compute() {
     if (m_graph->isNull()) return false;
     if (!m_graph->firstVertex()) return false;
-
-//    // TODO: убрать - вставил для проверки
-//    QVector<Work*> works = m_graph->edges();
-//    for (int i = 0; i < works.size(); i++) works[i]->time()->random();
 
     Event *event;
 
@@ -159,24 +185,35 @@ bool CriticalPathAlgorithm::compute() {
 }
 
 bool CostAlgorithm::compute() {
-    int cost = 0;
+    double value = 0;
+//    double mathExpected = 0;
+//    double dispersion = 0;
     QVector<Work*> works = m_graph->edges();
     for (int i = 0; i < works.size(); i++) {
-        cost += works[i]->cost();
+        value += works[i]->cost();
+//        mathExpected += works[i]->cost()->mathExpected();
+//        dispersion += works[i]->cost()->dispersion();
     }
-    m_graph->setCost(cost);
+    m_graph->cost()->setValue(value);
+//    m_graph->cost()->setMathExpected(mathExpected);
+//    m_graph->cost()->setDispersion(dispersion);
 
     return true;
 }
 
 bool TimeAlgorithm::compute() {
-    int time = 0;
-    QVector<Work*> works = m_graph->edges();
-    for (int i = 0; i < works.size(); i++) {
-        if (works[i]->isCritical())
-            time += works[i]->time()->value();
+    double value = 0;
+    double mathExpected = 0;
+    double dispersion = 0;
+    QVector<Work*> critPath = m_graph->criticalPath();
+    for (int i = 0; i < critPath.size(); i++) {
+        value += critPath[i]->time()->value();
+        mathExpected += critPath[i]->time()->mathExpected();
+        dispersion += critPath[i]->time()->dispersion();
     }
-    m_graph->setTime(time);
+    m_graph->time()->setValue(value);
+    m_graph->time()->setMathExpected(mathExpected);
+    m_graph->time()->setDispersion(dispersion);
 
     return true;
 }

@@ -5,11 +5,25 @@
 
 namespace Math {
 namespace Functions {
+
 /**
- * @brief The IFunction class Интерфейс для представления функции
+ * @brief The IFunction class y = x
  */
 class Linear : public IFunction {
 public:
+    static IFunction* instance() { static Linear f; return &f; }
+
+    double value(const vector<double> &args);
+};
+
+/**
+ * @brief The IFunction class Функция нормального распределения F(x)
+ * https://www.johndcook.com/blog/cpp_phi/
+ */
+class NormalGaussian : public IFunction {
+public:
+    static IFunction* instance() { static NormalGaussian f; return &f; }
+
     double value(const vector<double> &args);
 };
 

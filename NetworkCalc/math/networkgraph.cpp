@@ -85,7 +85,7 @@ Work::Work(Event *event1,
            double timeMin,
            double timeMax,
            double timeAvg,
-           IRandom *timeRandom,
+           IRandomFactory* timeRandom,
            IFunction *timeSpeed,
            bool isCritical,
            bool isVirtual,
@@ -97,7 +97,7 @@ Work::Work(Event *event1,
       m_timeMin(timeMin),
       m_timeMax(timeMax),
       m_timeAvg(timeAvg),
-      m_time(timeRandom == 0 ? new Randoms::PertBeta(this) : timeRandom),
+      m_time(timeRandom == 0 ? new Random::PertBeta(this) : timeRandom->create(this)),
       m_timeSpeed(timeSpeed == 0 ? new Math::Functions::Linear : timeSpeed),
       m_fullReserve(fullReserve),
       m_isCritical(isCritical),
@@ -148,8 +148,14 @@ double Work::timeAvg() {
     return m_timeAvg / m_timeSpeed->value(m_resourseCount);
 }
 
-Random *Work::time() {
+Math::Random::Value *Work::time() {
     return &m_time;
+}
+
+void Work::setTimeRandom(IRandomFactory* factory) {
+    if (!factory) return;
+
+    m_time.setRandom(factory->create(this));
 }
 
 double Work::fullReserve() const {
@@ -179,19 +185,12 @@ NetworkGraph::NetworkGraph(QVector<Event *> vertices, QVector<Work *> edges)
     : Graph(vertices, edges)
 {}
 
-double NetworkGraph::getTime() const {
-    return time.value();
+Math::Random::Value *NetworkGraph::time() {
+    return &m_time;
 }
 
-void NetworkGraph::setTime(double /*value*/) {
-}
-
-double NetworkGraph::getCost() const {
-    return cost;
-}
-
-void NetworkGraph::setCost(double value) {
-    cost = value;
+Math::Random::Value *NetworkGraph::cost() {
+    return &m_cost;
 }
 
 QVector<Work*> NetworkGraph::criticalPath() {

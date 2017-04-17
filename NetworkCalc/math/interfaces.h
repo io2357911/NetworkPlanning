@@ -42,11 +42,13 @@ public:
      * @return
      */
     virtual double mathExpected() = 0;
+    virtual void setMathExpected(double /*value*/) {}
     /**
      * @brief dispersion дисперсия
      * @return
      */
     virtual double dispersion() = 0;
+    virtual void setDispersion(double /*value*/) {}
     /**
      * @brief value случайное значение
      * @return

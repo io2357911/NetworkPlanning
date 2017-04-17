@@ -4,31 +4,33 @@
 #include "interfaces.h"
 
 namespace Math {
+namespace Random {
 
 /**
- * @brief The Random class Класс случайной величины после генерации (random()) сохраняющий значение
+ * @brief The Value class Класс случайной величины после генерации (random()) сохраняющий значение
  */
-class Random : IRandom {
+class Value : public IRandom {
 public:
-    Random(IRandom* random = 0) : m_random(random) {}
+    Value(IRandom* random = 0);
 
     // IRandom interface
     IFunction* f();
     IFunction* F();
     double mathExpected();
+    void setMathExpected(double value);
     double dispersion();
+    void setDispersion(double value);
     double random();
 
     void setRandom(IRandom *random);
 
     double value() const;
+    void setValue(double value);
 
 private:
     IRandom*    m_random;
     double      m_value;
 };
-
-namespace Randoms {
 
 class Beta : public IRandom {
 public:
@@ -59,8 +61,26 @@ public:
     double random();
 };
 
-}
+class PertNormal : public IRandom {
+public:
+    PertNormal();
 
-}
+    // IRandom interface
+    IFunction *f();
+    IFunction *F();
+    double mathExpected();
+    double dispersion();
+    double random();
+
+    void setMathExpected(double value);
+    void setDispersion(double value);
+
+private:
+    double m_mathExpected;
+    double m_dispersion;
+};
+
+} // namespace Random
+} // namespace Math
 
 #endif // RANDOM_H

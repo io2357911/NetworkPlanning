@@ -26,6 +26,15 @@ protected:
     NetworkGraph* m_graph;
 };
 
+class PertNetworkAlgorithm : public INetworkAlgorithm {
+public:
+    PertNetworkAlgorithm(NetworkGraph* graph) : INetworkAlgorithm(graph) {}
+    virtual ~PertNetworkAlgorithm() {}
+
+    // IAlgorithm interface
+    bool compute();
+};
+
 /*!
  * \brief Класс алгоритма для рассчета сетевого графа
  *
