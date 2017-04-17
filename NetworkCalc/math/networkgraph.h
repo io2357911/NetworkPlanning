@@ -129,6 +129,8 @@ public:
     double getCost() const;
     void setCost(double value);
 
+    QVector<Work*> criticalPath();
+
 private:
     Random  time;
     double  cost;

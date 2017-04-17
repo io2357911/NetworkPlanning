@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "networkgraph.h"
+#include "interfaces.h"
 
 using namespace std;
 
@@ -10,20 +11,39 @@ namespace Math {
 namespace Planning {
 namespace Algorithms {
 
+/*!
+ * \brief Класс алгоритмов на сетевом графе
+ */
+class INetworkAlgorithm : public IAlgorithm {
+public:
+    INetworkAlgorithm(NetworkGraph* graph) : m_graph(graph) {}
+    virtual ~INetworkAlgorithm() {}
+
+    // IAlgorithm interface
+    virtual bool compute() = 0;
+
+protected:
+    NetworkGraph* m_graph;
+};
 
 /*!
  * \brief Класс алгоритма для рассчета сетевого графа
+ *
+ * Расчитывает ранние и поздние сроки наступления событий
  */
-class NetworkGraphAlgoritm {
+class NetworkAlgorithm : public INetworkAlgorithm {
 public:
-    virtual ~NetworkGraphAlgoritm() {}
-    virtual void compute(NetworkGraph *graph);
+    NetworkAlgorithm(NetworkGraph* graph) : INetworkAlgorithm(graph) {}
+    virtual ~NetworkAlgorithm() {}
+
+    // IAlgorithm interface
+    virtual bool compute();
 
 private:
     bool reset(NetworkGraph *graph);
 
-    Event *nextForward(NetworkGraph *graph);
-    Event *nextBackward(NetworkGraph *graph);
+    Event* nextForward();
+    Event* nextBackward();
 
     double maxEarlyTime(Event *vertex);
     double minLateTime(Event *vertex);
@@ -34,40 +54,43 @@ private:
 /*!
  * \brief Класс алгоритма нахождения критического пути
  * \warning Предполагается, что параметры сетевого графа уже рассчитаны (посредством NetworkGraphAlgoritm)
+ *
+ * Определяет принадлежность работ критическому пути (свободные резервы слобытий и полный резерв работы равны нулю)
  */
-class CriticalPathAlgorithm {
+class CriticalPathAlgorithm : public INetworkAlgorithm {
 public:
+    CriticalPathAlgorithm(NetworkGraph* graph) : INetworkAlgorithm(graph) {}
     virtual ~CriticalPathAlgorithm() {}
-    virtual QVector<Work*> compute(NetworkGraph *graph);
+
+    // IAlgorithm interface
+    bool compute();
 };
 
 /*!
  * \brief Класс алгоритма нахождения стоимости проекта
  */
-class CostAlgorithm {
+class CostAlgorithm : public INetworkAlgorithm {
 public:
+    CostAlgorithm(NetworkGraph* graph) : INetworkAlgorithm(graph) {}
     virtual ~CostAlgorithm() {}
-    virtual void compute(NetworkGraph *graph);
+
+    // IAlgorithm interface
+    bool compute();
 };
 
 /*!
  * \brief Класс алгоритма нахождения времени проекта
  * \warning Предполагается, что уже рассчитен крит. путь
  */
-class TimeAlgorithm {
+class TimeAlgorithm : public INetworkAlgorithm {
 public:
+    TimeAlgorithm(NetworkGraph* graph) : INetworkAlgorithm(graph) {}
     virtual ~TimeAlgorithm() {}
-    virtual void compute(NetworkGraph *graph);
+
+    // IAlgorithm interface
+    bool compute();
 };
 
-/*!
- * \brief Класс алгоритма нахождения
- */
-class ModelingAlgorithm {
-public:
-    virtual ~ModelingAlgorithm() {}
-    virtual void compute(NetworkGraph *graph) = 0;
-};
 
 /*!
  * \brief Класс алгоритма нахождения

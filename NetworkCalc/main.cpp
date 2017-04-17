@@ -36,11 +36,15 @@ int main(int argc, char *argv[]) {
 
     Debug::printGraph(graph);
 
-    NetworkGraphAlgoritm().compute(&graph);
+    NetworkAlgorithm(&graph).compute();
+    CriticalPathAlgorithm(&graph).compute();
+    TimeAlgorithm(&graph).compute();
+    CostAlgorithm(&graph).compute();
+
 
     Debug::printEvents(graph);
     Debug::printEdges(graph.edges());
-    Debug::printCriticalPath(CriticalPathAlgorithm().compute(&graph));
+    Debug::printCriticalPath(graph.criticalPath());
 
 
 //    QApplication a(argc, argv);

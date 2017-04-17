@@ -54,6 +54,14 @@ public:
     virtual double random() = 0;
 };
 
+/**
+ * @brief The IAlgorithm class Интерфеййс некоторого алгоритма
+ */
+class IAlgorithm {
+public:
+    virtual bool compute() = 0;
+};
+
 }
 
 #endif // INTERFACES_H

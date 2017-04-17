@@ -194,5 +194,32 @@ void NetworkGraph::setCost(double value) {
     cost = value;
 }
 
+QVector<Work*> NetworkGraph::criticalPath() {
+    QVector<Work*> critPath;
+    if (isNull()) return critPath;
+
+    Event *event = firstVertex();
+    if (!event) return critPath;
+
+    Event *lastEvent = lastVertex();
+    if (!lastEvent) return critPath;
+
+    // построим критический путь
+    while (event != lastEvent) {
+        QVector<Work*> nextEdges = event->nextEdges();
+        for (int i = 0; i < nextEdges.size(); i++) {
+            Work *work = nextEdges[i];
+
+            if (work->isCritical()) {
+                critPath.append(nextEdges[i]);
+                event = nextEdges[i]->vertex2();
+                break;
+            }
+        }
+    }
+
+    return critPath;
+}
+
 } // namespace Planning
 } // namespace Math
