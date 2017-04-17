@@ -6,6 +6,8 @@
 namespace Math {
 namespace Functions {
 
+double linear(double x);
+
 /**
  * @brief The IFunction class y = x
  */
@@ -15,6 +17,8 @@ public:
 
     double value(const vector<double> &args);
 };
+
+double normalGaussian(double x);
 
 /**
  * @brief The IFunction class Функция нормального распределения F(x)

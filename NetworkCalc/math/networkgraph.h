@@ -158,10 +158,12 @@ public: \
         if (!m_work) return 0; \
         return Math::Random::randomClass(m_work->timeMin(), m_work->timeMax(), m_work->timeAvg()).F(); \
     } \
+    void setMathExpected(double /*value*/) {} \
     double mathExpected() { \
         if (!m_work) return 0; \
         return Math::Random::randomClass(m_work->timeMin(), m_work->timeMax(), m_work->timeAvg()).mathExpected(); \
     } \
+    void setDispersion(double /*value*/) {} \
     double dispersion() { \
         if (!m_work) return 0; \
         return Math::Random::randomClass(m_work->timeMin(), m_work->timeMax(), m_work->timeAvg()).dispersion(); \

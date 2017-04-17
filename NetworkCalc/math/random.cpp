@@ -5,6 +5,8 @@
 namespace Math {
 namespace Random {
 
+using namespace Functions;
+
 Value::Value(IRandom *random)
     : m_random(random)
 {}
@@ -72,8 +74,16 @@ IFunction *Beta::F() {
     return 0;
 }
 
+void Beta::setMathExpected(double value) {
+
+}
+
 double Beta::mathExpected() {
     return 0;
+}
+
+void Beta::setDispersion(double value) {
+
 }
 
 double Beta::dispersion() {
@@ -111,38 +121,71 @@ double PertBeta::random() {
 
 
 PertNormal::PertNormal()
+    : m_f(this), m_F(this)
 {}
 
 IFunction *PertNormal::f() {
-    return 0;
-}
-
-IFunction *PertNormal::F() {
-    return 0;
-}
-
-//IFunction *PertNormal::F() {
-//    class inner : public IFunction {
-//    public:
-//        inner(PertNormal* p) : m_p(p) {}
+//    struct Function : public IFunction {
+//        PertNormal* p;
+//        Function_F(PertNormal* parent) : p(parent) {}
 
 //        double value(const vector<double> &args) {
 //            if (args.size() < 1) return 0;
-//            if (m_p->dispersion() == 0) return 0;
 
-//            double x = args[0];
-
-//            return Math::Functions::NormalGaussian::instance()
-//                    ->value((x-m_p->mathExpected())/sqrt(m_p->dispersion()));
 //            return 0;
 //        }
+//    };
 
-//    private:
-//        PertNormal* m_p;
+//    return new Function(this);
+    return &m_f;
+}
 
-//    } m_F(this);
+IFunction *PertNormal::F() {
+//    struct Function : public IFunction {
+//        PertNormal* p;
+//        Function_F(PertNormal* parent) : p(parent) {}
 
-//    return &m_F;
+//        double value(const vector<double> &args) {
+//            if (args.size() < 1) return 0;
+//            if (p->dispersion() == 0) return 0;
+
+//            double x = args[0];
+//            double M = p->mathExpected();
+//            double V = p->dispersion();
+
+//            return normalGaussian((x - M)/sqrt(V));
+//        }
+//    };
+
+//    return new Function(this);
+    return &m_F;
+}
+
+//template <typename P>
+//struct InnerFunction : public IFunction {
+//public:
+//    P* p;
+//    InnerFunction(P* parent) : p(parent) {}
+//};
+
+//IFunction *PertNormal::F() {
+//    return new (class : IFunction {
+
+//        double value(const vector<double> &args) {
+////            if (args.size() < 1) return 0;
+////            if (p->dispersion() == 0) return 0;
+
+////            double x = args[0];
+////            double M = p->mathExpected();
+////            double V = p->dispersion();
+
+////            return normalGaussian((x - M)/sqrt(V));
+//            return 0;
+//        }
+//    });
+//    return 0;
+////    return new Function(this);
+
 //}
 
 double PertNormal::mathExpected() {
@@ -165,19 +208,22 @@ void PertNormal::setDispersion(double value) {
     m_dispersion = value;
 }
 
-//double PertNormal::innerF::value(const vector<double> &args) {
-//    if (args.size() < 1) return 0;
-//    if (m_dispersion == 0) return 0;
+double PertNormal::Function_f::value(const vector<double> &args) {
+    if (args.size() < 1) return 0;
 
-//    double x = args[0];
+    return 0;
+}
 
-//    return Math::Functions::NormalGaussian::instance()
-//            ->value((x-m_mathExpected)/sqrt(m_dispersion));
-//}
+double PertNormal::Function_F::value(const vector<double> &args) {
+    if (args.size() < 1) return 0;
+    if (p->dispersion() == 0) return 0;
 
+    double x = args[0];
+    double M = p->mathExpected();
+    double V = p->dispersion();
 
-
+    return normalGaussian((x - M)/sqrt(V));
+}
 
 } // namespace Randoms
-
 } // namespace Math

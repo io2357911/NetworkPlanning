@@ -4,17 +4,17 @@
 namespace Math {
 namespace Functions {
 
+double linear(double x) {
+    return x;
+}
+
 double Linear::value(const vector<double> &args) {
     if (args.size() < 1) return 0;
 
-    return args[0];
+    return linear(args[0]);
 }
 
-double NormalGaussian::value(const vector<double> &args) {
-    if (args.size() < 1) return 0;
-
-    double x = args[0];
-
+double normalGaussian(double x) {
     // constants
     double a1 =  0.254829592;
     double a2 = -0.284496736;
@@ -36,6 +36,11 @@ double NormalGaussian::value(const vector<double> &args) {
     return 0.5*(1.0 + sign*y);
 }
 
+double NormalGaussian::value(const vector<double> &args) {
+    if (args.size() < 1) return 0;
+
+    return normalGaussian(args[0]);
+}
 
 } // namespace Functions
 } // namespace Math
