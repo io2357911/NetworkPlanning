@@ -4,6 +4,8 @@
 #include <QDialog>
 #include "../math/networkgraph.h"
 
+using namespace Math::Planning;
+
 namespace Ui {
 class EventPropertiesDialog;
 }
@@ -16,7 +18,7 @@ public:
     explicit EventPropertiesDialog(QWidget *parent = 0);
     ~EventPropertiesDialog();
 
-    void setEvent(IEvent *value);
+    void setEvent(Event *value);
 
 private slots:
     void on_buttonBox_accepted();
@@ -24,7 +26,7 @@ private slots:
 private:
     Ui::EventPropertiesDialog *ui;
 
-    IEvent *event;
+    Event *event;
 };
 
 #endif // EVENTPROPERTIESDIALOG_H

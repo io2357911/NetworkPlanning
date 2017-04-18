@@ -32,8 +32,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->aGraphSave, SIGNAL(triggered()),
             this, SLOT(onSaveGraph()));
 
-    ui->widgetNetworkGraph->setAssingsWidget(ui->wAssigns);
-    ui->widgetNetworkGraph->setWorkersWidget(ui->wWorkers);
+//    ui->widgetNetworkGraph->setAssingsWidget(ui->wAssigns);
+//    ui->widgetNetworkGraph->setWorkersWidget(ui->wWorkers);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
@@ -50,8 +50,7 @@ void MainWindow::onOpenGraph()
     if (!filePath.isNull()) ui->widgetNetworkGraph->openGraph(filePath);
 }
 
-void MainWindow::onSaveGraph()
-{
+void MainWindow::onSaveGraph() {
     QString filePath = QFileDialog::getSaveFileName(this, tr("Select File"),
                                                     "./",
                                                     tr("ini files (*.ini)"));
@@ -59,18 +58,16 @@ void MainWindow::onSaveGraph()
     if (!filePath.isNull()) ui->widgetNetworkGraph->saveGraph(filePath);
 }
 
-void MainWindow::onComputeAssignsWithTime()
-{
-    ui->widgetNetworkGraph->computeAssigns(ui->sbTimeLimit->value());
+//void MainWindow::onComputeAssignsWithTime()
+//{
+//    ui->widgetNetworkGraph->computeAssigns(ui->sbTimeLimit->value());
+//}
+
+void MainWindow::onGraphComputed(NetworkGraph *graph) {
+    ui->sbCost->setValue(graph->cost()->value());
+    ui->sbTime->setValue(graph->time()->value());
 }
 
-void MainWindow::onGraphComputed(NetworkGraph *graph)
-{
-    ui->sbCost->setValue(graph->getCost());
-    ui->sbTime->setValue(graph->getTime());
-}
-
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow() {
     delete ui;
 }

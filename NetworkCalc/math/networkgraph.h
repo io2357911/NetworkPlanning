@@ -44,23 +44,24 @@ public:
           int reserve = 0,
           bool isCalculated = false);
 
-    QString name() const;
-    void setName(int name);
+    virtual void setName(QString value);
+    virtual QString name() const;
 
-    double earlyTime() const;
-    void setEarlyTime(double earlyTime);
+    virtual void setEarlyTime(double value);
+    virtual double earlyTime() const;
 
-    double lateTime() const;
-    void setLateTime(double lateTime);
+    virtual void setLateTime(double value);
+    virtual double lateTime() const;
 
-    double reserve() const;
-    void setReserve(double reserve);
+    virtual void setReserve(double value);
+    virtual double reserve() const;
 
-    bool isCalculated() const;
-    void setIsCalculated(bool isCalculated);
+    virtual void setIsCalculated(bool value);
+    virtual bool isCalculated() const;
 
 private:
     QString m_name;
+
     double m_earlyTime;
     double m_lateTime;
     double m_reserve;
@@ -78,32 +79,38 @@ public:
 
 class Work : public GraphEdge<Event, Work> {
 public:
-    Work(Event *event1, Event *event2, QString name = "", Resourse* resourse = 0, double resourseCount = 0,
+    Work(Event *event1 = 0, Event *event2 = 0, QString name = "", Resourse* resourse = 0, double resourseCount = 0,
          double timeMin = 0, double timeMax = 0, double timeAvg = 0,
          IRandomFactory* timeRandom = 0, IFunction* timeSpeed = 0,
          bool isCritical = false, bool isVirtual = false, double fullReserve = 0);
 
-    QString name() const;
-    void setName(int name);
+    virtual QString name() const;
+    virtual void setName(QString value);
 
     // ресурсные характеристики
-    double cost();
+    virtual void setResourse(Resourse* value);
+    virtual Resourse *resourse();
+    virtual void setResourseCount(double value);
+    virtual double resourseCount();
+    virtual double cost();
 
     // временные характеристики
-    double timeMin();
-    double timeMax();
-    double timeAvg();
-    Random::Value* time();
-    void setTimeRandom(IRandomFactory* factory);
+    virtual void setTimeMin(double value);
+    virtual double timeMin(bool unitResourse = true);
+    virtual void setTimeMax(double value);
+    virtual double timeMax(bool unitResourse = true);
+    virtual void setTimeAvg(double value);
+    virtual double timeAvg(bool unitResourse = true);
+    virtual Random::Value* time();
+    virtual void setTimeRandom(IRandomFactory* factory);
 
     // сетевые характеристики
-    double fullReserve() const;
-    void setFullReserve(double value);
-
-    bool isCritical() const;
-    void setIsCritical(bool value);
-
-    bool isVirtual() const;
+    virtual void setFullReserve(double value);
+    virtual double fullReserve() const;
+    virtual void setIsCritical(bool value);
+    virtual bool isCritical() const;
+    virtual void setIsVirtual(bool value);
+    virtual bool isVirtual() const;
 
 private:
     QString         m_name;             // Наименование работы
@@ -150,13 +157,13 @@ public: \
     randomClass(Work* work) \
         : m_work(work) \
     {} \
-    IFunction *f() { \
+    double f(double val) { \
         if (!m_work) return 0; \
-        return Math::Random::randomClass(m_work->timeMin(), m_work->timeMax(), m_work->timeAvg()).f(); \
+        return Math::Random::randomClass(m_work->timeMin(), m_work->timeMax(), m_work->timeAvg()).f(val); \
     } \
-    IFunction *F() { \
+    double F(double val) { \
         if (!m_work) return 0; \
-        return Math::Random::randomClass(m_work->timeMin(), m_work->timeMax(), m_work->timeAvg()).F(); \
+        return Math::Random::randomClass(m_work->timeMin(), m_work->timeMax(), m_work->timeAvg()).F(val); \
     } \
     void setMathExpected(double /*value*/) {} \
     double mathExpected() { \

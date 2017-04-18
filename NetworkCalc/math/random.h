@@ -14,8 +14,8 @@ public:
     Value(IRandom* random = 0);
 
     // IRandom interface
-    IFunction* f();
-    IFunction* F();
+    double f(double prob);
+    double F(double prob);
     double mathExpected();
     void setMathExpected(double value);
     double dispersion();
@@ -37,8 +37,8 @@ public:
     Beta(double a, double b, double m);
 
     // IRandom interface
-    virtual IFunction *f();
-    virtual IFunction *F();
+    double f(double val);
+    double F(double val);
     virtual void setMathExpected(double value);
     virtual double mathExpected();
     virtual void setDispersion(double value);
@@ -56,8 +56,8 @@ public:
     PertBeta(double a, double b, double m);
 
     // IRandom interface
-    IFunction *f();
-    IFunction *F();
+    double f(double val);
+    double F(double val);
     double mathExpected();
     double dispersion();
     double random();
@@ -68,8 +68,8 @@ public:
     PertNormal();
 
     // IRandom interface
-    IFunction *f();
-    IFunction *F();
+    double f(double val);
+    double F(double val);
     void setMathExpected(double value);
     double mathExpected();
     void setDispersion(double value);
@@ -77,18 +77,6 @@ public:
     double random();
 
 private:
-    struct Function_f : public InnerFunction<PertNormal> {
-        Function_f(PertNormal* parent = 0) : InnerFunction<PertNormal>(parent) {}
-
-        // IFunction interface
-        double value(const vector<double> &args);
-    } m_f;
-    struct Function_F : public InnerFunction<PertNormal> {
-        Function_F(PertNormal* parent = 0) : InnerFunction<PertNormal>(parent) {}
-
-        // IFunction interface
-        double value(const vector<double> &args);
-    } m_F;
     double m_mathExpected;
     double m_dispersion;
 };

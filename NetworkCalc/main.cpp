@@ -1,5 +1,5 @@
-//#include "mainwindow.h"
-//#include <QApplication>
+#include "mainwindow.h"
+#include <QApplication>
 
 #include "math/networkgraph.h"
 #include "math/algorithms.h"
@@ -51,85 +51,17 @@ void testNetworkGraph() {
     Debug::printCriticalPath(graph.criticalPath());
 }
 
-double phi(double x) {
-    // constants
-    double a1 =  0.254829592;
-    double a2 = -0.284496736;
-    double a3 =  1.421413741;
-    double a4 = -1.453152027;
-    double a5 =  1.061405429;
-    double p  =  0.3275911;
-
-    // Save the sign of x
-    int sign = 1;
-    if (x < 0)
-        sign = -1;
-    x = fabs(x)/sqrt(2.0);
-
-    // A&S formula 7.1.26
-    double t = 1.0/(1.0 + p*x);
-    double y = 1.0 - (((((a5*t + a4)*t) + a3)*t + a2)*t + a1)*t*exp(-x*x);
-
-    return 0.5*(1.0 + sign*y);
-}
-
-//#include <vector>
-
-void testPhi() {
-    vector<double> x = vector<double>({
-//        -5.604485383,
-//        -5.329979977,
-//        -5.05547457,
-//        -4.780969164,
-//        -4.506463757,
-//        -4.231958351,
-//        -3.957452944,
-//        -3.682947538,
-//        -3.408442131,
-//        -3.133936724,
-//        -2.859431318,
-//        -2.584925911,
-//        -2.310420505,
-        -2.035915098,
-        1.25814978,
-    });
-
-    for (uint i = 0; i < x.size(); i++) {
-        qDebug("phi(%f) = %f", x[i], phi(x[i]));
-    }
-}
 
 int main(int argc, char *argv[]) {
     (void)argc;
     (void)argv;
 
 //    testNetworkGraph();
-    testPhi();
 
-
-//    QApplication a(argc, argv);
-//    MainWindow w;
-//    w.show();
-//    return a.exec();
+    QApplication a(argc, argv);
+    MainWindow w;
+    w.show();
+    return a.exec();
 
     return 0;
 }
-
-/*
-QVector<IEvent*> events = {&e1, &e2, &e3, &e4, &e5, &e6, &e7};
-QVector<IWork*> works = {&w1, &w2, &w3, &w4, &w5, &w6, &w7, &pw};
-
-int n = -1;
-int a[7][7] = {
-    {n, 1, 0, n, n, n, n},
-    {n, n, 7, n, 3, n, n},
-    {n, n, n, 2, n, n, n},
-    {n, n, n, n, n, 4, n},
-    {n, n, n, n, n, 5, n},
-    {n, n, n, n, n, n, 6},
-    {n, n, n, n, n, n, n},
-};
-Matrix<int> m((int*)a, 7, 7);
-
-NetworkGraph graph(events, works, m);
-*/

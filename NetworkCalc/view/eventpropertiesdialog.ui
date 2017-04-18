@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>343</width>
-    <height>199</height>
+    <width>293</width>
+    <height>157</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,17 +19,7 @@
      <item row="0" column="1">
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>ID</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QSpinBox" name="sbID">
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-       <property name="maximum">
-        <number>1000</number>
+        <string>Название:</string>
        </property>
       </widget>
      </item>
@@ -152,6 +142,13 @@
        </property>
        <property name="value">
         <number>0</number>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLineEdit" name="leName">
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>

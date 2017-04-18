@@ -6,11 +6,13 @@
 #include "eventwidget.h"
 #include "../math/networkgraph.h"
 
+using namespace Math::Planning;
+
 namespace Ui {
 class WorkWidget;
 }
 
-class WorkWidget : public QWidget, public IWork
+class WorkWidget : public QWidget, public Work
 {
     Q_OBJECT
 
@@ -31,6 +33,15 @@ public:
 
     void contextMenuEvent(QContextMenuEvent *event);
 
+    // Work interface
+    void setResourseCount(double value);
+    void setTimeMin(double value);
+    void setTimeMax(double value);
+    void setTimeAvg(double value);
+    void setFullReserve(double value);
+    void setIsCritical(bool value);
+    void setIsVirtual(bool value);
+
 signals:
     void properties(WorkWidget *widget);
     void deleteMe(WorkWidget *widget);
@@ -40,6 +51,8 @@ private slots:
     void onDelete() { emit deleteMe(this); }
     void onDeleteEvent(EventWidget *) { emit deleteMe(this); }
 
+    void onWorkChanged();
+
 private:
     Ui::WorkWidget *ui;
 
@@ -48,33 +61,6 @@ private:
 
     QAction *aProperties;
     QAction *aDelete;
-
-    int id;
-    int cost;
-    int fullReserve;
-    bool m_isCritical;
-    bool m_isVirtual;
-    //int time;
-
-    // IWork interface
-public:
-    int getID() const;
-    void setID(int value);
-
-    int getCost() const;
-    void setCost(int value);
-
-    int getTime() const;
-    void setTime(int value);
-
-    int getFullReserve() const { return fullReserve; }
-    void setFullReserve(int value) { fullReserve = value; }
-
-    bool isCritical() const;
-    void setIsCritical(bool value);
-
-    bool isVirtual() const;
-    void setIsVirtual(bool value);
 };
 
 #endif // WORKWIDGET_H

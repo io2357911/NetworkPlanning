@@ -43,7 +43,7 @@ void EventWidget::store(QString fileName)
     setts["widget_width"] = width();
     setts["widget_height"] = height();
 
-    INI::store(setts, fileName, QString("Event_%1").arg(getID()));
+    INI::store(setts, fileName, QString("Event_%1").arg(name()));
 }
 
 void EventWidget::restore(QString fileName)
@@ -55,7 +55,7 @@ void EventWidget::restore(QString fileName)
         "widget_height"
     };
 
-    INI::Settings setts = INI::restore(keys, fileName, QString("Event_%1").arg(getID()));
+    INI::Settings setts = INI::restore(keys, fileName, QString("Event_%1").arg(name()));
 
     if (setts["widget_width"].isValid() && setts["widget_height"].isValid())
         move(setts["widget_width"].toInt(), setts["widget_height"].toInt());
@@ -103,58 +103,28 @@ QPoint EventWidget::center()
     return QPoint(pos().x() + width()/2, pos().y() + height()/2);
 }
 
-int EventWidget::getID() const
-{
-    return ui->lID->text().toInt();
+void EventWidget::setName(QString value) {
+    Event::setName(value);
+    onEventChanged();
 }
 
-void EventWidget::setID(int value)
-{
-    ui->lID->setText(QString::number(value));
+void EventWidget::setEarlyTime(double value) {
+    Event::setEarlyTime(value);
+    onEventChanged();
 }
 
-int EventWidget::getEarlyTime() const
-{
-    return ui->lEarlyTime->text().toInt();
+void EventWidget::setLateTime(double value) {
+    Event::setLateTime(value);
+    onEventChanged();
 }
 
-void EventWidget::setEarlyTime(int value)
-{
-    ui->lEarlyTime->setText(QString::number(value));
+void EventWidget::setReserve(double value) {
+    Event::setReserve(value);
+    onEventChanged();
 }
 
-int EventWidget::getLateTime() const
-{
-    return ui->lLateTime->text().toInt();
+void EventWidget::onEventChanged() {
+    ui->lID->setText(name());
+    ui->lEarlyTime->setText(QString::number(earlyTime()));
+    ui->lReserve->setText(QString::number(reserve()));
 }
-
-void EventWidget::setLateTime(int value)
-{
-    ui->lLateTime->setText(QString::number(value));
-}
-
-int EventWidget::getReserve() const
-{
-    return ui->lReserve->text().toInt();
-}
-
-void EventWidget::setReserve(int value)
-{
-    ui->lReserve->setText(QString::number(value));
-}
-
-bool EventWidget::getIsCalculated() const
-{
-    return isCalculated;
-}
-
-void EventWidget::setIsCalculated(bool value)
-{
-    isCalculated = value;
-}
-
-
-
-
-
-

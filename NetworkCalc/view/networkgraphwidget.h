@@ -7,8 +7,6 @@
 #include "workwidget.h"
 #include "eventpropertiesdialog.h"
 #include "workpropertiesdialog.h"
-#include "workerswidget.h"
-#include "assignswidget.h"
 #include "../tools/debug.h"
 #include "../tools/ini.h"
 #include "../math/algorithms.h"
@@ -29,8 +27,8 @@ public:
     void keyPressEvent(QKeyEvent *event);
     void wheelEvent(QWheelEvent *event);
 
-    void setAssingsWidget(AssignsWidget *w);
-    void setWorkersWidget(WorkersWidget *w);
+//    void setAssingsWidget(AssignsWidget *w);
+//    void setWorkersWidget(WorkersWidget *w);
 
 signals:
     void showWorkers();
@@ -47,8 +45,8 @@ public slots:
     void saveGraph(QString path);
 
     void computeNetworkGraph();
-    void computeAssigns();
-    void computeAssigns(int maxTime);
+//    void computeAssigns();
+//    void computeAssigns(int maxTime);
 
 private slots:
     void onNewEvent();
@@ -63,8 +61,8 @@ private slots:
     void onWorkProperties(WorkWidget *widget);
     void onWorkDelete(WorkWidget *widget);
 
-    void newWorker();
-    void deleteWorker(IWorker*);
+//    void newWorker();
+//    void deleteWorker(IWorker*);
 
 private:
     EventWidget *createEventWidget();
@@ -82,7 +80,7 @@ private:
 
     QVector<EventWidget*> events;
     QVector<WorkWidget*> works;
-    QVector<IWorker*> workers;
+//    QVector<Worker*> workers;
 
     QAction *aNewEvent;
     QAction *aTest;

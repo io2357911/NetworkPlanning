@@ -4,6 +4,8 @@
 #include <QDialog>
 #include "../math/networkgraph.h"
 
+using namespace Math::Planning;
+
 namespace Ui {
 class WorkPropertiesDialog;
 }
@@ -16,8 +18,8 @@ public:
     explicit WorkPropertiesDialog(QWidget *parent = 0);
     ~WorkPropertiesDialog();
 
-    void setWork(IWork *value);
-    IWork *getWork() const;
+    void setWork(Work *value);
+    Work* getWork() const;
 
     void updateWorkers();
 
@@ -30,7 +32,7 @@ private slots:
 private:
     Ui::WorkPropertiesDialog *ui;
 
-    IWork *work;
+    Work *work;
 };
 
 #endif // WORKPROPERTIESDIALOG_H

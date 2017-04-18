@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include "math/networkgraph.h"
 
+using namespace Math::Planning;
+
 namespace Ui {
 class MainWindow;
 }
@@ -22,7 +24,7 @@ private slots:
     void onOpenGraph();
     void onSaveGraph();
 
-    void onComputeAssignsWithTime();
+//    void onComputeAssignsWithTime();
 
     void onGraphComputed(NetworkGraph *graph);
 

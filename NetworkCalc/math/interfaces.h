@@ -35,12 +35,14 @@ public:
      * @brief f функция плотности вероятности
      * @return
      */
-    virtual IFunction* f() = 0;
+//    virtual IFunction* f() = 0;
+    virtual double f(double val) = 0;
     /**
      * @brief F функция распределения вероятностей
      * @return
      */
-    virtual IFunction* F() = 0;
+//    virtual IFunction* F() = 0;
+    virtual double F(double val) = 0;
     /**
      * @brief setMathExpected
      * @param value

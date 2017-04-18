@@ -17,19 +17,17 @@ EventPropertiesDialog::~EventPropertiesDialog()
 void EventPropertiesDialog::on_buttonBox_accepted()
 {
     if (!event) return;
-
-    event->setID(ui->sbID->value());
+    event->setName(ui->leName->text());
 }
 
-void EventPropertiesDialog::setEvent(IEvent *value)
-{
+void EventPropertiesDialog::setEvent(Event *value) {
     if (!value) return;
 
     event = value;
 
-    ui->sbID->setValue(event->getID());
-    ui->sbEarlyTime->setValue(event->getEarlyTime());
-    ui->sbLateTime->setValue(event->getLateTime());
-    ui->sbReserve->setValue(event->getReserve());
+    ui->leName->setText(event->name());
+    ui->sbEarlyTime->setValue(event->earlyTime());
+    ui->sbLateTime->setValue(event->lateTime());
+    ui->sbReserve->setValue(event->reserve());
 }
 

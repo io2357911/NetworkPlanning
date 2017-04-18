@@ -6,13 +6,8 @@ WorkWidget::WorkWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::WorkWidget),
     firstEvent(NULL),
-    secondEvent(NULL),
-    id (0),
-    cost(0),
-    fullReserve(0),
-    m_isCritical(false),
-    m_isVirtual(false)
-{
+    secondEvent(NULL) {
+
     ui->setupUi(this);
 
     aProperties = new QAction(tr("Свойства"), this);
@@ -26,13 +21,11 @@ WorkWidget::WorkWidget(QWidget *parent) :
     connect(aDelete, SIGNAL(triggered()), this, SLOT(onDelete()));
 }
 
-WorkWidget::~WorkWidget()
-{
+WorkWidget::~WorkWidget() {
     delete ui;
 }
 
-void WorkWidget::draw(QPainter *painter)
-{
+void WorkWidget::draw(QPainter *painter) {
     if (!(firstEvent && secondEvent)) return;
 
     QPoint c1 = firstEvent->center();
@@ -59,116 +52,104 @@ void WorkWidget::draw(QPainter *painter)
     painter->setPen(origPen);
 }
 
-void WorkWidget::contextMenuEvent(QContextMenuEvent *event)
-{
+void WorkWidget::contextMenuEvent(QContextMenuEvent *event) {
     QMenu menu(this);
     menu.addAction(aProperties);
     menu.addAction(aDelete);
     menu.exec(event->globalPos());
 }
 
-EventWidget *WorkWidget::getFirstEvent() const
-{
+void WorkWidget::setResourseCount(double value) {
+    Work::setResourseCount(value);
+    onWorkChanged();
+}
+
+void WorkWidget::setTimeMin(double value) {
+    Work::setTimeMin(value);
+    onWorkChanged();
+}
+
+void WorkWidget::setTimeMax(double value) {
+    Work::setTimeMax(value);
+    onWorkChanged();
+}
+
+void WorkWidget::setTimeAvg(double value) {
+    Work::setTimeAvg(value);
+    onWorkChanged();
+}
+
+void WorkWidget::setFullReserve(double value) {
+    Work::setFullReserve(value);
+    onWorkChanged();
+}
+
+void WorkWidget::setIsCritical(bool value) {
+    Work::setIsCritical(value);
+    onWorkChanged();
+}
+
+void WorkWidget::setIsVirtual(bool value) {
+    Work::setIsVirtual(value);
+    onWorkChanged();
+}
+
+void WorkWidget::onWorkChanged() {
+    QString info = QString("%1\n{%2,%3,%4}").arg(name()).arg(timeMin()).arg(timeAvg()).arg(timeMax());
+
+    ui->lInfo->setText(info);
+    ui->lInfo->setVisible(!isVirtual());
+
+    adjustSize();
+}
+
+EventWidget *WorkWidget::getFirstEvent() const {
     return firstEvent;
 }
 
-void WorkWidget::setFirstEvent(EventWidget *widget)
-{
+void WorkWidget::setFirstEvent(EventWidget *widget) {
     firstEvent = widget;
     setVertex1(widget);
     connect(widget, SIGNAL(deleteMe(EventWidget*)), this, SLOT(onDeleteEvent(EventWidget*)));
 }
 
-EventWidget *WorkWidget::getSecondEvent() const
-{
+EventWidget *WorkWidget::getSecondEvent() const {
     return secondEvent;
 }
 
-void WorkWidget::setSecondEvent(EventWidget *widget)
-{
+void WorkWidget::setSecondEvent(EventWidget *widget) {
     secondEvent = widget;
     setVertex2(widget);
     connect(widget, SIGNAL(deleteMe(EventWidget*)), this, SLOT(onDeleteEvent(EventWidget*)));
 }
 
-void WorkWidget::store(QString fileName)
-{
+void WorkWidget::store(QString fileName) {
     INI::Settings setts;
 
-    setts["firstEvent"] = getFirstEvent()->getID();
-    setts["secondEvent"] = getSecondEvent()->getID();
-    setts["cost"] = getCost();
-    setts["time"] = getTime();
-    setts["virtual"] = isVirtual();
+//    setts["firstEvent"] = getFirstEvent()->getID();
+//    setts["secondEvent"] = getSecondEvent()->getID();
+//    setts["cost"] = getCost();
+//    setts["time"] = getTime();
+//    setts["virtual"] = isVirtual();
 
-    INI::store(setts, fileName, QString("Work_%1").arg(getID()));
+    INI::store(setts, fileName, QString("Work_%1").arg(name()));
 }
 
-void WorkWidget::restore(QString fileName)
-{
+void WorkWidget::restore(QString fileName) {
     QStringList keys = {
         "cost",
         "time",
         "virtual"
     };
 
-    INI::Settings setts = INI::restore(keys, fileName, QString("Work_%1").arg(getID()));
+    INI::Settings setts = INI::restore(keys, fileName, QString("Work_%1").arg(name()));
 
-    if (setts["cost"].isValid())
-        setCost(setts["cost"].toInt());
+//    if (setts["cost"].isValid())
+//        setCost(setts["cost"].toInt());
 
-    if (setts["time"].isValid())
-        setTime(setts["time"].toInt());
+//    if (setts["time"].isValid())
+//        setTime(setts["time"].toInt());
 
-    if (setts["virtual"].isValid())
-        setIsVirtual(setts["virtual"].toBool());
-}
-
-int WorkWidget::getID() const
-{
-    return id;
-}
-
-void WorkWidget::setID(int value)
-{
-    id = value;
-}
-
-int WorkWidget::getCost() const
-{
-    return worker ? worker->getCost((IWork*)this)
-                  : cost;
-}
-
-void WorkWidget::setCost(int value)
-{
-    cost = value;
-}
-
-int WorkWidget::getTime() const
-{
-    return worker ? worker->getTime((IWork*)this)
-                  : ui->lTime->text().toInt();
-}
-
-void WorkWidget::setTime(int value)
-{
-    ui->lTime->setText(QString::number(value));
-}
-
-bool WorkWidget::isCritical() const
-{
-    return m_isCritical;
-}
-
-void WorkWidget::setIsCritical(bool value)
-{
-    m_isCritical = value;
-}
-
-bool WorkWidget::isVirtual() const { return m_isVirtual; }
-
-void WorkWidget::setIsVirtual(bool value) {
-    m_isVirtual = value;
-    ui->lTime->setVisible(!m_isVirtual);
+//    if (setts["virtual"].isValid())
+//        setIsVirtual(setts["virtual"].toBool());
 }

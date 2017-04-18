@@ -4,59 +4,55 @@
 WorkPropertiesDialog::WorkPropertiesDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::WorkPropertiesDialog),
-    work(NULL)
-{
+    work(NULL) {
+
     ui->setupUi(this);
 }
 
-WorkPropertiesDialog::~WorkPropertiesDialog()
-{
+WorkPropertiesDialog::~WorkPropertiesDialog() {
     delete ui;
 }
 
-void WorkPropertiesDialog::on_buttonBox_accepted()
-{
+void WorkPropertiesDialog::on_buttonBox_accepted() {
     if (!work) return;
 
-    work->setID(ui->sbID->value());
-    work->setIsVirtual(ui->cbIsVirtual->isChecked());
+    work->setName(ui->leName->text());
 
-    if (!work->getWorker()) {
-        work->setCost(ui->sbCost->value());
-        work->setTime(ui->sbTime->value());
-    }
+    work->setTimeMin(ui->dsbTimeMin->value());
+    work->setTimeAvg(ui->dsbTimeAvg->value());
+    work->setTimeMax(ui->dsbTimeMax->value());
+
+    work->setResourseCount(ui->dsbResoursCount->value());
+
+    work->setIsVirtual(ui->cbIsVirtual->isChecked());
 }
 
-IWork *WorkPropertiesDialog::getWork() const
-{
+Work *WorkPropertiesDialog::getWork() const {
     return work;
 }
 
-void WorkPropertiesDialog::setWork(IWork *value)
-{
+void WorkPropertiesDialog::setWork(Work *value) {
     work = value;
 
     updateWork();
 }
 
-void WorkPropertiesDialog::updateWork()
-{
+void WorkPropertiesDialog::updateWork() {
     if (!work) {
         close();
         return;
     }
 
-    ui->sbID->setValue(work->getID());
-    ui->sbCost->setValue(work->getCost());
-    ui->sbTime->setValue(work->getTime());
-    ui->sbFullReserve->setValue(work->getFullReserve());
+    ui->leName->setText(work->name());
+
+    ui->dsbResoursCount->setValue(work->resourseCount());
+    ui->dsbCost->setValue(work->cost());
+
+    ui->dsbTimeMin->setValue(work->timeMin());
+    ui->dsbTimeAvg->setValue(work->timeAvg());
+    ui->dsbTimeMax->setValue(work->timeMax());
+    ui->dsbFullReserve->setValue(work->fullReserve());
+    ui->dsbTime->setValue(work->time()->value());
+
     ui->cbIsVirtual->setChecked(work->isVirtual());
-
-    IWorker *worker = work->getWorker();
-
-    ui->lWorker->setText(worker ? QString::number(worker->getID())
-                                : "нет");
-
-    ui->sbCost->setEnabled(!worker);
-    ui->sbTime->setEnabled(!worker);
 }

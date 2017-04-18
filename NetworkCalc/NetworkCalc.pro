@@ -18,15 +18,13 @@ SOURCES += \
     math/algorithms.cpp \
     math/random.cpp \
     tools/debug.cpp \
-    math/function.cpp
-#    view/assignswidget.cpp \
-#    view/workerswidget.cpp \
-#    view/eventwidget.cpp \
-#    view/networkgraphwidget.cpp \
-#    view/workwidget.cpp \
-#    view/eventpropertiesdialog.cpp \
-#    view/workpropertiesdialog.cpp \
-#    mainwindow.cpp \
+    math/function.cpp \
+    view/eventwidget.cpp \
+    view/networkgraphwidget.cpp \
+    view/workwidget.cpp \
+    view/eventpropertiesdialog.cpp \
+    view/workpropertiesdialog.cpp \
+    mainwindow.cpp
 
 HEADERS  += \
     math/graph.h \
@@ -37,26 +35,22 @@ HEADERS  += \
     math/random.h \
     tools/ini.h \
     tools/debug.h \
-    math/function.h
-#    view/assignswidget.h \
-#    view/workerswidget.h \
-#    view/eventwidget.h \
-#    view/networkgraphwidget.h \
-#    view/workwidget.h \
-#    view/eventpropertiesdialog.h \
-#    view/workpropertiesdialog.h \
-#    mainwindow.h \
+    math/function.h \
+    view/eventwidget.h \
+    view/networkgraphwidget.h \
+    view/workwidget.h \
+    view/eventpropertiesdialog.h \
+    view/workpropertiesdialog.h \
+    mainwindow.h \
 
 
 FORMS    += \
-#    mainwindow.ui \
-#    view/eventwidget.ui \
-#    view/networkgraphwidget.ui \
-#    view/workwidget.ui \
-#    view/eventpropertiesdialog.ui \
-#    view/workpropertiesdialog.ui \
-#    view/assignswidget.ui \
-#    view/workerswidget.ui
+    mainwindow.ui \
+    view/eventwidget.ui \
+    view/networkgraphwidget.ui \
+    view/workwidget.ui \
+    view/eventpropertiesdialog.ui \
+    view/workpropertiesdialog.ui
 
 RESOURCES += \
     pics.qrc

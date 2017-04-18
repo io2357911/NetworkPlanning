@@ -117,11 +117,11 @@
       </widget>
       <widget class="QWidget" name="tab_2">
        <attribute name="title">
-        <string>Исполнители</string>
+        <string>Ресурсы</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_5">
         <item row="0" column="0">
-         <widget class="WorkersWidget" name="wWorkers" native="true"/>
+         <widget class="QWidget" name="wWorkers" native="true"/>
         </item>
        </layout>
       </widget>
@@ -131,7 +131,7 @@
        </attribute>
        <layout class="QGridLayout" name="gridLayout_4">
         <item row="0" column="0">
-         <widget class="AssignsWidget" name="wAssigns" native="true"/>
+         <widget class="QWidget" name="wAssigns" native="true"/>
         </item>
        </layout>
       </widget>
@@ -145,7 +145,7 @@
      <x>0</x>
      <y>0</y>
      <width>622</width>
-     <height>26</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
@@ -233,18 +233,6 @@
    <class>NetworkGraphWidget</class>
    <extends>QWidget</extends>
    <header>view/networkgraphwidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>AssignsWidget</class>
-   <extends>QWidget</extends>
-   <header>view/assignswidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>WorkersWidget</class>
-   <extends>QWidget</extends>
-   <header>view/workerswidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

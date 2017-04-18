@@ -6,11 +6,13 @@
 #include "../tools/ini.h"
 #include "../math/networkgraph.h"
 
+using namespace Math::Planning;
+
 namespace Ui {
 class EventWidget;
 }
 
-class EventWidget : public QWidget, public IEvent
+class EventWidget : public QWidget, public Event
 {
     Q_OBJECT
 
@@ -31,6 +33,12 @@ public:
 
     QPoint center();
 
+    // Event interface
+    void setName(QString value);
+    void setEarlyTime(double value);
+    void setLateTime(double value);
+    void setReserve(double value);
+
 signals:
     void clicked(EventWidget *widget);
     void moved(EventWidget *widget);
@@ -44,6 +52,8 @@ private slots:
     void onProperties() { emit properties(this); }
     void onDelete() { emit deleteMe(this); }
 
+    void onEventChanged();
+
 private:
     Ui::EventWidget *ui;
 
@@ -56,19 +66,6 @@ private:
     QPoint offset;
 
     bool isCalculated;
-
-    // IEvent interface
-public:
-    int getID() const;
-    void setID(int value);
-    int getEarlyTime() const;
-    void setEarlyTime(int value);
-    int getLateTime() const;
-    void setLateTime(int value);
-    int getReserve() const;
-    void setReserve(int value);
-    bool getIsCalculated() const;
-    void setIsCalculated(bool value);
 };
 
 #endif // EVENTWIDGET_H

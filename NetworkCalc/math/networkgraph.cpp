@@ -39,32 +39,32 @@ QString Event::name() const {
     return m_name;
 }
 
-void Event::setName(int name) {
-    m_name = name;
+void Event::setName(QString value) {
+    m_name = value;
 }
 
 double Event::earlyTime() const {
     return m_earlyTime;
 }
 
-void Event::setEarlyTime(double earlyTime) {
-    m_earlyTime = earlyTime;
+void Event::setEarlyTime(double value) {
+    m_earlyTime = value;
 }
 
 double Event::lateTime() const {
     return m_lateTime;
 }
 
-void Event::setLateTime(double lateTime) {
-    m_lateTime = lateTime;
+void Event::setLateTime(double value) {
+    m_lateTime = value;
 }
 
 double Event::reserve() const {
     return m_reserve;
 }
 
-void Event::setReserve(double reserve) {
-    m_reserve = reserve;
+void Event::setReserve(double value) {
+    m_reserve = value;
 }
 
 bool Event::isCalculated() const {
@@ -108,8 +108,24 @@ QString Work::name() const {
     return m_name;
 }
 
-void Work::setName(int name) {
-    m_name = name;
+void Work::setName(QString value) {
+    m_name = value;
+}
+
+void Work::setResourse(Resourse *value) {
+    m_resourse = value;
+}
+
+Resourse *Work::resourse() {
+    return m_resourse;
+}
+
+void Work::setResourseCount(double value) {
+    m_resourseCount = value;
+}
+
+double Work::resourseCount() {
+    return m_resourseCount;
 }
 
 double Work::cost() {
@@ -118,7 +134,13 @@ double Work::cost() {
     return m_time.value() * m_resourse->cost();
 }
 
-double Work::timeMin() {
+void Work::setTimeMin(double value) {
+    m_timeMin = value;
+}
+
+double Work::timeMin(bool unitResourse) {
+    if (unitResourse) return m_timeMin;
+
     if (m_resourseCount <= 0) return 0;
     if (!m_timeSpeed) return 0;
     // t = W/w(r);
@@ -128,7 +150,13 @@ double Work::timeMin() {
     return m_timeMin / m_timeSpeed->value(m_resourseCount);
 }
 
-double Work::timeMax() {
+void Work::setTimeMax(double value) {
+    m_timeMax = value;
+}
+
+double Work::timeMax(bool unitResourse) {
+    if (unitResourse) return m_timeMax;
+
     if (m_resourseCount <= 0) return 0;
     if (!m_timeSpeed) return 0;
     // t = W/w(r);
@@ -138,7 +166,13 @@ double Work::timeMax() {
     return m_timeMax / m_timeSpeed->value(m_resourseCount);
 }
 
-double Work::timeAvg() {
+void Work::setTimeAvg(double value) {
+    m_timeAvg = value;
+}
+
+double Work::timeAvg(bool unitResourse) {
+    if (unitResourse) return m_timeAvg;
+
     if (m_resourseCount <= 0) return 0;
     if (!m_timeSpeed) return 0;
     // t = W/w(r);
@@ -168,6 +202,10 @@ void Work::setFullReserve(double fullReserve) {
 
 bool Work::isCritical() const {
     return m_isCritical;
+}
+
+void Work::setIsVirtual(bool value) {
+    m_isCritical = value;
 }
 
 void Work::setIsCritical(bool value) {
