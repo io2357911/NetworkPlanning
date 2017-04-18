@@ -22,13 +22,25 @@ void WorkPropertiesDialog::on_buttonBox_accepted() {
     work->setTimeAvg(ui->dsbTimeAvg->value());
     work->setTimeMax(ui->dsbTimeMax->value());
 
+    work->setResourse(currentResourse());
     work->setResourseCount(ui->dsbResoursCount->value());
 
     work->setIsVirtual(ui->cbIsVirtual->isChecked());
 }
 
+Resourse *WorkPropertiesDialog::currentResourse() {
+    int ind = ui->cbResourse->currentIndex()-1;
+    if (ind < 0 || ind >= resourses->size()) return 0;
+
+    return resourses->at(ind);
+}
+
 Work *WorkPropertiesDialog::getWork() const {
     return work;
+}
+
+void WorkPropertiesDialog::setResourses(QVector<Resourse *> *resourses) {
+    this->resourses = resourses;
 }
 
 void WorkPropertiesDialog::setWork(Work *value) {
@@ -55,4 +67,19 @@ void WorkPropertiesDialog::updateWork() {
     ui->dsbTime->setValue(work->time()->value());
 
     ui->cbIsVirtual->setChecked(work->isVirtual());
+
+    updateResourses();
+}
+
+void WorkPropertiesDialog::updateResourses() {
+    if (!resourses) return;
+
+    ui->cbResourse->clear();
+    ui->cbResourse->addItem("");
+    for (int i = 0; i < resourses->size(); i++) {
+        ui->cbResourse->addItem(resourses->at(i)->name());
+    }
+
+    int ind = resourses->indexOf(work->resourse());
+    if (ind != -1) ui->cbResourse->setCurrentIndex(ind+1);
 }

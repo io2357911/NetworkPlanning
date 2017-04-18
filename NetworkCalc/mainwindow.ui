@@ -121,17 +121,7 @@
        </attribute>
        <layout class="QGridLayout" name="gridLayout_5">
         <item row="0" column="0">
-         <widget class="QWidget" name="wWorkers" native="true"/>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tab_3">
-       <attribute name="title">
-        <string>Назначения</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout_4">
-        <item row="0" column="0">
-         <widget class="QWidget" name="wAssigns" native="true"/>
+         <widget class="ResoursesWidget" name="wResourses" native="true"/>
         </item>
        </layout>
       </widget>
@@ -233,6 +223,12 @@
    <class>NetworkGraphWidget</class>
    <extends>QWidget</extends>
    <header>view/networkgraphwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ResoursesWidget</class>
+   <extends>QWidget</extends>
+   <header>view/resourseswidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -19,6 +19,8 @@ WorkWidget::WorkWidget(QWidget *parent) :
     aDelete->setShortcuts(QKeySequence::Delete);
     aDelete->setStatusTip(tr("Удалить работу"));
     connect(aDelete, SIGNAL(triggered()), this, SLOT(onDelete()));
+
+    onWorkChanged();
 }
 
 WorkWidget::~WorkWidget() {
@@ -57,6 +59,11 @@ void WorkWidget::contextMenuEvent(QContextMenuEvent *event) {
     menu.addAction(aProperties);
     menu.addAction(aDelete);
     menu.exec(event->globalPos());
+}
+
+void WorkWidget::setName(QString value) {
+    Work::setName(value);
+    onWorkChanged();
 }
 
 void WorkWidget::setResourseCount(double value) {

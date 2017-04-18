@@ -12,8 +12,8 @@ NetworkGraphWidget::NetworkGraphWidget(QWidget *parent) :
     firstConnectEvent(NULL),
     eventsCounter(0),
     worksCounter(0),
-    workerCounter(0)
-{
+    resourseCounter(0) {
+
     ui->setupUi(this);
 
     aNewEvent = new QAction(tr("Новое событие"), this);
@@ -23,6 +23,8 @@ NetworkGraphWidget::NetworkGraphWidget(QWidget *parent) :
 
     aTest = new QAction(tr("Тест"), this);
     connect(aTest, SIGNAL(triggered()), this, SLOT(onTest()));
+
+    dWork.setResourses(&resourses);
 }
 
 NetworkGraphWidget::~NetworkGraphWidget()
@@ -98,17 +100,16 @@ void NetworkGraphWidget::wheelEvent(QWheelEvent *event)
 //    connect(wAssigns, SIGNAL(assignChanged()), &dWork, SLOT(updateWork()));
 //}
 
-//void NetworkGraphWidget::setWorkersWidget(WorkersWidget *wWorkers)
-//{
-//    wWorkers->setWorkers(&workers);
-//    connect(wWorkers, SIGNAL(newWorker()), this, SLOT(newWorker()));
-//    connect(wWorkers, SIGNAL(deleteWorker(IWorker*)), this, SLOT(deleteWorker(IWorker*)));
-//    connect(this, SIGNAL(showWorkers()), wWorkers, SLOT(show()));
-//    connect(this, SIGNAL(workersChanged()), wWorkers, SLOT(updateWorkers()));
-//    connect(this, SIGNAL(worksChanged()), wWorkers, SLOT(updateWorks()));
+void NetworkGraphWidget::setResoursesWidget(ResoursesWidget *wResourses) {
+    wResourses->setResourses(&resourses);
+    connect(wResourses, SIGNAL(newResourse()), this, SLOT(onNewResourse()));
+    connect(wResourses, SIGNAL(deleteResourse(Resourse*)), this, SLOT(onDeleteResourse(Resourse*)));
+//    connect(this, SIGNAL(showWorkers()), wResourses, SLOT(show()));
+    connect(this, SIGNAL(resoursesChanged()), wResourses, SLOT(onResoursesChanged()));
+//    connect(this, SIGNAL(worksChanged()), wResourses, SLOT(updateWorks()));
 
-//    connect(wWorkers, SIGNAL(workerChanged()), &dWork, SLOT(updateWork()));
-//}
+    connect(wResourses, SIGNAL(resourseChanged()), &dWork, SLOT(updateWork()));
+}
 
 void NetworkGraphWidget::newGraph()
 {
@@ -230,27 +231,24 @@ void NetworkGraphWidget::computeNetworkGraph() {
 //    computeNetworkGraph();
 //}
 
-//void NetworkGraphWidget::newWorker()
-//{
-//    IWorker *worker = new IWorker(++workerCounter);
-//    workers.append(worker);
-//    for (int i = 0; i < works.size(); i++) worker->addWork(works[i]);
+void NetworkGraphWidget::onNewResourse() {
+    Resourse* resourse = new Resourse(QString("Ресурс-%1").arg(++resourseCounter));
+    resourses.append(resourse);
 
-//    emit workersChanged();
-//}
+    emit resoursesChanged();
+}
 
-//void NetworkGraphWidget::deleteWorker(IWorker *worker)
-//{
-//    workers.removeAll(worker);
+void NetworkGraphWidget::onDeleteResourse(Resourse *resourse) {
+    resourses.removeAll(resourse);
 
-//    for (int i = 0; i < works.size(); i++)
-//        if (works[i]->getWorker() == worker)
-//            works[i]->setWorker(0);
+    for (int i = 0; i < works.size(); i++)
+        if (works[i]->resourse() == resourse)
+            works[i]->setResourse(0);
 
-//    emit workersChanged();
+    emit resoursesChanged();
 
-//    delete worker;
-//}
+    delete resourse;
+}
 
 void NetworkGraphWidget::onEventMoved(EventWidget *)
 {
@@ -281,8 +279,7 @@ void NetworkGraphWidget::onWorkProperties(WorkWidget *widget)
     dWork.show();
 }
 
-void NetworkGraphWidget::onWorkDelete(WorkWidget *widget)
-{
+void NetworkGraphWidget::onWorkDelete(WorkWidget *widget) {
     graph.deleteEdge(widget);
     works.removeAll(widget);
 
@@ -316,7 +313,7 @@ WorkWidget *NetworkGraphWidget::createWorkWidget(EventWidget *firstEvent, EventW
     worksCounter++;
 
     WorkWidget *work = new WorkWidget(this);
-    work->setName(QString::number(worksCounter));
+    work->setName(QString("Работа-%1").arg(worksCounter));
     work->setFirstEvent(firstEvent);
     work->setSecondEvent(secondEvent);
     work->show();

@@ -34,6 +34,7 @@ public:
     void contextMenuEvent(QContextMenuEvent *event);
 
     // Work interface
+    void setName(QString value);
     void setResourseCount(double value);
     void setTimeMin(double value);
     void setTimeMax(double value);

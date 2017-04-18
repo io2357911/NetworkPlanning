@@ -13,10 +13,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->aComputeNetworkGraph, SIGNAL(triggered()),
             ui->widgetNetworkGraph, SLOT(computeNetworkGraph()));
-    connect(ui->aComputeAssigns, SIGNAL(triggered()),
-            ui->widgetNetworkGraph, SLOT(computeAssigns()));
-    connect(ui->aComputeAssignsWithTime, SIGNAL(triggered()),
-            this, SLOT(onComputeAssignsWithTime()));
+//    connect(ui->aComputeAssigns, SIGNAL(triggered()),
+//            ui->widgetNetworkGraph, SLOT(computeAssigns()));
+//    connect(ui->aComputeAssignsWithTime, SIGNAL(triggered()),
+//            this, SLOT(onComputeAssignsWithTime()));
 
     connect(ui->widgetNetworkGraph, SIGNAL(graphComputed(NetworkGraph*)),
             this, SLOT(onGraphComputed(NetworkGraph*)));
@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(onSaveGraph()));
 
 //    ui->widgetNetworkGraph->setAssingsWidget(ui->wAssigns);
-//    ui->widgetNetworkGraph->setWorkersWidget(ui->wWorkers);
+    ui->widgetNetworkGraph->setResoursesWidget(ui->wResourses);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)

@@ -21,18 +21,25 @@ public:
     void setWork(Work *value);
     Work* getWork() const;
 
-    void updateWorkers();
+    void setResourses(QVector<Resourse*>* resourses);
+
+//    void updateWorkers();
 
 public slots:
     void updateWork();
+    void updateResourses();
 
 private slots:
     void on_buttonBox_accepted();
 
 private:
+    Resourse* currentResourse();
+
+private:
     Ui::WorkPropertiesDialog *ui;
 
     Work *work;
+    QVector<Resourse*>* resourses;
 };
 
 #endif // WORKPROPERTIESDIALOG_H

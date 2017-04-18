@@ -5,6 +5,7 @@
 #include <QVector>
 #include "eventwidget.h"
 #include "workwidget.h"
+#include "resourseswidget.h"
 #include "eventpropertiesdialog.h"
 #include "workpropertiesdialog.h"
 #include "../tools/debug.h"
@@ -28,13 +29,13 @@ public:
     void wheelEvent(QWheelEvent *event);
 
 //    void setAssingsWidget(AssignsWidget *w);
-//    void setWorkersWidget(WorkersWidget *w);
+    void setResoursesWidget(ResoursesWidget *w);
 
 signals:
     void showWorkers();
     void showAssigns();
 
-    void workersChanged();
+    void resoursesChanged();
     void worksChanged();
 
     void graphComputed(NetworkGraph *graph);
@@ -61,8 +62,8 @@ private slots:
     void onWorkProperties(WorkWidget *widget);
     void onWorkDelete(WorkWidget *widget);
 
-//    void newWorker();
-//    void deleteWorker(IWorker*);
+    void onNewResourse();
+    void onDeleteResourse(Resourse*);
 
 private:
     EventWidget *createEventWidget();
@@ -80,14 +81,14 @@ private:
 
     QVector<EventWidget*> events;
     QVector<WorkWidget*> works;
-//    QVector<Worker*> workers;
+    QVector<Resourse*> resourses;
 
     QAction *aNewEvent;
     QAction *aTest;
 
     EventWidget *firstConnectEvent;
 
-    int eventsCounter, worksCounter, workerCounter;
+    int eventsCounter, worksCounter, resourseCounter;
 };
 
 #endif // NETWORKGRAPHWIDGET_H
