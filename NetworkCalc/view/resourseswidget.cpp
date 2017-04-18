@@ -7,8 +7,6 @@ ResoursesWidget::ResoursesWidget(QWidget *parent) :
 
     ui->setupUi(this);
 
-    resourses = new QVector<Resourse*>;
-
     connect(ui->tlwResourses, SIGNAL(itemChanged(QTableWidgetItem*)),
             this, SLOT(onItemChanged(QTableWidgetItem*)));
 }
@@ -17,7 +15,7 @@ ResoursesWidget::~ResoursesWidget() {
     delete ui;
 }
 
-void ResoursesWidget::setResourses(QVector<Resourse *> *resourses) {
+void ResoursesWidget::setResourses(QVector<WorkResourse*> *resourses) {
     this->resourses = resourses;
 }
 

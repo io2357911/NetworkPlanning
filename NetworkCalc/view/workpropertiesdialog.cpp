@@ -39,7 +39,7 @@ Work *WorkPropertiesDialog::getWork() const {
     return work;
 }
 
-void WorkPropertiesDialog::setResourses(QVector<Resourse *> *resourses) {
+void WorkPropertiesDialog::setResourses(QVector<WorkResourse *> *resourses) {
     this->resourses = resourses;
 }
 
@@ -80,6 +80,6 @@ void WorkPropertiesDialog::updateResourses() {
         ui->cbResourse->addItem(resourses->at(i)->name());
     }
 
-    int ind = resourses->indexOf(work->resourse());
+    int ind = resourses->indexOf((WorkResourse*)work->resourse());
     if (ind != -1) ui->cbResourse->setCurrentIndex(ind+1);
 }

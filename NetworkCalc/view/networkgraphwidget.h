@@ -8,6 +8,7 @@
 #include "resourseswidget.h"
 #include "eventpropertiesdialog.h"
 #include "workpropertiesdialog.h"
+#include "workresourse.h"
 #include "../tools/debug.h"
 #include "../tools/ini.h"
 #include "../math/algorithms.h"
@@ -63,7 +64,7 @@ private slots:
     void onWorkDelete(WorkWidget *widget);
 
     void onNewResourse();
-    void onDeleteResourse(Resourse*);
+    void onDeleteResourse(WorkResourse*);
 
 private:
     EventWidget *createEventWidget();
@@ -81,7 +82,7 @@ private:
 
     QVector<EventWidget*> events;
     QVector<WorkWidget*> works;
-    QVector<Resourse*> resourses;
+    QVector<WorkResourse*> resourses;
 
     QAction *aNewEvent;
     QAction *aTest;

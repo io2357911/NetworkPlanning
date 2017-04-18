@@ -17,9 +17,7 @@ class Event;
 
 class Resourse {
 public:
-    Resourse(QString name = "", double quantity = 0, double cost = 0)
-        : m_name(name), m_quantity(quantity), m_cost(cost)
-    {}
+    Resourse(QString name = "", double quantity = 0, double cost = 0);
 
     QString name() const;
     void setName(const QString &name);

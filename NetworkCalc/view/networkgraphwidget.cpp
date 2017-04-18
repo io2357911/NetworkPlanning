@@ -103,7 +103,7 @@ void NetworkGraphWidget::wheelEvent(QWheelEvent *event)
 void NetworkGraphWidget::setResoursesWidget(ResoursesWidget *wResourses) {
     wResourses->setResourses(&resourses);
     connect(wResourses, SIGNAL(newResourse()), this, SLOT(onNewResourse()));
-    connect(wResourses, SIGNAL(deleteResourse(Resourse*)), this, SLOT(onDeleteResourse(Resourse*)));
+    connect(wResourses, SIGNAL(deleteResourse(WorkResourse*)), this, SLOT(onDeleteResourse(WorkResourse*)));
 //    connect(this, SIGNAL(showWorkers()), wResourses, SLOT(show()));
     connect(this, SIGNAL(resoursesChanged()), wResourses, SLOT(onResoursesChanged()));
 //    connect(this, SIGNAL(worksChanged()), wResourses, SLOT(updateWorks()));
@@ -111,8 +111,7 @@ void NetworkGraphWidget::setResoursesWidget(ResoursesWidget *wResourses) {
     connect(wResourses, SIGNAL(resourseChanged()), &dWork, SLOT(updateWork()));
 }
 
-void NetworkGraphWidget::newGraph()
-{
+void NetworkGraphWidget::newGraph() {
     eventsCounter = worksCounter = 0;
 
     for (int i = 0; i < events.size(); i++) {
@@ -121,6 +120,7 @@ void NetworkGraphWidget::newGraph()
     for (int i = 0; i < works.size(); i++) {
         works[i]->close();
     }
+    resourses.clear();
     events.clear();
     works.clear();
     graph.clear();
@@ -128,22 +128,39 @@ void NetworkGraphWidget::newGraph()
     repaint();
 }
 
-void NetworkGraphWidget::openGraph(QString fileName)
-{
+void NetworkGraphWidget::openGraph(QString fileName) {
     newGraph();
 
     QStringList keys = {
+        "resourses",
         "events",
         "works"
     };
 
     INI::Settings setts = INI::restore(keys, fileName, "Graph");
 
-    if (!(setts["events"].isValid() && setts["works"].isValid())) return;
+    if (!(setts["resourses"].isValid() &&
+          setts["events"].isValid() &&
+          setts["works"].isValid())) return;
 
+    // ресурсы
+    QMap<QString, Resourse*> nameToResourses;
+    QStringList resoursesList = setts["resourses"].toString().split(",", QString::SkipEmptyParts);
+    for (int i = 0; i < resoursesList.size(); i++) {
+        QString name = resoursesList[i];
+
+        WorkResourse* res = new WorkResourse();
+        res->setName(name);
+        res->restore(fileName);
+
+        resourses.append(res);
+
+        nameToResourses[name] = res;
+    }
+
+    // события
     QMap<QString, EventWidget*> nameToEvents;
     QStringList eventsList = setts["events"].toString().split(",", QString::SkipEmptyParts);
-
     for (int i = 0; i < eventsList.size(); i++) {
         QString name = eventsList[i];
 
@@ -157,26 +174,34 @@ void NetworkGraphWidget::openGraph(QString fileName)
         nameToEvents[name] = event;
     }
 
+    // работы
     QStringList worksList = setts["works"].toString().split(",", QString::SkipEmptyParts);
-
     for (int i = 0; i < worksList.size(); i++) {
         QString name = worksList[i];
-        setts = INI::restore({"firstEvent","secondEvent"}, fileName, QString("Work_%1").arg(name));
+        setts = INI::restore({"firstEvent","secondEvent","resourseName"}, fileName, QString("Work_%1").arg(name));
 
         WorkWidget *work = createWorkWidget(
                     nameToEvents[setts["firstEvent"].toString()],
                     nameToEvents[setts["secondEvent"].toString()]
         );
         work->setName(name);
+        work->setResourse(nameToResourses.value(setts["resourseName"].toString(), 0));
         work->restore(fileName);
 
         graph.addEdge(work);
     }
+
     repaint();
+
+    emit resoursesChanged();
 }
 
-void NetworkGraphWidget::saveGraph(QString fileName)
-{
+void NetworkGraphWidget::saveGraph(QString fileName) {
+    QString resoursesNames;
+    for (int i = 0; i < resourses.size(); i++) {
+        resourses[i]->store(fileName);
+        resoursesNames += QString("%1,").arg(resourses[i]->name());
+    }
     QString eventsNames;
     for (int i = 0; i < events.size(); i++) {
         events[i]->store(fileName);
@@ -189,6 +214,7 @@ void NetworkGraphWidget::saveGraph(QString fileName)
     }
 
     INI::Settings setts;
+    setts["resourses"] = resoursesNames;
     setts["events"] = eventsNames;
     setts["works"] = worksNames;
 
@@ -232,13 +258,13 @@ void NetworkGraphWidget::computeNetworkGraph() {
 //}
 
 void NetworkGraphWidget::onNewResourse() {
-    Resourse* resourse = new Resourse(QString("Ресурс-%1").arg(++resourseCounter));
+    WorkResourse* resourse = new WorkResourse(QString("Ресурс-%1").arg(++resourseCounter));
     resourses.append(resourse);
 
     emit resoursesChanged();
 }
 
-void NetworkGraphWidget::onDeleteResourse(Resourse *resourse) {
+void NetworkGraphWidget::onDeleteResourse(WorkResourse *resourse) {
     resourses.removeAll(resourse);
 
     for (int i = 0; i < works.size(); i++)
@@ -328,4 +354,3 @@ WorkWidget *NetworkGraphWidget::createWorkWidget(EventWidget *firstEvent, EventW
 
     return work;
 }
-

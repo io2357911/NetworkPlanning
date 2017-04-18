@@ -25,7 +25,8 @@ SOURCES += \
     view/eventpropertiesdialog.cpp \
     view/workpropertiesdialog.cpp \
     mainwindow.cpp \
-    view/resourseswidget.cpp
+    view/resourseswidget.cpp \
+    view/workresourse.cpp
 #    view/workerswidget.cpp
 
 HEADERS  += \
@@ -44,7 +45,8 @@ HEADERS  += \
     view/eventpropertiesdialog.h \
     view/workpropertiesdialog.h \
     mainwindow.h \
-    view/resourseswidget.h
+    view/resourseswidget.h \
+    view/workresourse.h
 #    view/workerswidget.h
 
 

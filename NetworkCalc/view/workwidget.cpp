@@ -133,30 +133,44 @@ void WorkWidget::setSecondEvent(EventWidget *widget) {
 void WorkWidget::store(QString fileName) {
     INI::Settings setts;
 
-//    setts["firstEvent"] = getFirstEvent()->getID();
-//    setts["secondEvent"] = getSecondEvent()->getID();
-//    setts["cost"] = getCost();
-//    setts["time"] = getTime();
-//    setts["virtual"] = isVirtual();
+    setts["firstEvent"] = getFirstEvent()->name();
+    setts["secondEvent"] = getSecondEvent()->name();
+
+    if (resourse())
+        setts["resourseName"] = resourse()->name();
+
+    setts["resourseCount"] = resourseCount();
+    setts["timeMin"] = timeMin();
+    setts["timeAvg"] = timeAvg();
+    setts["timeMax"] = timeMax();
+    setts["virtual"] = isVirtual();
 
     INI::store(setts, fileName, QString("Work_%1").arg(name()));
 }
 
 void WorkWidget::restore(QString fileName) {
     QStringList keys = {
-        "cost",
-        "time",
+        "resourseCount",
+        "timeMin",
+        "timeAvg",
+        "timeMax",
         "virtual"
     };
 
     INI::Settings setts = INI::restore(keys, fileName, QString("Work_%1").arg(name()));
 
-//    if (setts["cost"].isValid())
-//        setCost(setts["cost"].toInt());
+    if (setts["resourseCount"].isValid())
+        setTimeMin(setts["resourseCount"].toDouble());
 
-//    if (setts["time"].isValid())
-//        setTime(setts["time"].toInt());
+    if (setts["timeMin"].isValid())
+        setTimeMin(setts["timeMin"].toDouble());
 
-//    if (setts["virtual"].isValid())
-//        setIsVirtual(setts["virtual"].toBool());
+    if (setts["timeAvg"].isValid())
+        setTimeAvg(setts["timeAvg"].toDouble());
+
+    if (setts["timeMax"].isValid())
+        setTimeMax(setts["timeMax"].toDouble());
+
+    if (setts["virtual"].isValid())
+        setIsVirtual(setts["virtual"].toBool());
 }

@@ -3,6 +3,10 @@
 namespace Math {
 namespace Planning {
 
+Resourse::Resourse(QString name, double quantity, double cost)
+    : m_name(name), m_quantity(quantity), m_cost(cost)
+{}
+
 QString Resourse::name() const {
     return m_name;
 }
@@ -200,16 +204,16 @@ void Work::setFullReserve(double fullReserve) {
     m_fullReserve = fullReserve;
 }
 
+void Work::setIsCritical(bool value) {
+    m_isCritical = value;
+}
+
 bool Work::isCritical() const {
     return m_isCritical;
 }
 
 void Work::setIsVirtual(bool value) {
-    m_isCritical = value;
-}
-
-void Work::setIsCritical(bool value) {
-    m_isCritical = value;
+    m_isVirtual = value;
 }
 
 bool Work::isVirtual() const {
