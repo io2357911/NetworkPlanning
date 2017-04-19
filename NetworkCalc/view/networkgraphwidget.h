@@ -46,7 +46,8 @@ public slots:
     void openGraph(QString path);
     void saveGraph(QString path);
 
-    void computeNetworkGraph();
+    void computePert();
+    void computeMonteCarlo();
 //    void computeAssigns();
 //    void computeAssigns(int maxTime);
 

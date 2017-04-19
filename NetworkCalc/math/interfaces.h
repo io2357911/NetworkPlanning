@@ -19,11 +19,11 @@ public:
     double value(const double &arg) { return value(vector<double>({arg})); }
 };
 
-template <typename P>
-struct InnerFunction : public IFunction {
-    P* p;
-    InnerFunction(P* parent) : p(parent) {}
-};
+//template <typename P>
+//struct InnerFunction : public IFunction {
+//    P* p;
+//    InnerFunction(P* parent) : p(parent) {}
+//};
 
 /**
  * @brief The IRandom class Интерфейс для представления случайной величины
@@ -36,13 +36,13 @@ public:
      * @return
      */
 //    virtual IFunction* f() = 0;
-    virtual double f(double val) = 0;
+    virtual double f(double value) = 0;
     /**
      * @brief F функция распределения вероятностей
      * @return
      */
 //    virtual IFunction* F() = 0;
-    virtual double F(double val) = 0;
+    virtual double F(double value) = 0;
     /**
      * @brief setMathExpected
      * @param value
@@ -68,6 +68,16 @@ public:
      * @return
      */
     virtual double random() = 0;
+    /**
+     * @brief setValue
+     * @param value
+     */
+    virtual void setValue(double value) = 0;
+    /**
+     * @brief value
+     * @return
+     */
+    virtual double value() = 0;
 };
 
 /**

@@ -221,16 +221,21 @@ void NetworkGraphWidget::saveGraph(QString fileName) {
     INI::store(setts, fileName, "Graph");
 }
 
-void NetworkGraphWidget::computeNetworkGraph() {
-//    NetworkGraphAlgoritm().compute(&graph);
-//    CriticalPathAlgorithm().compute(&graph);
-//    CostAlgorithm().compute(&graph);
-//    TimeAlgorithm().compute(&graph);
+void NetworkGraphWidget::computePert() {
 
+    if (!PertNetworkAlgorithm(&graph).compute()) {
+        qDebug("computePert - FAILED");
+        return;
+    }
 
-//    if (!PertNetworkAlgorithm(&graph).compute()) {
-    if (!MonteCarloNetworkAlgorithm(&graph, 1).compute()) {
-        qDebug("computeNetworkGraph - FAILED");
+    emit graphComputed(&graph);
+
+    repaint();
+}
+
+void NetworkGraphWidget::computeMonteCarlo() {
+    if (!MonteCarloNetworkAlgorithm(&graph, 100).compute()) {
+        qDebug("computeMoteCarlo - FAILED");
         return;
     }
 

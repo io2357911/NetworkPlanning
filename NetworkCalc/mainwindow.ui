@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>622</width>
-    <height>431</height>
+    <width>571</width>
+    <height>377</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,22 +34,6 @@
          </property>
         </spacer>
        </item>
-       <item row="0" column="1">
-        <widget class="QSpinBox" name="sbTime">
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-         <property name="buttonSymbols">
-          <enum>QAbstractSpinBox::NoButtons</enum>
-         </property>
-         <property name="maximum">
-          <number>9999999</number>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="5">
         <widget class="QSpinBox" name="sbTimeLimit">
          <property name="alignment">
@@ -67,22 +51,6 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="3">
-        <widget class="QSpinBox" name="sbCost">
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-         <property name="buttonSymbols">
-          <enum>QAbstractSpinBox::NoButtons</enum>
-         </property>
-         <property name="maximum">
-          <number>9999999</number>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="0">
         <widget class="QLabel" name="label">
          <property name="text">
@@ -94,6 +62,38 @@
         <widget class="QLabel" name="label_2">
          <property name="text">
           <string>Дир. срок:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QDoubleSpinBox" name="dsbTime">
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::NoButtons</enum>
+         </property>
+         <property name="maximum">
+          <double>9999999.990000000223517</double>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QDoubleSpinBox" name="dsbCost">
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::NoButtons</enum>
+         </property>
+         <property name="maximum">
+          <double>9999999.990000000223517</double>
          </property>
         </widget>
        </item>
@@ -134,7 +134,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>622</width>
+     <width>571</width>
      <height>19</height>
     </rect>
    </property>
@@ -142,7 +142,8 @@
     <property name="title">
      <string>Рассчет</string>
     </property>
-    <addaction name="aComputeNetworkGraph"/>
+    <addaction name="aComputePert"/>
+    <addaction name="aComputeMonteCarlo"/>
    </widget>
    <widget class="QMenu" name="menu_2">
     <property name="title">
@@ -164,9 +165,9 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="aComputeNetworkGraph">
+  <action name="aComputePert">
    <property name="text">
-    <string>Сетевого графика</string>
+    <string>PERT</string>
    </property>
   </action>
   <action name="aGraphOpen">
@@ -212,6 +213,11 @@
   <action name="aComputeAssignsWithTime">
    <property name="text">
     <string>Назначений с учетом времени</string>
+   </property>
+  </action>
+  <action name="aComputeMonteCarlo">
+   <property name="text">
+    <string>Monte-Carlo</string>
    </property>
   </action>
  </widget>

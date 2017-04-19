@@ -33,18 +33,24 @@ public:
 
     // IAlgorithm interface
     bool compute();
+
+private:
+    bool computeTime();
 };
 
 class MonteCarloNetworkAlgorithm : public INetworkAlgorithm {
 public:
-    MonteCarloNetworkAlgorithm(NetworkGraph* graph, int iterations);
+    MonteCarloNetworkAlgorithm(NetworkGraph* graph, uint iterations);
     virtual ~MonteCarloNetworkAlgorithm() {}
 
     // IAlgorithm interface
     bool compute();
 
 private:
-    int m_iterations;
+    bool computeTime();
+
+private:
+    uint m_iterations;
 };
 
 /*!
@@ -99,18 +105,18 @@ public:
     bool compute();
 };
 
-/*!
- * \brief Класс алгоритма нахождения времени проекта
- * \warning Предполагается, что уже рассчитен крит. путь
- */
-class TimeAlgorithm : public INetworkAlgorithm {
-public:
-    TimeAlgorithm(NetworkGraph* graph) : INetworkAlgorithm(graph) {}
-    virtual ~TimeAlgorithm() {}
+///*!
+// * \brief Класс алгоритма нахождения времени проекта
+// * \warning Предполагается, что уже рассчитен крит. путь
+// */
+//class TimeAlgorithm : public INetworkAlgorithm {
+//public:
+//    TimeAlgorithm(NetworkGraph* graph) : INetworkAlgorithm(graph) {}
+//    virtual ~TimeAlgorithm() {}
 
-    // IAlgorithm interface
-    bool compute();
-};
+//    // IAlgorithm interface
+//    bool compute();
+//};
 
 } // namespace Algorithms
 } // namespace Planning

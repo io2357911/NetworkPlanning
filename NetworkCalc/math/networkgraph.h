@@ -72,7 +72,7 @@ private:
  */
 class IRandomFactory {
 public:
-    virtual IRandom* create(Work* work) = 0;
+    virtual Random* create(Work* work) = 0;
 };
 
 class Work : public GraphEdge<Event, Work> {
@@ -99,8 +99,8 @@ public:
     virtual double timeMax(bool unitResourse = true);
     virtual void setTimeAvg(double value);
     virtual double timeAvg(bool unitResourse = true);
-    virtual Random::Value* time();
-    virtual void setTimeRandom(IRandomFactory* factory);
+    virtual void setTime(IRandomFactory* factory);
+    virtual Random* time();
 
     // сетевые характеристики
     virtual void setFullReserve(double value);
@@ -121,7 +121,7 @@ private:
     double          m_timeMin;          // минимальная оценка времени выполнения
     double          m_timeMax;          // максимальная оценка времени выполнения
     double          m_timeAvg;          // ожидаемая оценка времени выполнения
-    Random::Value   m_time;             // время выполнения с учетом ресурсов
+    Random*         m_time;             // время выполнения с учетом ресурсов
     IFunction*      m_timeSpeed;        // скорость выполения в зависимости от кол-ва ресурсов
 
     // сетевые характеристики
@@ -137,20 +137,22 @@ public:
     NetworkGraph();
     NetworkGraph(QVector<Event*> vertices, QVector<Work*> edges);
 
-    Random::Value* time();
-    Random::Value* cost();
+    void setTime(Random* time);
+    Random* time();
+
+    void setCost(Random* cost);
+    Random* cost();
 
     QVector<Work*> criticalPath();
 
 private:
-    Random::Value   m_time;
-    Random::Value   m_cost;
+    Random*  m_time;
+    Random*  m_cost;
 };
 
-namespace Random {
+namespace Randoms {
 
-
-class WorkBased : public IRandom {
+class WorkBased : public Random {
 public:
     WorkBased(Work* work) : m_work(work) {}
 
@@ -165,15 +167,13 @@ public:
 
     double f(double val);
     double F(double val);
-    void setMathExpected(double /*value*/);
     double mathExpected();
-    void setDispersion(double /*value*/);
     double dispersion();
-    double random();
+    double _random();
 };
 class TriangleFactory : public IRandomFactory { \
-public: \
-    IRandom* create(Work* work) { return new Triangle(work); } \
+public:
+    Random* create(Work* work) { return new Triangle(work); } \
 };
 
 
@@ -183,57 +183,14 @@ public:
 
     double f(double val);
     double F(double val);
-    void setMathExpected(double /*value*/);
     double mathExpected();
-    void setDispersion(double /*value*/);
     double dispersion();
-    double random();
+    double _random();
 };
 class PertBetaFactory : public IRandomFactory { \
 public: \
-    IRandom* create(Work* work) { return new PertBeta(work); } \
+    Random* create(Work* work) { return new PertBeta(work); } \
 };
-
-
-//#define WORK_RANDOM(randomClass)  \
-//class randomClass : public IRandom { \
-//public: \
-//    randomClass(Work* work) \
-//        : m_work(work) \
-//    {} \
-//    double f(double val) { \
-//        if (!m_work) return 0; \
-//        return Math::Random::randomClass(m_work->timeMin(false), m_work->timeMax(false), m_work->timeAvg(false)).f(val); \
-//    } \
-//    double F(double val) { \
-//        if (!m_work) return 0; \
-//        return Math::Random::randomClass(m_work->timeMin(false), m_work->timeMax(false), m_work->timeAvg(false)).F(val); \
-//    } \
-//    void setMathExpected(double /*value*/) {} \
-//    double mathExpected() { \
-//        if (!m_work) return 0; \
-//        return Math::Random::randomClass(m_work->timeMin(false), m_work->timeMax(false), m_work->timeAvg(false)).mathExpected(); \
-//    } \
-//    void setDispersion(double /*value*/) {} \
-//    double dispersion() { \
-//        if (!m_work) return 0; \
-//        return Math::Random::randomClass(m_work->timeMin(false), m_work->timeMax(false), m_work->timeAvg(false)).dispersion(); \
-//    } \
-//    double random() { \
-//        if (!m_work) return 0; \
-//        return Math::Random::randomClass(m_work->timeMin(false), m_work->timeMax(false), m_work->timeAvg(false)).random(); \
-//    } \
-//protected: \
-//    Work *m_work; \
-//}; \
-//class randomClass##Factory : public IRandomFactory { \
-//public: \
-//    IRandom* create(Work* work) { return new randomClass(work); } \
-//};
-
-//WORK_RANDOM(Beta)
-//WORK_RANDOM(PertBeta)
-//WORK_RANDOM(Triangle)
 
 } // namespace Randoms
 

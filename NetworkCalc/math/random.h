@@ -1,56 +1,69 @@
 #ifndef RANDOM_H
 #define RANDOM_H
 
+#include <QVector>
 #include "interfaces.h"
 
+
 namespace Math {
-namespace Random {
-
-class Uniform : public IRandom {
-public:
-    static double rand();
-
-    virtual double random();
-};
 
 /**
- * @brief The Value class Класс случайной величины после генерации (random()) сохраняющий значение
+ * @brief The Random class Класс случайной величины после генерации (random()) сохраняющий значение
  */
-class Value : public IRandom {
+class Random : public IRandom {
 public:
-    Value(IRandom* random = 0);
+    virtual ~Random() {}
 
     // IRandom interface
-    double f(double prob);
-    double F(double prob);
-    double mathExpected();
-    void setMathExpected(double value);
-    double dispersion();
-    void setDispersion(double value);
-    double random();
-
-    void setRandom(IRandom *random);
-
-    double value() const;
-    void setValue(double value);
-
-private:
-    IRandom*    m_random;
-    double      m_value;
-};
-
-class Beta : public IRandom {
-public:
-    Beta(double a, double b, double m);
-
-    // IRandom interface
-    double f(double val);
-    double F(double val);
+    virtual double f(double value);
+    virtual double F(double value);
     virtual void setMathExpected(double value);
     virtual double mathExpected();
     virtual void setDispersion(double value);
     virtual double dispersion();
-    virtual double random();
+    virtual void setValue(double value);
+    virtual double value();
+
+    double random();
+
+protected:
+    virtual double _random() = 0;
+
+protected:
+    double m_value;
+};
+
+namespace Randoms {
+
+class Uniform : public Random {
+protected:
+    double _random();
+};
+
+/**
+ * @brief The Empirical class Случайная величина, полученная вследствии эксперимента
+ */
+class Empirical : public Random {
+public:
+    // Random interface
+    double f(double value);
+    double F(double value);
+    double mathExpected();
+    double dispersion();
+    void setValue(double value);
+    double value();
+    double _random();
+
+protected:
+    QVector<double> m_vals;
+};
+
+class Beta : public Random {
+public:
+    Beta(double a, double b, double m);
+
+    // Random interface
+    virtual double _random();
 
 protected:
     double m_a;
@@ -68,26 +81,25 @@ public:
     static double dispersion(double a, double b, double m);
     static double random(double a, double b, double m);
 
-    // IRandom interface
+    // Random interface
     double f(double val);
     double F(double val);
     double mathExpected();
     double dispersion();
-    double random();
+    double _random();
 };
 
-class PertNormal : public IRandom {
+class PertNormal : public Random {
 public:
     PertNormal();
 
-    // IRandom interface
-    double f(double val);
+    // Random interface
     double F(double val);
     void setMathExpected(double value);
     double mathExpected();
     void setDispersion(double value);
     double dispersion();
-    double random();
+    double _random();
 
 private:
     double m_mathExpected;
@@ -98,7 +110,7 @@ private:
  * @brief The Triangle class Треугольное распределение
  * http://rdostudio.raox.ru/help/help/rdo_lang_rus/html/rdo_theory/rdo_theory_seq_triangular.htm
  */
-class Triangle : public IRandom {
+class Triangle : public Random {
 public:
     Triangle(double a, double b, double m);
 
@@ -111,9 +123,7 @@ public:
     // IRandom interface
     double f(double val);
     double F(double val);
-    void setMathExpected(double value);
     double mathExpected();
-    void setDispersion(double value);
     double dispersion();
     double random();
 

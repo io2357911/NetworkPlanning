@@ -4,71 +4,100 @@
 #include <stdlib.h>
 
 namespace Math {
-namespace Random {
+
+
+double Random::f(double) {
+    return 0;
+}
+
+double Random::F(double) {
+    return 0;
+}
+
+void Random::setMathExpected(double) {
+}
+
+double Random::mathExpected() {
+    return 0;
+}
+
+void Random::setDispersion(double) {
+}
+
+double Random::dispersion() {
+    return 0;
+}
+
+void Random::setValue(double value) {
+    m_value = value;
+}
+
+double Random::value() {
+    return m_value;
+}
+
+double Random::random() {
+    m_value = _random();
+    return m_value;
+}
+
+
+namespace Randoms {
 
 using namespace Functions;
 
-double Uniform::rand() {
-    return ((double)::rand() / (double)(RAND_MAX));;
-}
 
-double Uniform::random() {
-    return rand();
+double Uniform::_random() {
+    return ((double)::rand() / (double)(RAND_MAX));
 }
 
 
-Value::Value(IRandom *random)
-    : m_random(random)
-{}
-
-double Value::f(double prob) {
-    if (!m_random) return 0;
-    return m_random->f(prob);
+double Empirical::f(double value) {
+    return 0;
 }
 
-double Value::F(double prob) {
-    if (!m_random) return 0;
-    return m_random->F(prob);
+double Empirical::F(double value) {
+    return 0;
 }
 
-double Value::mathExpected() {
-    if (!m_random) return 0;
-    return m_random->mathExpected();
+double Empirical::mathExpected() {
+    if (m_vals.isEmpty()) return 0;
+
+    double m = 0;
+    double N = m_vals.size();
+    for (int i = 0; i < N; i++) {
+        m += m_vals[i];
+    }
+
+    return m / N;
 }
 
-void Value::setMathExpected(double value) {
-    if (!m_random) return;
-    m_random->setMathExpected(value);
+double Empirical::dispersion() {
+    if (m_vals.isEmpty()) return 0;
+
+    double m = 0;
+    double m2 = 0;
+    double N = m_vals.size();
+    for (int i = 0; i < N; i++) {
+        double y = m_vals[i];
+        m += y;
+        m2 += pow(y, 2);
+    }
+
+    return m2 / N - pow(m / N, 2);
 }
 
-double Value::dispersion() {
-    if (!m_random) return 0;
-    return m_random->dispersion();
-}
-
-void Value::setDispersion(double value) {
-    if (!m_random) return;
-    m_random->setDispersion(value);
-}
-
-double Value::random() {
-    if (!m_random) return 0;
-
-    m_value = m_random->random();
-    return m_value;
-}
-
-void Value::setRandom(IRandom *random) {
-    if (m_random) delete m_random;
-    m_random = random;
-}
-
-double Value::value() const {
-    return m_value;
-}
-
-void Value::setValue(double value) {
+void Empirical::setValue(double value) {
     m_value = value;
+    m_vals.append(value);
+}
+
+double Empirical::value() {
+    return mathExpected();
+}
+
+double Empirical::_random() {
+    return 0;
 }
 
 
@@ -76,31 +105,7 @@ Beta::Beta(double a, double b, double m)
     : m_a(a), m_b(b), m_m(m)
 {}
 
-double Beta::f(double val) {
-    return 0;
-}
-
-double Beta::F(double val) {
-    return 0;
-}
-
-void Beta::setMathExpected(double value) {
-
-}
-
-double Beta::mathExpected() {
-    return 0;
-}
-
-void Beta::setDispersion(double value) {
-
-}
-
-double Beta::dispersion() {
-    return 0;
-}
-
-double Beta::random() {
+double Beta::_random() {
     return 0;
 }
 
@@ -145,17 +150,13 @@ double PertBeta::dispersion() {
     return dispersion(m_a, m_b, m_m);
 }
 
-double PertBeta::random() {
+double PertBeta::_random() {
     return random(m_a, m_b, m_m);
 }
 
 
 PertNormal::PertNormal()
 {}
-
-double PertNormal::f(double val) {
-    return 0;
-}
 
 double PertNormal::F(double val) {
     double M = mathExpected();
@@ -172,7 +173,7 @@ double PertNormal::dispersion() {
     return m_dispersion;
 }
 
-double PertNormal::random() {
+double PertNormal::_random() {
     return mathExpected();
 }
 
@@ -235,7 +236,7 @@ double Triangle::dispersion(double a, double b, double c) {
 }
 
 double Triangle::random(double a, double b, double c) {
-    double y = Uniform::rand();
+    double y = Uniform().random();
 
     // (c-a)*(b-a)
     double m = (c-a)*(b-a);
@@ -258,14 +259,8 @@ double Triangle::F(double x) {
     return F(x, m_a, m_b, m_m);
 }
 
-void Triangle::setMathExpected(double) {
-}
-
 double Triangle::mathExpected() {
     return mathExpected(m_a, m_b, m_m);
-}
-
-void Triangle::setDispersion(double) {
 }
 
 double Triangle::dispersion() {

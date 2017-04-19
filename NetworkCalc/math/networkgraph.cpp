@@ -101,7 +101,7 @@ Work::Work(Event *event1,
       m_timeMin(timeMin),
       m_timeMax(timeMax),
       m_timeAvg(timeAvg),
-      m_time(timeRandom == 0 ? new Random::PertBeta(this) : timeRandom->create(this)),
+      m_time(timeRandom == 0 ? new Randoms::PertBeta(this) : timeRandom->create(this)),
       m_timeSpeed(timeSpeed == 0 ? new Math::Functions::Linear : timeSpeed),
       m_fullReserve(fullReserve),
       m_isCritical(isCritical),
@@ -133,9 +133,10 @@ double Work::resourseCount() {
 }
 
 double Work::cost() {
+    if (!m_time) return 0;
     if (!m_resourse) return 0;
 
-    return m_time.value() * m_resourse->cost() * m_resourseCount;
+    return m_time->value() * m_resourse->cost() * m_resourseCount;
 }
 
 void Work::setTimeMin(double value) {
@@ -186,14 +187,15 @@ double Work::timeAvg(bool unitResourse) {
     return m_timeAvg / m_timeSpeed->value(m_resourseCount);
 }
 
-Math::Random::Value *Work::time() {
-    return &m_time;
+void Work::setTime(IRandomFactory* factory) {
+    if (!factory) return;
+    if (m_time) delete m_time;
+
+    m_time = factory->create(this);
 }
 
-void Work::setTimeRandom(IRandomFactory* factory) {
-    if (!factory) return;
-
-    m_time.setRandom(factory->create(this));
+Math::Random *Work::time() {
+    return m_time;
 }
 
 double Work::fullReserve() const {
@@ -221,18 +223,30 @@ bool Work::isVirtual() const {
 }
 
 
-NetworkGraph::NetworkGraph() {}
+NetworkGraph::NetworkGraph() : m_time(0), m_cost(0) {}
 
 NetworkGraph::NetworkGraph(QVector<Event *> vertices, QVector<Work *> edges)
-    : Graph(vertices, edges)
+    : Graph(vertices, edges), m_time(0), m_cost(0)
 {}
 
-Math::Random::Value *NetworkGraph::time() {
-    return &m_time;
+void NetworkGraph::setTime(Random *time) {
+    if (m_time) delete m_time;
+
+    m_time = time;
 }
 
-Math::Random::Value *NetworkGraph::cost() {
-    return &m_cost;
+Math::Random *NetworkGraph::time() {
+    return m_time;
+}
+
+void NetworkGraph::setCost(Random *cost) {
+    if (m_cost) delete m_cost;
+
+    m_cost = cost;
+}
+
+Math::Random *NetworkGraph::cost() {
+    return m_cost;
 }
 
 QVector<Work*> NetworkGraph::criticalPath() {
@@ -262,11 +276,11 @@ QVector<Work*> NetworkGraph::criticalPath() {
     return critPath;
 }
 
-namespace Random {
+namespace Randoms {
 
 double Triangle::f(double val) {
     if (!m_work) return 0;
-    return Math::Random::Triangle::f(val,
+    return Math::Randoms::Triangle::f(val,
                                      m_work->timeMin(false),
                                      m_work->timeMax(false),
                                      m_work->timeAvg(false));
@@ -274,33 +288,29 @@ double Triangle::f(double val) {
 
 double Triangle::F(double val) {
     if (!m_work) return 0;
-    return Math::Random::Triangle::F(val,
+    return Math::Randoms::Triangle::F(val,
                                      m_work->timeMin(false),
                                      m_work->timeMax(false),
                                      m_work->timeAvg(false));
 }
 
-void Triangle::setMathExpected(double) {}
-
 double Triangle::mathExpected() {
     if (!m_work) return 0;
-    return Math::Random::Triangle::mathExpected(m_work->timeMin(false),
+    return Math::Randoms::Triangle::mathExpected(m_work->timeMin(false),
                                                 m_work->timeMax(false),
                                                 m_work->timeAvg(false));
 }
 
-void Triangle::setDispersion(double) {}
-
 double Triangle::dispersion() {
     if (!m_work) return 0;
-    return Math::Random::Triangle::dispersion(m_work->timeMin(false),
+    return Math::Randoms::Triangle::dispersion(m_work->timeMin(false),
                                               m_work->timeMax(false),
                                               m_work->timeAvg(false));
 }
 
-double Triangle::random() {
+double Triangle::_random() {
     if (!m_work) return 0;
-    return Math::Random::Triangle::random(m_work->timeMin(false),
+    return Math::Randoms::Triangle::random(m_work->timeMin(false),
                                           m_work->timeMax(false),
                                           m_work->timeAvg(false));
 }
@@ -308,7 +318,7 @@ double Triangle::random() {
 
 double PertBeta::f(double val) {
     if (!m_work) return 0;
-    return Math::Random::PertBeta::f(val,
+    return Math::Randoms::PertBeta::f(val,
                                      m_work->timeMin(false),
                                      m_work->timeMax(false),
                                      m_work->timeAvg(false));
@@ -316,33 +326,29 @@ double PertBeta::f(double val) {
 
 double PertBeta::F(double val) {
     if (!m_work) return 0;
-    return Math::Random::PertBeta::F(val,
+    return Math::Randoms::PertBeta::F(val,
                                      m_work->timeMin(false),
                                      m_work->timeMax(false),
                                      m_work->timeAvg(false));
 }
 
-void PertBeta::setMathExpected(double) {}
-
 double PertBeta::mathExpected() {
     if (!m_work) return 0;
-    return Math::Random::PertBeta::mathExpected(m_work->timeMin(false),
+    return Math::Randoms::PertBeta::mathExpected(m_work->timeMin(false),
                                                 m_work->timeMax(false),
                                                 m_work->timeAvg(false));
 }
 
-void PertBeta::setDispersion(double) {}
-
 double PertBeta::dispersion() {
     if (!m_work) return 0;
-    return Math::Random::PertBeta::dispersion(m_work->timeMin(false),
+    return Math::Randoms::PertBeta::dispersion(m_work->timeMin(false),
                                               m_work->timeMax(false),
                                               m_work->timeAvg(false));
 }
 
-double PertBeta::random() {
+double PertBeta::_random() {
     if (!m_work) return 0;
-    return Math::Random::PertBeta::random(m_work->timeMin(false),
+    return Math::Randoms::PertBeta::random(m_work->timeMin(false),
                                           m_work->timeMax(false),
                                           m_work->timeAvg(false));
 }

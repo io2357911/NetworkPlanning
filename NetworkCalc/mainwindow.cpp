@@ -11,8 +11,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->aGraphNew, SIGNAL(triggered()),
             ui->widgetNetworkGraph, SLOT(newGraph()));
 
-    connect(ui->aComputeNetworkGraph, SIGNAL(triggered()),
-            ui->widgetNetworkGraph, SLOT(computeNetworkGraph()));
+    connect(ui->aComputePert, SIGNAL(triggered()),
+            ui->widgetNetworkGraph, SLOT(computePert()));
+    connect(ui->aComputeMonteCarlo, SIGNAL(triggered()),
+            ui->widgetNetworkGraph, SLOT(computeMonteCarlo()));
 //    connect(ui->aComputeAssigns, SIGNAL(triggered()),
 //            ui->widgetNetworkGraph, SLOT(computeAssigns()));
 //    connect(ui->aComputeAssignsWithTime, SIGNAL(triggered()),
@@ -64,8 +66,8 @@ void MainWindow::onSaveGraph() {
 //}
 
 void MainWindow::onGraphComputed(NetworkGraph *graph) {
-    ui->sbCost->setValue(graph->cost()->value());
-    ui->sbTime->setValue(graph->time()->value());
+    ui->dsbCost->setValue(graph->cost()->value());
+    ui->dsbTime->setValue(graph->time()->value());
 }
 
 MainWindow::~MainWindow() {

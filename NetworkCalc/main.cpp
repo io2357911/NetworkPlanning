@@ -8,7 +8,7 @@
 using namespace Math;
 using namespace Math::Planning;
 using namespace Math::Planning::Algorithms;
-using namespace Math::Planning::Random;
+using namespace Math::Planning::Randoms;
 
 void testNetworkGraph() {
     Resourse res("People", 20, 1);

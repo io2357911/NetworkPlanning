@@ -14,17 +14,17 @@ namespace Algorithms {
 
 bool PertNetworkAlgorithm::compute() {
     // зададим вероятностные хар-ки
-    Random::PertBetaFactory     workTimeRandom;
-    Math::Random::PertNormal*   graphTimeRandom = new Math::Random::PertNormal;
-    Math::Random::PertNormal*   graphCostRandom = new Math::Random::PertNormal;
+    Randoms::PertBetaFactory    workTime;
+    Random*                     graphTime = new Math::Randoms::PertNormal;
+    Random*                     graphCost = new Math::Randoms::PertNormal;
 
     QVector<Work*> works = m_graph->edges();
     for (int i = 0; i < works.size(); i++) {
-        works[i]->setTimeRandom(&workTimeRandom);
+        works[i]->setTime(&workTime);
         works[i]->time()->random();
     }
-    m_graph->time()->setRandom(graphTimeRandom);
-    m_graph->cost()->setRandom(graphCostRandom);
+    m_graph->setTime(graphTime);
+    m_graph->setCost(graphCost);
 
     // расчет сетевого графа
     if (!NetworkAlgorithm(m_graph).compute()) return false;
@@ -32,45 +32,79 @@ bool PertNetworkAlgorithm::compute() {
     // расчет крит. пути
     if (!CriticalPathAlgorithm(m_graph).compute()) return false;
 
-    // расчет времени
-    if (!TimeAlgorithm(m_graph).compute()) return false;
-
     // расчет стоимости
     if (!CostAlgorithm(m_graph).compute()) return false;
+
+    // расчет времени
+    if (!computeTime()) return false;
+
+    return true;
+}
+
+bool PertNetworkAlgorithm::computeTime() {
+    double value = 0;
+    double mathExpected = 0;
+    double dispersion = 0;
+    QVector<Work*> critPath = m_graph->criticalPath();
+    for (int i = 0; i < critPath.size(); i++) {
+        value += critPath[i]->time()->value();
+        mathExpected += critPath[i]->time()->mathExpected();
+        dispersion += critPath[i]->time()->dispersion();
+    }
+    m_graph->time()->setValue(value);
+    m_graph->time()->setMathExpected(mathExpected);
+    m_graph->time()->setDispersion(dispersion);
 
     return true;
 }
 
 
-MonteCarloNetworkAlgorithm::MonteCarloNetworkAlgorithm(NetworkGraph *graph, int iterations)
+MonteCarloNetworkAlgorithm::MonteCarloNetworkAlgorithm(NetworkGraph *graph, uint iterations)
     : INetworkAlgorithm(graph), m_iterations(iterations)
 {}
 
 bool MonteCarloNetworkAlgorithm::compute() {
     // зададим вероятностные хар-ки
-    Random::TriangleFactory     workTimeRandom;
-    Math::Random::PertNormal*   graphTimeRandom = new Math::Random::PertNormal;
-    Math::Random::PertNormal*   graphCostRandom = new Math::Random::PertNormal;
+    Randoms::TriangleFactory    workTime;
+    Random*                     graphTime = new Math::Randoms::Empirical;
+    Random*                     graphCost = new Math::Randoms::Empirical;
 
     QVector<Work*> works = m_graph->edges();
     for (int i = 0; i < works.size(); i++) {
-        works[i]->setTimeRandom(&workTimeRandom);
-        works[i]->time()->random();
+        works[i]->setTime(&workTime);
     }
-    m_graph->time()->setRandom(graphTimeRandom);
-    m_graph->cost()->setRandom(graphCostRandom);
+    m_graph->setTime(graphTime);
+    m_graph->setCost(graphCost);
 
-    // расчет сетевого графа
-    if (!NetworkAlgorithm(m_graph).compute()) return false;
+    for (uint i = 0; i < m_iterations; i++) {
+        // имитация случайных длительностей работ
+        for (int i = 0; i < works.size(); i++) {
+            works[i]->time()->random();
+        }
 
-    // расчет крит. пути
-    if (!CriticalPathAlgorithm(m_graph).compute()) return false;
+        // расчет сетевого графа
+        if (!NetworkAlgorithm(m_graph).compute()) return false;
 
-    // расчет времени
-    if (!TimeAlgorithm(m_graph).compute()) return false;
+        // расчет крит. пути
+        if (!CriticalPathAlgorithm(m_graph).compute()) return false;
 
-    // расчет стоимости
-    if (!CostAlgorithm(m_graph).compute()) return false;
+        // расчет стоимости
+        if (!CostAlgorithm(m_graph).compute()) return false;
+
+        // расчет времени
+        if (!computeTime()) return false;
+    }
+
+    return true;
+}
+
+bool MonteCarloNetworkAlgorithm::computeTime() {
+    double value = 0;
+    QVector<Work*> critPath = m_graph->criticalPath();
+    for (int i = 0; i < critPath.size(); i++) {
+        value += critPath[i]->time()->value();
+    }
+    m_graph->time()->setValue(value);
 
     return true;
 }
@@ -219,37 +253,31 @@ bool CriticalPathAlgorithm::compute() {
 
 bool CostAlgorithm::compute() {
     double value = 0;
-//    double mathExpected = 0;
-//    double dispersion = 0;
     QVector<Work*> works = m_graph->edges();
     for (int i = 0; i < works.size(); i++) {
         value += works[i]->cost();
-//        mathExpected += works[i]->cost()->mathExpected();
-//        dispersion += works[i]->cost()->dispersion();
     }
     m_graph->cost()->setValue(value);
-//    m_graph->cost()->setMathExpected(mathExpected);
-//    m_graph->cost()->setDispersion(dispersion);
 
     return true;
 }
 
-bool TimeAlgorithm::compute() {
-    double value = 0;
-    double mathExpected = 0;
-    double dispersion = 0;
-    QVector<Work*> critPath = m_graph->criticalPath();
-    for (int i = 0; i < critPath.size(); i++) {
-        value += critPath[i]->time()->value();
-        mathExpected += critPath[i]->time()->mathExpected();
-        dispersion += critPath[i]->time()->dispersion();
-    }
-    m_graph->time()->setValue(value);
-    m_graph->time()->setMathExpected(mathExpected);
-    m_graph->time()->setDispersion(dispersion);
+//bool TimeAlgorithm::compute() {
+//    double value = 0;
+//    double mathExpected = 0;
+//    double dispersion = 0;
+//    QVector<Work*> critPath = m_graph->criticalPath();
+//    for (int i = 0; i < critPath.size(); i++) {
+//        value += critPath[i]->time()->value();
+//        mathExpected += critPath[i]->time()->mathExpected();
+//        dispersion += critPath[i]->time()->dispersion();
+//    }
+//    m_graph->time()->setValue(value);
+//    m_graph->time()->setMathExpected(mathExpected);
+//    m_graph->time()->setDispersion(dispersion);
 
-    return true;
-}
+//    return true;
+//}
 
 } // namespace Algorithms
 } // namespace Planning
