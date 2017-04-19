@@ -5,12 +5,11 @@
 #-------------------------------------------------
 
 QT       += core gui
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 QMAKE_CXXFLAGS += -std=c++0x
 
 TARGET = NetworkCalc
 TEMPLATE = app
-
 
 SOURCES += \
     main.cpp \
@@ -27,6 +26,7 @@ SOURCES += \
     mainwindow.cpp \
     view/resourseswidget.cpp \
     view/workresourse.cpp \
+    view/qcustomplot.cpp \
     tools/tools.cpp
 #    view/workerswidget.cpp
 
@@ -45,6 +45,7 @@ HEADERS  += \
     view/workwidget.h \
     view/eventpropertiesdialog.h \
     view/workpropertiesdialog.h \
+    view/qcustomplot.h \
     mainwindow.h \
     view/resourseswidget.h \
     view/workresourse.h \
