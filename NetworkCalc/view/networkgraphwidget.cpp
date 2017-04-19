@@ -227,6 +227,13 @@ void NetworkGraphWidget::computeNetworkGraph() {
 //    CostAlgorithm().compute(&graph);
 //    TimeAlgorithm().compute(&graph);
 
+
+//    if (!PertNetworkAlgorithm(&graph).compute()) {
+    if (!MonteCarloNetworkAlgorithm(&graph).compute()) {
+        qDebug("computeNetworkGraph - FAILED");
+        return;
+    }
+
     emit graphComputed(&graph);
 
     repaint();

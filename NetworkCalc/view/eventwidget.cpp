@@ -3,6 +3,8 @@
 #include <QPainter>
 #include <QMenu>
 
+#include "../tools/tools.h"
+
 EventWidget::EventWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::EventWidget) {
@@ -125,6 +127,7 @@ void EventWidget::setReserve(double value) {
 
 void EventWidget::onEventChanged() {
     ui->lID->setText(name());
-    ui->lEarlyTime->setText(QString::number(earlyTime()));
-    ui->lReserve->setText(QString::number(reserve()));
+    ui->lEarlyTime->setText(Tools::formatDouble(earlyTime()));
+    ui->lLateTime->setText(Tools::formatDouble(lateTime()));
+    ui->lReserve->setText(Tools::formatDouble(reserve()));
 }

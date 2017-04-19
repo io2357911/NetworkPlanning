@@ -6,6 +6,11 @@
 namespace Math {
 namespace Random {
 
+class Uniform : public IRandom {
+public:
+    virtual double random();
+};
+
 /**
  * @brief The Value class Класс случайной величины после генерации (random()) сохраняющий значение
  */
@@ -79,6 +84,29 @@ public:
 private:
     double m_mathExpected;
     double m_dispersion;
+};
+
+/**
+ * @brief The Triangle class Треугольное распределение
+ * http://rdostudio.raox.ru/help/help/rdo_lang_rus/html/rdo_theory/rdo_theory_seq_triangular.htm
+ */
+class Triangle : public Uniform {
+public:
+    Triangle(double a, double b, double m);
+
+    // IRandom interface
+    double f(double val);
+    double F(double val);
+    void setMathExpected(double value);
+    double mathExpected();
+    void setDispersion(double value);
+    double dispersion();
+    double random();
+
+private:
+    double m_a;
+    double m_b;
+    double m_m;
 };
 
 } // namespace Random

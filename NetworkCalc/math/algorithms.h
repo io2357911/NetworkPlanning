@@ -35,6 +35,15 @@ public:
     bool compute();
 };
 
+class MonteCarloNetworkAlgorithm : public INetworkAlgorithm {
+public:
+    MonteCarloNetworkAlgorithm(NetworkGraph* graph) : INetworkAlgorithm(graph) {}
+    virtual ~MonteCarloNetworkAlgorithm() {}
+
+    // IAlgorithm interface
+    bool compute();
+};
+
 /*!
  * \brief Класс алгоритма для рассчета сетевого графа
  *

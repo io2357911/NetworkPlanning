@@ -1,11 +1,17 @@
 #include "random.h"
 #include <math.h>
 #include "function.h"
+#include <stdlib.h>
 
 namespace Math {
 namespace Random {
 
 using namespace Functions;
+
+double Uniform::random() {
+    return ((double)rand() / (double)(RAND_MAX));;
+}
+
 
 Value::Value(IRandom *random)
     : m_random(random)
@@ -152,6 +158,77 @@ void PertNormal::setMathExpected(double value) {
 
 void PertNormal::setDispersion(double value) {
     m_dispersion = value;
+}
+
+
+Triangle::Triangle(double a, double b, double m)
+    : m_a(a), m_b(b), m_m(m)
+{}
+
+double Triangle::f(double x) {
+    if (x < m_a) {
+        return 0;
+
+    } else if (x <= m_m) {
+        // 2*(x-a)/((b-a)*(c-a))
+        return 2*(x-m_a)/((m_b-m_a)*(m_m-m_a));
+
+    } else if (x <= m_b) {
+        // 2*(b-x)/((b-a)*(b-c))
+        return 2*(m_b-x)/((m_b-m_a)*(m_b-m_m));
+
+    } else {
+        return 0;
+    }
+}
+
+double Triangle::F(double x) {
+    if (x < m_a) {
+        return 0;
+
+    } else if (x < m_m) {
+        // (x-a)^2/((b-a)*(c-a))
+        return pow(x-m_a,2)/((m_b-m_a)*(m_m-m_a));
+
+    } else if (x <= m_b) {
+        // 1-(b-x)^2/((b-a)*(b-c))
+        return 1-pow(m_b-x,2)/((m_b-m_a)*(m_b-m_m));
+
+    } else {
+        return 1;
+    }
+}
+
+void Triangle::setMathExpected(double) {
+}
+
+double Triangle::mathExpected() {
+    // (a+b+c)/3
+    return (m_a+m_b+m_m)/3;
+}
+
+void Triangle::setDispersion(double) {
+}
+
+double Triangle::dispersion() {
+    // (a^2+b^2+c^2-a*b-a*c-b*c)/18
+    return (pow(m_a,2)+pow(m_b,2)+pow(m_m,2)-m_a*m_b-m_a*m_m-m_b*m_m)/18;
+}
+
+double Triangle::random() {
+    double y = Uniform::random();
+
+    // (c-a)*(b-a)
+    double m = (m_m-m_a)*(m_b-m_a);
+
+    if (y <= m) {
+        // sqrt(y*(b-a)*(c-a))+a
+        return sqrt(y*(m_b-m_a)*(m_m-m_a))+m_a;
+
+    } else {
+        // b-sqrt((1-y)*(b-a)*(b-c))
+        return m_b-sqrt((1-y)*(m_b-m_a)*(m_b-m_m));
+    }
 }
 
 } // namespace Randoms

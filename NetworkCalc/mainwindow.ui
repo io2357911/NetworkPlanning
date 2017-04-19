@@ -143,8 +143,6 @@
      <string>Рассчет</string>
     </property>
     <addaction name="aComputeNetworkGraph"/>
-    <addaction name="aComputeAssigns"/>
-    <addaction name="aComputeAssignsWithTime"/>
    </widget>
    <widget class="QMenu" name="menu_2">
     <property name="title">

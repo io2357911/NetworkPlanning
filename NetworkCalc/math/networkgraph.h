@@ -157,25 +157,25 @@ public: \
     {} \
     double f(double val) { \
         if (!m_work) return 0; \
-        return Math::Random::randomClass(m_work->timeMin(), m_work->timeMax(), m_work->timeAvg()).f(val); \
+        return Math::Random::randomClass(m_work->timeMin(false), m_work->timeMax(false), m_work->timeAvg(false)).f(val); \
     } \
     double F(double val) { \
         if (!m_work) return 0; \
-        return Math::Random::randomClass(m_work->timeMin(), m_work->timeMax(), m_work->timeAvg()).F(val); \
+        return Math::Random::randomClass(m_work->timeMin(false), m_work->timeMax(false), m_work->timeAvg(false)).F(val); \
     } \
     void setMathExpected(double /*value*/) {} \
     double mathExpected() { \
         if (!m_work) return 0; \
-        return Math::Random::randomClass(m_work->timeMin(), m_work->timeMax(), m_work->timeAvg()).mathExpected(); \
+        return Math::Random::randomClass(m_work->timeMin(false), m_work->timeMax(false), m_work->timeAvg(false)).mathExpected(); \
     } \
     void setDispersion(double /*value*/) {} \
     double dispersion() { \
         if (!m_work) return 0; \
-        return Math::Random::randomClass(m_work->timeMin(), m_work->timeMax(), m_work->timeAvg()).dispersion(); \
+        return Math::Random::randomClass(m_work->timeMin(false), m_work->timeMax(false), m_work->timeAvg(false)).dispersion(); \
     } \
     double random() { \
         if (!m_work) return 0; \
-        return Math::Random::randomClass(m_work->timeMin(), m_work->timeMax(), m_work->timeAvg()).random(); \
+        return Math::Random::randomClass(m_work->timeMin(false), m_work->timeMax(false), m_work->timeAvg(false)).random(); \
     } \
 protected: \
     Work *m_work; \
@@ -187,6 +187,7 @@ public: \
 
 WORK_RANDOM(Beta)
 WORK_RANDOM(PertBeta)
+WORK_RANDOM(Triangle)
 
 } // namespace Randoms
 

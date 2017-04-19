@@ -26,8 +26,8 @@ void EventPropertiesDialog::setEvent(Event *value) {
     event = value;
 
     ui->leName->setText(event->name());
-    ui->sbEarlyTime->setValue(event->earlyTime());
-    ui->sbLateTime->setValue(event->lateTime());
-    ui->sbReserve->setValue(event->reserve());
+    ui->dsbEarlyTime->setValue(event->earlyTime());
+    ui->dsbLateTime->setValue(event->lateTime());
+    ui->dsbReserve->setValue(event->reserve());
 }
 

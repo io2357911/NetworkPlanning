@@ -13,19 +13,47 @@ namespace Planning {
 namespace Algorithms {
 
 bool PertNetworkAlgorithm::compute() {
-
     // зададим вероятностные хар-ки
-    Random::PertBetaFactory     workRandomTime;
-    Math::Random::PertNormal*   graphRandomTime = new Math::Random::PertNormal;
-    Math::Random::PertNormal*   graphRandomCost = new Math::Random::PertNormal;
+    Random::PertBetaFactory     workTimeRandom;
+    Math::Random::PertNormal*   graphTimeRandom = new Math::Random::PertNormal;
+    Math::Random::PertNormal*   graphCostRandom = new Math::Random::PertNormal;
 
     QVector<Work*> works = m_graph->edges();
     for (int i = 0; i < works.size(); i++) {
-        works[i]->setTimeRandom(&workRandomTime);
+        works[i]->setTimeRandom(&workTimeRandom);
         works[i]->time()->random();
     }
-    m_graph->time()->setRandom(graphRandomTime);
-    m_graph->cost()->setRandom(graphRandomCost);
+    m_graph->time()->setRandom(graphTimeRandom);
+    m_graph->cost()->setRandom(graphCostRandom);
+
+    // расчет сетевого графа
+    if (!NetworkAlgorithm(m_graph).compute()) return false;
+
+    // расчет крит. пути
+    if (!CriticalPathAlgorithm(m_graph).compute()) return false;
+
+    // расчет времени
+    if (!TimeAlgorithm(m_graph).compute()) return false;
+
+    // расчет стоимости
+    if (!CostAlgorithm(m_graph).compute()) return false;
+
+    return true;
+}
+
+bool MonteCarloNetworkAlgorithm::compute() {
+    // зададим вероятностные хар-ки
+    Random::TriangleFactory     workTimeRandom;
+    Math::Random::PertNormal*   graphTimeRandom = new Math::Random::PertNormal;
+    Math::Random::PertNormal*   graphCostRandom = new Math::Random::PertNormal;
+
+    QVector<Work*> works = m_graph->edges();
+    for (int i = 0; i < works.size(); i++) {
+        works[i]->setTimeRandom(&workTimeRandom);
+        works[i]->time()->random();
+    }
+    m_graph->time()->setRandom(graphTimeRandom);
+    m_graph->cost()->setRandom(graphCostRandom);
 
     // расчет сетевого графа
     if (!NetworkAlgorithm(m_graph).compute()) return false;

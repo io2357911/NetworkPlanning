@@ -26,7 +26,8 @@ SOURCES += \
     view/workpropertiesdialog.cpp \
     mainwindow.cpp \
     view/resourseswidget.cpp \
-    view/workresourse.cpp
+    view/workresourse.cpp \
+    tools/tools.cpp
 #    view/workerswidget.cpp
 
 HEADERS  += \
@@ -46,7 +47,8 @@ HEADERS  += \
     view/workpropertiesdialog.h \
     mainwindow.h \
     view/resourseswidget.h \
-    view/workresourse.h
+    view/workresourse.h \
+    tools/tools.h
 #    view/workerswidget.h
 
 

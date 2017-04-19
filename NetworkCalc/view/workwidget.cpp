@@ -2,6 +2,8 @@
 #include "ui_workwidget.h"
 #include <QMenu>
 
+#include "../tools/tools.h"
+
 WorkWidget::WorkWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::WorkWidget),
@@ -102,7 +104,12 @@ void WorkWidget::setIsVirtual(bool value) {
 }
 
 void WorkWidget::onWorkChanged() {
-    QString info = QString("%1\n{%2,%3,%4}").arg(name()).arg(timeMin()).arg(timeAvg()).arg(timeMax());
+    QString info = QString("%1\n{%2,%3,%4}\n%5")
+            .arg(name())
+            .arg(timeMin())
+            .arg(timeAvg())
+            .arg(timeMax())
+            .arg(Tools::formatDouble(time()->value()));
 
     ui->lInfo->setText(info);
     ui->lInfo->setVisible(!isVirtual());
@@ -160,7 +167,7 @@ void WorkWidget::restore(QString fileName) {
     INI::Settings setts = INI::restore(keys, fileName, QString("Work_%1").arg(name()));
 
     if (setts["resourseCount"].isValid())
-        setTimeMin(setts["resourseCount"].toDouble());
+        setResourseCount(setts["resourseCount"].toDouble());
 
     if (setts["timeMin"].isValid())
         setTimeMin(setts["timeMin"].toDouble());

@@ -135,7 +135,7 @@ double Work::resourseCount() {
 double Work::cost() {
     if (!m_resourse) return 0;
 
-    return m_time.value() * m_resourse->cost();
+    return m_time.value() * m_resourse->cost() * m_resourseCount;
 }
 
 void Work::setTimeMin(double value) {
