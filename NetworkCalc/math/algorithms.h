@@ -37,11 +37,14 @@ public:
 
 class MonteCarloNetworkAlgorithm : public INetworkAlgorithm {
 public:
-    MonteCarloNetworkAlgorithm(NetworkGraph* graph) : INetworkAlgorithm(graph) {}
+    MonteCarloNetworkAlgorithm(NetworkGraph* graph, int iterations);
     virtual ~MonteCarloNetworkAlgorithm() {}
 
     // IAlgorithm interface
     bool compute();
+
+private:
+    int m_iterations;
 };
 
 /*!
@@ -107,19 +110,6 @@ public:
 
     // IAlgorithm interface
     bool compute();
-};
-
-
-/*!
- * \brief Класс алгоритма нахождения
- */
-class MonteCarloModelingAlgorithm {
-public:
-    virtual ~MonteCarloModelingAlgorithm() {}
-    virtual void compute(NetworkGraph *graph);
-
-private:
-    void modelWorks(NetworkGraph *graph);
 };
 
 } // namespace Algorithms

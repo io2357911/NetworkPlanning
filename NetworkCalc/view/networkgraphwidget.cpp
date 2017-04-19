@@ -229,7 +229,7 @@ void NetworkGraphWidget::computeNetworkGraph() {
 
 
 //    if (!PertNetworkAlgorithm(&graph).compute()) {
-    if (!MonteCarloNetworkAlgorithm(&graph).compute()) {
+    if (!MonteCarloNetworkAlgorithm(&graph, 1).compute()) {
         qDebug("computeNetworkGraph - FAILED");
         return;
     }

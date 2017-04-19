@@ -149,45 +149,91 @@ private:
 
 namespace Random {
 
-#define WORK_RANDOM(randomClass)  \
-class randomClass : public IRandom { \
-public: \
-    randomClass(Work* work) \
-        : m_work(work) \
-    {} \
-    double f(double val) { \
-        if (!m_work) return 0; \
-        return Math::Random::randomClass(m_work->timeMin(false), m_work->timeMax(false), m_work->timeAvg(false)).f(val); \
-    } \
-    double F(double val) { \
-        if (!m_work) return 0; \
-        return Math::Random::randomClass(m_work->timeMin(false), m_work->timeMax(false), m_work->timeAvg(false)).F(val); \
-    } \
-    void setMathExpected(double /*value*/) {} \
-    double mathExpected() { \
-        if (!m_work) return 0; \
-        return Math::Random::randomClass(m_work->timeMin(false), m_work->timeMax(false), m_work->timeAvg(false)).mathExpected(); \
-    } \
-    void setDispersion(double /*value*/) {} \
-    double dispersion() { \
-        if (!m_work) return 0; \
-        return Math::Random::randomClass(m_work->timeMin(false), m_work->timeMax(false), m_work->timeAvg(false)).dispersion(); \
-    } \
-    double random() { \
-        if (!m_work) return 0; \
-        return Math::Random::randomClass(m_work->timeMin(false), m_work->timeMax(false), m_work->timeAvg(false)).random(); \
-    } \
-protected: \
-    Work *m_work; \
-}; \
-class randomClass##Factory : public IRandomFactory { \
-public: \
-    IRandom* create(Work* work) { return new randomClass(work); } \
+
+class WorkBased : public IRandom {
+public:
+    WorkBased(Work* work) : m_work(work) {}
+
+protected:
+    Work* m_work;
 };
 
-WORK_RANDOM(Beta)
-WORK_RANDOM(PertBeta)
-WORK_RANDOM(Triangle)
+
+class Triangle : public WorkBased {
+public:
+    Triangle(Work* work) : WorkBased(work) {}
+
+    double f(double val);
+    double F(double val);
+    void setMathExpected(double /*value*/);
+    double mathExpected();
+    void setDispersion(double /*value*/);
+    double dispersion();
+    double random();
+};
+class TriangleFactory : public IRandomFactory { \
+public: \
+    IRandom* create(Work* work) { return new Triangle(work); } \
+};
+
+
+class PertBeta : public WorkBased {
+public:
+    PertBeta(Work* work) : WorkBased(work) {}
+
+    double f(double val);
+    double F(double val);
+    void setMathExpected(double /*value*/);
+    double mathExpected();
+    void setDispersion(double /*value*/);
+    double dispersion();
+    double random();
+};
+class PertBetaFactory : public IRandomFactory { \
+public: \
+    IRandom* create(Work* work) { return new PertBeta(work); } \
+};
+
+
+//#define WORK_RANDOM(randomClass)  \
+//class randomClass : public IRandom { \
+//public: \
+//    randomClass(Work* work) \
+//        : m_work(work) \
+//    {} \
+//    double f(double val) { \
+//        if (!m_work) return 0; \
+//        return Math::Random::randomClass(m_work->timeMin(false), m_work->timeMax(false), m_work->timeAvg(false)).f(val); \
+//    } \
+//    double F(double val) { \
+//        if (!m_work) return 0; \
+//        return Math::Random::randomClass(m_work->timeMin(false), m_work->timeMax(false), m_work->timeAvg(false)).F(val); \
+//    } \
+//    void setMathExpected(double /*value*/) {} \
+//    double mathExpected() { \
+//        if (!m_work) return 0; \
+//        return Math::Random::randomClass(m_work->timeMin(false), m_work->timeMax(false), m_work->timeAvg(false)).mathExpected(); \
+//    } \
+//    void setDispersion(double /*value*/) {} \
+//    double dispersion() { \
+//        if (!m_work) return 0; \
+//        return Math::Random::randomClass(m_work->timeMin(false), m_work->timeMax(false), m_work->timeAvg(false)).dispersion(); \
+//    } \
+//    double random() { \
+//        if (!m_work) return 0; \
+//        return Math::Random::randomClass(m_work->timeMin(false), m_work->timeMax(false), m_work->timeAvg(false)).random(); \
+//    } \
+//protected: \
+//    Work *m_work; \
+//}; \
+//class randomClass##Factory : public IRandomFactory { \
+//public: \
+//    IRandom* create(Work* work) { return new randomClass(work); } \
+//};
+
+//WORK_RANDOM(Beta)
+//WORK_RANDOM(PertBeta)
+//WORK_RANDOM(Triangle)
 
 } // namespace Randoms
 

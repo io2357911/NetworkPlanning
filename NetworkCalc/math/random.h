@@ -8,6 +8,8 @@ namespace Random {
 
 class Uniform : public IRandom {
 public:
+    static double rand();
+
     virtual double random();
 };
 
@@ -60,6 +62,12 @@ class PertBeta : public Beta {
 public:
     PertBeta(double a, double b, double m);
 
+    static double f(double val, double a, double b, double m);
+    static double F(double val, double a, double b, double m);
+    static double mathExpected(double a, double b, double m);
+    static double dispersion(double a, double b, double m);
+    static double random(double a, double b, double m);
+
     // IRandom interface
     double f(double val);
     double F(double val);
@@ -90,9 +98,15 @@ private:
  * @brief The Triangle class Треугольное распределение
  * http://rdostudio.raox.ru/help/help/rdo_lang_rus/html/rdo_theory/rdo_theory_seq_triangular.htm
  */
-class Triangle : public Uniform {
+class Triangle : public IRandom {
 public:
     Triangle(double a, double b, double m);
+
+    static double f(double val, double a, double b, double m);
+    static double F(double val, double a, double b, double m);
+    static double mathExpected(double a, double b, double m);
+    static double dispersion(double a, double b, double m);
+    static double random(double a, double b, double m);
 
     // IRandom interface
     double f(double val);

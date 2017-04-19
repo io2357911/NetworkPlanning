@@ -41,6 +41,11 @@ bool PertNetworkAlgorithm::compute() {
     return true;
 }
 
+
+MonteCarloNetworkAlgorithm::MonteCarloNetworkAlgorithm(NetworkGraph *graph, int iterations)
+    : INetworkAlgorithm(graph), m_iterations(iterations)
+{}
+
 bool MonteCarloNetworkAlgorithm::compute() {
     // зададим вероятностные хар-ки
     Random::TriangleFactory     workTimeRandom;
@@ -244,22 +249,6 @@ bool TimeAlgorithm::compute() {
     m_graph->time()->setDispersion(dispersion);
 
     return true;
-}
-
-void MonteCarloModelingAlgorithm::compute(NetworkGraph */*graph*/) {
-    int exps = 50;
-    for (int i = 0; i < exps; i++) {
-//        works[i]->time()->random();
-
-    }
-}
-
-void MonteCarloModelingAlgorithm::modelWorks(NetworkGraph *graph) {
-    QVector<Work*> works = graph->edges();
-    for (int i = 0; i < works.size(); i++) {
-        Work* work = works[i];
-        work->time()->random();
-    }
 }
 
 } // namespace Algorithms

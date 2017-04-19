@@ -262,5 +262,93 @@ QVector<Work*> NetworkGraph::criticalPath() {
     return critPath;
 }
 
+namespace Random {
+
+double Triangle::f(double val) {
+    if (!m_work) return 0;
+    return Math::Random::Triangle::f(val,
+                                     m_work->timeMin(false),
+                                     m_work->timeMax(false),
+                                     m_work->timeAvg(false));
+}
+
+double Triangle::F(double val) {
+    if (!m_work) return 0;
+    return Math::Random::Triangle::F(val,
+                                     m_work->timeMin(false),
+                                     m_work->timeMax(false),
+                                     m_work->timeAvg(false));
+}
+
+void Triangle::setMathExpected(double) {}
+
+double Triangle::mathExpected() {
+    if (!m_work) return 0;
+    return Math::Random::Triangle::mathExpected(m_work->timeMin(false),
+                                                m_work->timeMax(false),
+                                                m_work->timeAvg(false));
+}
+
+void Triangle::setDispersion(double) {}
+
+double Triangle::dispersion() {
+    if (!m_work) return 0;
+    return Math::Random::Triangle::dispersion(m_work->timeMin(false),
+                                              m_work->timeMax(false),
+                                              m_work->timeAvg(false));
+}
+
+double Triangle::random() {
+    if (!m_work) return 0;
+    return Math::Random::Triangle::random(m_work->timeMin(false),
+                                          m_work->timeMax(false),
+                                          m_work->timeAvg(false));
+}
+
+
+double PertBeta::f(double val) {
+    if (!m_work) return 0;
+    return Math::Random::PertBeta::f(val,
+                                     m_work->timeMin(false),
+                                     m_work->timeMax(false),
+                                     m_work->timeAvg(false));
+}
+
+double PertBeta::F(double val) {
+    if (!m_work) return 0;
+    return Math::Random::PertBeta::F(val,
+                                     m_work->timeMin(false),
+                                     m_work->timeMax(false),
+                                     m_work->timeAvg(false));
+}
+
+void PertBeta::setMathExpected(double) {}
+
+double PertBeta::mathExpected() {
+    if (!m_work) return 0;
+    return Math::Random::PertBeta::mathExpected(m_work->timeMin(false),
+                                                m_work->timeMax(false),
+                                                m_work->timeAvg(false));
+}
+
+void PertBeta::setDispersion(double) {}
+
+double PertBeta::dispersion() {
+    if (!m_work) return 0;
+    return Math::Random::PertBeta::dispersion(m_work->timeMin(false),
+                                              m_work->timeMax(false),
+                                              m_work->timeAvg(false));
+}
+
+double PertBeta::random() {
+    if (!m_work) return 0;
+    return Math::Random::PertBeta::random(m_work->timeMin(false),
+                                          m_work->timeMax(false),
+                                          m_work->timeAvg(false));
+}
+
+
+} // namespace Random
+
 } // namespace Planning
 } // namespace Math
