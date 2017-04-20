@@ -234,7 +234,7 @@ void NetworkGraphWidget::computePert() {
 }
 
 void NetworkGraphWidget::computeMonteCarlo() {
-    if (!MonteCarloNetworkAlgorithm(&graph, 100).compute()) {
+    if (!MonteCarloNetworkAlgorithm(&graph, 500).compute()) {
         qDebug("computeMoteCarlo - FAILED");
         return;
     }

@@ -22,6 +22,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->widgetNetworkGraph, SIGNAL(graphComputed(NetworkGraph*)),
             this, SLOT(onGraphComputed(NetworkGraph*)));
+    connect(ui->widgetNetworkGraph, SIGNAL(graphComputed(NetworkGraph*)),
+            ui->qcp_f, SLOT(onGraphComputed(NetworkGraph*)));
+    connect(ui->widgetNetworkGraph, SIGNAL(graphComputed(NetworkGraph*)),
+            ui->qcp_F, SLOT(onGraphComputed(NetworkGraph*)));
 
     connect(ui->aWorkers, SIGNAL(triggered()),
             ui->widgetNetworkGraph, SIGNAL(showWorkers()));
@@ -33,6 +37,9 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(onOpenGraph()));
     connect(ui->aGraphSave, SIGNAL(triggered()),
             this, SLOT(onSaveGraph()));
+
+    ui->qcp_f->setFunctionType(QMyCustomPlot::f);
+    ui->qcp_F->setFunctionType(QMyCustomPlot::F);
 
 //    ui->widgetNetworkGraph->setAssingsWidget(ui->wAssigns);
     ui->widgetNetworkGraph->setResoursesWidget(ui->wResourses);

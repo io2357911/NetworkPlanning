@@ -40,6 +40,8 @@ protected:
     double _random();
 };
 
+typedef QVector<double> Intervals;
+
 /**
  * @brief The Empirical class Случайная величина, полученная вследствии эксперимента
  */
@@ -54,8 +56,19 @@ public:
     double value();
     double _random();
 
-protected:
+private:
+    void prepareFunctions();
+    void clearFunctions();
+
+    Intervals countByIntervals(const QVector<double>& vals, const Intervals &intervals);
+    Intervals createIntervals(double from, double to, int count);
+    int intervalIndex(const Intervals &intervals, double val);
+
+    Intervals integrate(Intervals vals);
+
+private:
     QVector<double> m_vals;
+    Intervals m_xi, m_f, m_F;
 };
 
 class Beta : public Random {
@@ -94,7 +107,8 @@ public:
     PertNormal();
 
     // Random interface
-    double F(double val);
+    double f(double value);
+    double F(double value);
     void setMathExpected(double value);
     double mathExpected();
     void setDispersion(double value);

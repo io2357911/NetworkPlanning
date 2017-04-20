@@ -4,14 +4,41 @@
 namespace Math {
 namespace Functions {
 
+double min(const QVector<double> &vec) {
+    double min = 0;
+    if (!vec.size()) {
+        return min;
+    }
+
+    min = vec[0];
+    for (int i = 0; i < vec.size(); i++) {
+        if (vec[i] < min) min = vec[i];
+    }
+
+    return min;
+}
+
+double max(const QVector<double> &vec) {
+    double max = 0;
+    if (!vec.size()) {
+        return max;
+    }
+
+    max = vec[0];
+    for (int i = 0; i < vec.size(); i++) {
+        if (vec[i] > max) max = vec[i];
+    }
+
+    return max;
+}
+
 double linear(double x) {
     return x;
 }
 
-double Linear::value(const vector<double> &args) {
-    if (args.size() < 1) return 0;
-
-    return linear(args[0]);
+double normalGaussianDensity(double x, double m, double v) {
+    return 1 / sqrt(v * 2 * M_PI) * exp(-1 * pow(x - m, 2) / (2 * v));
+//    return 1 / sqrt(/*v **/ 2 * M_PI) * exp(-1 * pow(x - m, 2) / (2 * v));
 }
 
 double normalGaussian(double x) {
@@ -34,6 +61,12 @@ double normalGaussian(double x) {
     double y = 1.0 - (((((a5*t + a4)*t) + a3)*t + a2)*t + a1)*t*exp(-x*x);
 
     return 0.5*(1.0 + sign*y);
+}
+
+double Linear::value(const vector<double> &args) {
+    if (args.size() < 1) return 0;
+
+    return linear(args[0]);
 }
 
 double NormalGaussian::value(const vector<double> &args) {

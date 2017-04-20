@@ -27,7 +27,8 @@ SOURCES += \
     view/resourseswidget.cpp \
     view/workresourse.cpp \
     view/qcustomplot.cpp \
-    tools/tools.cpp
+    tools/tools.cpp \
+    view/qmycustomplot.cpp
 #    view/workerswidget.cpp
 
 HEADERS  += \
@@ -49,7 +50,8 @@ HEADERS  += \
     mainwindow.h \
     view/resourseswidget.h \
     view/workresourse.h \
-    tools/tools.h
+    tools/tools.h \
+    view/qmycustomplot.h
 #    view/workerswidget.h
 
 

@@ -5,6 +5,7 @@
 
 namespace Math {
 
+using namespace Functions;
 
 double Random::f(double) {
     return 0;
@@ -53,11 +54,15 @@ double Uniform::_random() {
 
 
 double Empirical::f(double value) {
-    return 0;
+    prepareFunctions();
+    int x = intervalIndex(m_xi, value);
+    return m_f[x];
 }
 
 double Empirical::F(double value) {
-    return 0;
+    prepareFunctions();
+    int x = intervalIndex(m_xi, value);
+    return m_F[x];
 }
 
 double Empirical::mathExpected() {
@@ -90,6 +95,7 @@ double Empirical::dispersion() {
 void Empirical::setValue(double value) {
     m_value = value;
     m_vals.append(value);
+    clearFunctions();
 }
 
 double Empirical::value() {
@@ -97,9 +103,71 @@ double Empirical::value() {
 }
 
 double Empirical::_random() {
-    return 0;
+    return mathExpected();
 }
 
+void Empirical::prepareFunctions() {
+    if (m_F.isEmpty()) {
+        m_xi = createIntervals(min(m_vals), max(m_vals), 10);
+        m_f = countByIntervals(m_vals, m_xi);
+        m_F = integrate(m_f);
+    }
+}
+
+void Empirical::clearFunctions() {
+    m_xi.clear();
+    m_f.clear();
+    m_F.clear();
+}
+
+Intervals Empirical::countByIntervals(const QVector<double> &vals, const Intervals &intervals) {
+    Intervals res(intervals.size(), 0);
+
+    for (int i = 0; i < vals.size(); i++) {
+        int ind = intervalIndex(intervals, vals[i]);
+        res[ind]++;
+    }
+    for (int i = 0; i < res.size(); i++) {
+        res[i] /= vals.size();
+    }
+    return res;
+}
+
+Intervals Empirical::createIntervals(double from, double to, int count) {
+    double step = ((to - from) / count);
+    Intervals interval(count + 1);
+
+    double cur = from;
+    for (int i = 0; i < count; i++) {
+        interval[i] = cur;
+        cur += step;
+    }
+    interval[count] = to;
+    return interval;
+}
+
+int Empirical::intervalIndex(const Intervals &intervals, double val) {
+    if (intervals.empty()) return -1;
+
+    if (val < intervals[0]) return 0;
+    for (int j = 0; j < intervals.size() - 1; j++) {
+        double a = intervals[j];
+        double b = intervals[j + 1];
+        if (val >= a && val < b) {
+            return j;
+        }
+    }
+    return intervals.size() - 1;
+}
+
+Intervals Empirical::integrate(Intervals vals) {
+    Intervals integral(vals.size(), 0);
+    integral[0] = vals[0];
+    for (int i = 1; i < vals.size(); i++) {
+        integral[i] = integral[i - 1] + vals[i];
+    }
+    return integral;
+}
 
 Beta::Beta(double a, double b, double m)
     : m_a(a), m_b(b), m_m(m)
@@ -158,11 +226,18 @@ double PertBeta::_random() {
 PertNormal::PertNormal()
 {}
 
-double PertNormal::F(double val) {
+double PertNormal::f(double x) {
     double M = mathExpected();
     double V = dispersion();
 
-    return normalGaussian((val - M)/sqrt(V));
+    return normalGaussianDensity((x - M)/sqrt(V), 0, 1);
+}
+
+double PertNormal::F(double x) {
+    double M = mathExpected();
+    double V = dispersion();
+
+    return normalGaussian((x - M)/sqrt(V));
 }
 
 double PertNormal::mathExpected() {
