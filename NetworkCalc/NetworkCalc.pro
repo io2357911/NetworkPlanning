@@ -25,10 +25,10 @@ SOURCES += \
     view/workpropertiesdialog.cpp \
     mainwindow.cpp \
     view/resourseswidget.cpp \
-    view/workresourse.cpp \
     view/qcustomplot.cpp \
     tools/tools.cpp \
-    view/qmycustomplot.cpp
+    view/qmycustomplot.cpp \
+    project.cpp
 #    view/workerswidget.cpp
 
 HEADERS  += \
@@ -49,9 +49,9 @@ HEADERS  += \
     view/qcustomplot.h \
     mainwindow.h \
     view/resourseswidget.h \
-    view/workresourse.h \
     tools/tools.h \
-    view/qmycustomplot.h
+    view/qmycustomplot.h \
+    project.h
 #    view/workerswidget.h
 
 

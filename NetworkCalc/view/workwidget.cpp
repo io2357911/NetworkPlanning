@@ -103,6 +103,10 @@ void WorkWidget::setIsVirtual(bool value) {
     onWorkChanged();
 }
 
+void WorkWidget::release() {
+    close();
+}
+
 void WorkWidget::onWorkChanged() {
     QString info = QString("%1\n{%2,%3,%4}\n%5")
             .arg(name())

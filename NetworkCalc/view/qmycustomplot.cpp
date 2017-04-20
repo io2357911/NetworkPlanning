@@ -1,4 +1,5 @@
 #include "qmycustomplot.h"
+#include "../project.h"
 
 using namespace Math;
 
@@ -47,8 +48,8 @@ void QMyCustomPlot::setFunctionType(QMyCustomPlot::FunctionType type) {
     }
 }
 
-void QMyCustomPlot::onGraphComputed(NetworkGraph *graph) {
-    Random* time = graph->time();
+void QMyCustomPlot::onGraphChanged() {
+    Random* time = Project::instance()->graph()->time();
     if (!time) return;
 
     double m = time->mathExpected();

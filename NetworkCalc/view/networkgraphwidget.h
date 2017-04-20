@@ -8,16 +8,19 @@
 #include "resourseswidget.h"
 #include "eventpropertiesdialog.h"
 #include "workpropertiesdialog.h"
-#include "workresourse.h"
 #include "../tools/debug.h"
 #include "../tools/ini.h"
 #include "../math/algorithms.h"
+#include "../project.h"
 
 namespace Ui {
 class NetworkGraphWidget;
 }
 
-class NetworkGraphWidget : public QWidget
+class NetworkGraphWidget :
+        public QWidget,
+        public ProjectEventFactory,
+        public ProjectWorkFactory
 {
     Q_OBJECT
 public:
@@ -29,27 +32,14 @@ public:
     void keyPressEvent(QKeyEvent *event);
     void wheelEvent(QWheelEvent *event);
 
-//    void setAssingsWidget(AssignsWidget *w);
-    void setResoursesWidget(ResoursesWidget *w);
+    // ProjectWorkFactory interface
+    ProjectWork *createWork(Event *firstEvent, Event *secondEvent);
 
-signals:
-    void showWorkers();
-    void showAssigns();
-
-    void resoursesChanged();
-    void worksChanged();
-
-    void graphComputed(NetworkGraph *graph);
+    // ProjectEventFactory interface
+    ProjectEvent *createEvent();
 
 public slots:
-    void newGraph();
-    void openGraph(QString path);
-    void saveGraph(QString path);
-
-    void computePert();
-    void computeMonteCarlo();
-//    void computeAssigns();
-//    void computeAssigns(int maxTime);
+    void onGraphChanged();
 
 private slots:
     void onNewEvent();
@@ -64,33 +54,16 @@ private slots:
     void onWorkProperties(WorkWidget *widget);
     void onWorkDelete(WorkWidget *widget);
 
-    void onNewResourse();
-    void onDeleteResourse(WorkResourse*);
-
-private:
-    EventWidget *createEventWidget();
-    WorkWidget *createWorkWidget(EventWidget *firstEvent, EventWidget *secondEvent);
-
 private:
     Ui::NetworkGraphWidget *ui;
 
     EventPropertiesDialog dEvent;
     WorkPropertiesDialog dWork;
-//    WorkersWidget dWorkers;
-//    AssignsWidget dAssigns;
-
-    NetworkGraph graph;
-
-    QVector<EventWidget*> events;
-    QVector<WorkWidget*> works;
-    QVector<WorkResourse*> resourses;
 
     QAction *aNewEvent;
     QAction *aTest;
 
     EventWidget *firstConnectEvent;
-
-    int eventsCounter, worksCounter, resourseCounter;
 };
 
 #endif // NETWORKGRAPHWIDGET_H

@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QTableWidget>
 #include "../math/networkgraph.h"
-#include "workresourse.h"
+#include "../project.h"
 
 using namespace Math::Planning;
 
@@ -12,21 +12,19 @@ namespace Ui {
 class ResoursesWidget;
 }
 
-class ResoursesWidget : public QWidget
+class ResoursesWidget :
+        public QWidget,
+        public ProjectResourseFactory
 {
     Q_OBJECT
 public:
     explicit ResoursesWidget(QWidget *parent = 0);
     ~ResoursesWidget();
 
-    void setResourses(QVector<WorkResourse*>* resourses);
+    // ProjectResourseFactory interface
+    ProjectResourse *createResourse();
 
-signals:
-    void newResourse();
-    void resourseChanged();
-    void deleteResourse(WorkResourse*);
-
-private slots:
+public slots:
     void on_pbAdd_clicked();
     void on_pbDelete_clicked();
     void onItemChanged(QTableWidgetItem *item);
@@ -35,8 +33,6 @@ private slots:
 
 private:
     Ui::ResoursesWidget *ui;
-
-    QVector<WorkResourse*>* resourses;
 };
 
 #endif // RESOURSESWIDGET_H

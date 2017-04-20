@@ -15,20 +15,16 @@ ResoursesWidget::~ResoursesWidget() {
     delete ui;
 }
 
-void ResoursesWidget::setResourses(QVector<WorkResourse*> *resourses) {
-    this->resourses = resourses;
+ProjectResourse *ResoursesWidget::createResourse() {
+    return new ProjectResourse();
 }
 
 void ResoursesWidget::on_pbAdd_clicked() {
-    if (!resourses) return;
-
-    emit newResourse();
-
-    //    resourses->append(new Resourse("Ресурс"));
-//    onResoursesChanged();
+    Project::instance()->createResourse();
 }
 
 void ResoursesWidget::on_pbDelete_clicked() {
+    QVector<ProjectResourse*> *resourses = Project::instance()->resourses();
     if (!resourses) return;
     if (resourses->isEmpty()) return;
 
@@ -38,13 +34,11 @@ void ResoursesWidget::on_pbDelete_clicked() {
     int row = items[0]->row();
     if (row >= resourses->size()) return;
 
-    emit deleteResourse(resourses->at(row));
-
-//    resourses->remove(row);
-//    onResoursesChanged();
+    Project::instance()->deleteResourse(resourses->at(row));
 }
 
 void ResoursesWidget::onResoursesChanged() {
+    QVector<ProjectResourse*> *resourses = Project::instance()->resourses();
     if (!resourses) return;
 
     ui->tlwResourses->setRowCount(0);
@@ -70,6 +64,7 @@ void ResoursesWidget::onItemChanged(QTableWidgetItem *item) {
     int col = item->column();
     QString val = item->text();
 
+    QVector<ProjectResourse*> *resourses = Project::instance()->resourses();
     if (!resourses) return;
     if (resourses->isEmpty()) return;
     if (row >= resourses->size()) return;
@@ -79,17 +74,17 @@ void ResoursesWidget::onItemChanged(QTableWidgetItem *item) {
     switch (col) {
     case 0:
         res->setName(val);
-        emit resourseChanged();
+//        Project::instance()->resoursesChanged();
         break;
 
     case 1:
         res->setQuantity(val.toDouble());
-        emit resourseChanged();
+//        Project::instance()->resoursesChanged();
         break;
 
     case 2:
         res->setCost(val.toDouble());
-        emit resourseChanged();
+//        Project::instance()->resoursesChanged();
         break;
     }
 }

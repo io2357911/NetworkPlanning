@@ -4,59 +4,55 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
-{
+    ui(new Ui::MainWindow) {
+
     ui->setupUi(this);
 
     connect(ui->aGraphNew, SIGNAL(triggered()),
-            ui->widgetNetworkGraph, SLOT(newGraph()));
-
-    connect(ui->aComputePert, SIGNAL(triggered()),
-            ui->widgetNetworkGraph, SLOT(computePert()));
-    connect(ui->aComputeMonteCarlo, SIGNAL(triggered()),
-            ui->widgetNetworkGraph, SLOT(computeMonteCarlo()));
-//    connect(ui->aComputeAssigns, SIGNAL(triggered()),
-//            ui->widgetNetworkGraph, SLOT(computeAssigns()));
-//    connect(ui->aComputeAssignsWithTime, SIGNAL(triggered()),
-//            this, SLOT(onComputeAssignsWithTime()));
-
-    connect(ui->widgetNetworkGraph, SIGNAL(graphComputed(NetworkGraph*)),
-            this, SLOT(onGraphComputed(NetworkGraph*)));
-    connect(ui->widgetNetworkGraph, SIGNAL(graphComputed(NetworkGraph*)),
-            ui->qcp_f, SLOT(onGraphComputed(NetworkGraph*)));
-    connect(ui->widgetNetworkGraph, SIGNAL(graphComputed(NetworkGraph*)),
-            ui->qcp_F, SLOT(onGraphComputed(NetworkGraph*)));
-
-    connect(ui->aWorkers, SIGNAL(triggered()),
-            ui->widgetNetworkGraph, SIGNAL(showWorkers()));
-
-    connect(ui->aAssigns, SIGNAL(triggered()),
-            ui->widgetNetworkGraph, SIGNAL(showAssigns()));
+            Project::instance(), SLOT(reset()));
 
     connect(ui->aGraphOpen, SIGNAL(triggered()),
             this, SLOT(onOpenGraph()));
     connect(ui->aGraphSave, SIGNAL(triggered()),
             this, SLOT(onSaveGraph()));
 
+    connect(ui->aComputePert, SIGNAL(triggered()),
+            this, SLOT(onComputePert()));
+    connect(ui->aComputeMonteCarlo, SIGNAL(triggered()),
+            this, SLOT(onComputeMonteCarlo()));
+
+    connect(Project::instance(), SIGNAL(graphChanged()),
+            ui->widgetNetworkGraph, SLOT(onGraphChanged()));
+    connect(Project::instance(), SIGNAL(graphChanged()),
+            ui->qcp_f, SLOT(onGraphChanged()));
+    connect(Project::instance(), SIGNAL(graphChanged()),
+            ui->qcp_F, SLOT(onGraphChanged()));
+
+    connect(Project::instance(), SIGNAL(resoursesChanged()),
+            ui->wResourses, SLOT(onResoursesChanged()));
+
     ui->qcp_f->setFunctionType(QMyCustomPlot::f);
     ui->qcp_F->setFunctionType(QMyCustomPlot::F);
 
-//    ui->widgetNetworkGraph->setAssingsWidget(ui->wAssigns);
-    ui->widgetNetworkGraph->setResoursesWidget(ui->wResourses);
+    Project::instance()->setEventFactory(ui->widgetNetworkGraph);
+    Project::instance()->setWorkFactory(ui->widgetNetworkGraph);
+    Project::instance()->setResourseFactory(ui->wResourses);
 }
 
-void MainWindow::keyPressEvent(QKeyEvent *event)
-{
+MainWindow::~MainWindow() {
+    delete ui;
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event) {
     ui->widgetNetworkGraph->keyPressEvent(event);
 }
 
-void MainWindow::onOpenGraph()
-{
+void MainWindow::onOpenGraph() {
     QString filePath = QFileDialog::getOpenFileName(this, tr("Select File"),
                                                     "./",
                                                     tr("ini files (*.ini)"));
 
-    if (!filePath.isNull()) ui->widgetNetworkGraph->openGraph(filePath);
+    if (!filePath.isNull()) Project::instance()->restore(filePath);
 }
 
 void MainWindow::onSaveGraph() {
@@ -64,19 +60,35 @@ void MainWindow::onSaveGraph() {
                                                     "./",
                                                     tr("ini files (*.ini)"));
 
-    if (!filePath.isNull()) ui->widgetNetworkGraph->saveGraph(filePath);
+    if (!filePath.isNull()) Project::instance()->store(filePath);
 }
 
-//void MainWindow::onComputeAssignsWithTime()
-//{
-//    ui->widgetNetworkGraph->computeAssigns(ui->sbTimeLimit->value());
-//}
+void MainWindow::onComputePert() {
+    NetworkGraph* graph = Project::instance()->graph();
 
-void MainWindow::onGraphComputed(NetworkGraph *graph) {
+    if (!PertNetworkAlgorithm(graph).compute()) {
+        QMessageBox::warning(NULL, "Ошибка рассчета графа", "Невозможно найти решение");
+        return;
+    }
+
     ui->dsbCost->setValue(graph->cost()->value());
+//    ui->dsbTime->setValue(graph->time()->F(0.7));
     ui->dsbTime->setValue(graph->time()->value());
+
+    Project::instance()->graphChanged();
 }
 
-MainWindow::~MainWindow() {
-    delete ui;
+void MainWindow::onComputeMonteCarlo() {
+    NetworkGraph* graph = Project::instance()->graph();
+
+    if (!MonteCarloNetworkAlgorithm(graph, 1000).compute()) {
+        QMessageBox::warning(NULL, "Ошибка рассчета графа", "Невозможно найти решение");
+        return;
+    }
+
+    ui->dsbCost->setValue(graph->cost()->value());
+//    ui->dsbTime->setValue(graph->time()->F(0.7));
+    ui->dsbTime->setValue(graph->time()->value());
+
+    Project::instance()->graphChanged();
 }

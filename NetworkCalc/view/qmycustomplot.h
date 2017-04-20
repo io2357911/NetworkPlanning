@@ -16,7 +16,7 @@ public:
     void setFunctionType(FunctionType type);
 
 public slots:
-    void onGraphComputed(NetworkGraph* graph);
+    void onGraphChanged();
 
 private:
     QCPGraph*       data;

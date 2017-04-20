@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "math/networkgraph.h"
+#include "project.h"
 
 using namespace Math::Planning;
 
@@ -24,9 +25,8 @@ private slots:
     void onOpenGraph();
     void onSaveGraph();
 
-//    void onComputeAssignsWithTime();
-
-    void onGraphComputed(NetworkGraph *graph);
+    void onComputePert();
+    void onComputeMonteCarlo();
 
 private:
     Ui::MainWindow *ui;

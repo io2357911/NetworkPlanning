@@ -29,6 +29,9 @@ void WorkPropertiesDialog::on_buttonBox_accepted() {
 }
 
 Resourse *WorkPropertiesDialog::currentResourse() {
+    QVector<ProjectResourse*>* resourses = Project::instance()->resourses();
+
+
     int ind = ui->cbResourse->currentIndex()-1;
     if (ind < 0 || ind >= resourses->size()) return 0;
 
@@ -39,17 +42,13 @@ Work *WorkPropertiesDialog::getWork() const {
     return work;
 }
 
-void WorkPropertiesDialog::setResourses(QVector<WorkResourse *> *resourses) {
-    this->resourses = resourses;
-}
-
 void WorkPropertiesDialog::setWork(Work *value) {
     work = value;
 
-    updateWork();
+    onUpdateWork();
 }
 
-void WorkPropertiesDialog::updateWork() {
+void WorkPropertiesDialog::onUpdateWork() {
     if (!work) {
         close();
         return;
@@ -68,11 +67,11 @@ void WorkPropertiesDialog::updateWork() {
 
     ui->cbIsVirtual->setChecked(work->isVirtual());
 
-    updateResourses();
+    onUpdateResourses();
 }
 
-void WorkPropertiesDialog::updateResourses() {
-    if (!resourses) return;
+void WorkPropertiesDialog::onUpdateResourses() {
+    QVector<ProjectResourse*>* resourses = Project::instance()->resourses();
 
     ui->cbResourse->clear();
     ui->cbResourse->addItem("");
@@ -80,6 +79,6 @@ void WorkPropertiesDialog::updateResourses() {
         ui->cbResourse->addItem(resourses->at(i)->name());
     }
 
-    int ind = resourses->indexOf((WorkResourse*)work->resourse());
+    int ind = resourses->indexOf(dynamic_cast<ProjectResourse*>(work->resourse()));
     if (ind != -1) ui->cbResourse->setCurrentIndex(ind+1);
 }

@@ -125,6 +125,10 @@ void EventWidget::setReserve(double value) {
     onEventChanged();
 }
 
+void EventWidget::release() {
+    close();
+}
+
 void EventWidget::onEventChanged() {
     ui->lID->setText(name());
     ui->lEarlyTime->setText(Tools::formatDouble(earlyTime()));

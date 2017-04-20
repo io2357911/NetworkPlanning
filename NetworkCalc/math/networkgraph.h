@@ -18,6 +18,7 @@ class Event;
 class Resourse {
 public:
     Resourse(QString name = "", double quantity = 0, double cost = 0);
+    virtual ~Resourse() {}
 
     QString name() const;
     void setName(const QString &name);

@@ -5,6 +5,7 @@
 #include <QMouseEvent>
 #include "../tools/ini.h"
 #include "../math/networkgraph.h"
+#include "../project.h"
 
 using namespace Math::Planning;
 
@@ -12,7 +13,7 @@ namespace Ui {
 class EventWidget;
 }
 
-class EventWidget : public QWidget, public Event
+class EventWidget : public QWidget, public ProjectEvent
 {
     Q_OBJECT
 
@@ -20,24 +21,26 @@ public:
     explicit EventWidget(QWidget *parent = 0);
     ~EventWidget();
 
-    void mousePressEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
-    void wheelEvent(QWheelEvent * event);
-
-    void paintEvent(QPaintEvent *evt);
-
+    // IPersistent interface
     void store(QString fileName);
     void restore(QString fileName);
-
-    void contextMenuEvent(QContextMenuEvent *event);
-
-    QPoint center();
 
     // Event interface
     void setName(QString value);
     void setEarlyTime(double value);
     void setLateTime(double value);
     void setReserve(double value);
+
+    // IRelease interface
+    void release();
+
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void wheelEvent(QWheelEvent * event);
+    void paintEvent(QPaintEvent *evt);
+    void contextMenuEvent(QContextMenuEvent *event);
+
+    QPoint center();
 
 signals:
     void clicked(EventWidget *widget);

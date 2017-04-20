@@ -3,7 +3,7 @@
 
 #include <QDialog>
 #include "../math/networkgraph.h"
-#include "workresourse.h"
+#include "../project.h"
 
 using namespace Math::Planning;
 
@@ -11,10 +11,8 @@ namespace Ui {
 class WorkPropertiesDialog;
 }
 
-class WorkPropertiesDialog : public QDialog
-{
+class WorkPropertiesDialog : public QDialog {
     Q_OBJECT
-
 public:
     explicit WorkPropertiesDialog(QWidget *parent = 0);
     ~WorkPropertiesDialog();
@@ -22,13 +20,9 @@ public:
     void setWork(Work *value);
     Work* getWork() const;
 
-    void setResourses(QVector<WorkResourse*>* resourses);
-
-//    void updateWorkers();
-
 public slots:
-    void updateWork();
-    void updateResourses();
+    void onUpdateWork();
+    void onUpdateResourses();
 
 private slots:
     void on_buttonBox_accepted();
@@ -40,7 +34,6 @@ private:
     Ui::WorkPropertiesDialog *ui;
 
     Work *work;
-    QVector<WorkResourse*>* resourses;
 };
 
 #endif // WORKPROPERTIESDIALOG_H
