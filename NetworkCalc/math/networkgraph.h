@@ -134,6 +134,7 @@ private:
 };
 
 //typedef Graph<IEvent, IWork> NetworkGraph;
+typedef QVector<double> ResourseDistribution;
 
 class NetworkGraph : public Graph<Event, Work> {
 public:
@@ -150,6 +151,9 @@ public:
     Random* cost();
 
     QVector<Work*> criticalPath();
+
+    ResourseDistribution resourseDistribution();
+    void setResourseDistribution(const ResourseDistribution &res);
 
 private:
     QString m_name;

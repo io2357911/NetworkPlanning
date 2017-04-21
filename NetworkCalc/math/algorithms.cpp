@@ -12,6 +12,54 @@ namespace Math {
 namespace Planning {
 namespace Algorithms {
 
+
+ResourseNetworkAlgorithm::ResourseNetworkAlgorithm(NetworkGraph *graph, INetworkAlgorithm *algCalc, double prob)
+    : INetworkAlgorithm(graph), m_algCalc(algCalc), m_prob(prob)
+{}
+
+bool ResourseNetworkAlgorithm::compute() {
+    bool res = false;
+    if (!m_algCalc) return res;
+
+    ResourseDistribution minDist;
+    double minTime = std::numeric_limits<double>::max();
+
+    ResourseIterator iter(m_graph);
+    while (iter.hasNext()) {
+        ResourseDistribution dist = iter.next();
+        m_graph->setResourseDistribution(dist);
+
+        if (!m_algCalc->compute()) continue;
+
+        double time = m_graph->time()->invF(m_prob);
+        if (time < minTime) {
+            minTime = time;
+            minDist = dist;
+
+            res = true;
+        }
+    }
+
+    m_graph->setResourseDistribution(minDist);
+
+    return res;
+}
+
+ResourseNetworkAlgorithm::ResourseIterator::ResourseIterator(NetworkGraph *graph)
+    : m_graph(graph)
+{}
+
+bool ResourseNetworkAlgorithm::ResourseIterator::hasNext() {
+    return false;
+}
+
+ResourseDistribution ResourseNetworkAlgorithm::ResourseIterator::next() {
+    ResourseDistribution dist;
+
+    return dist;
+}
+
+
 bool PertNetworkAlgorithm::compute() {
     // зададим вероятностные хар-ки
     Randoms::PertBetaFactory    workTime;
@@ -251,9 +299,6 @@ bool CriticalPathAlgorithm::compute() {
         work->setIsCritical(IS_ZERO(firstEvent->reserve(), 0.001) &&
                             IS_ZERO(secondEvent->reserve(), 0.001) &&
                             IS_ZERO(work->fullReserve(), 0.001));
-//        work->setIsCritical(firstEvent->reserve() == 0 &&
-//                            secondEvent->reserve() == 0 &&
-//                            work->fullReserve() == 0);
     }
 
     return true;
@@ -269,23 +314,6 @@ bool CostAlgorithm::compute() {
 
     return true;
 }
-
-//bool TimeAlgorithm::compute() {
-//    double value = 0;
-//    double mathExpected = 0;
-//    double dispersion = 0;
-//    QVector<Work*> critPath = m_graph->criticalPath();
-//    for (int i = 0; i < critPath.size(); i++) {
-//        value += critPath[i]->time()->value();
-//        mathExpected += critPath[i]->time()->mathExpected();
-//        dispersion += critPath[i]->time()->dispersion();
-//    }
-//    m_graph->time()->setValue(value);
-//    m_graph->time()->setMathExpected(mathExpected);
-//    m_graph->time()->setDispersion(dispersion);
-
-//    return true;
-//}
 
 } // namespace Algorithms
 } // namespace Planning

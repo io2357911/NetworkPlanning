@@ -284,6 +284,26 @@ QVector<Work*> NetworkGraph::criticalPath() {
     return critPath;
 }
 
+ResourseDistribution NetworkGraph::resourseDistribution() {
+    QVector<Work*> works = edges();
+    ResourseDistribution res(works.size());
+
+    for (int i = 0; i < works.size(); i++) {
+        res[i] = works[i]->resourseCount();
+    }
+
+    return res;
+}
+
+void NetworkGraph::setResourseDistribution(const ResourseDistribution &res) {
+    QVector<Work*> works = edges();
+    if (res.size() != works.size()) return;
+
+    for (int i = 0; i < works.size(); i++) {
+        works[i]->setResourseCount(res[i]);
+    }
+}
+
 
 namespace Randoms {
 

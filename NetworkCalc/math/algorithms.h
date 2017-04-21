@@ -24,6 +24,35 @@ public:
 
 protected:
     NetworkGraph* m_graph;
+    INetworkAlgorithm *m_algCalc;
+};
+
+/**
+ * @brief The ResourseNetworkAlgorithm class Алгоритм для оптимального распределения ресурсов
+ */
+class ResourseNetworkAlgorithm : public INetworkAlgorithm {
+public:
+    ResourseNetworkAlgorithm(NetworkGraph* graph, INetworkAlgorithm *algCalc, double prob);
+    virtual ~ResourseNetworkAlgorithm() {}
+
+    // IAlgorithm interface
+    bool compute();
+
+private:
+    INetworkAlgorithm *m_algCalc;
+    double m_prob;
+
+private:
+    class ResourseIterator {
+    public:
+        ResourseIterator(NetworkGraph* graph = 0);
+
+        bool hasNext();
+        ResourseDistribution next();
+
+    private:
+        NetworkGraph* m_graph;
+    };
 };
 
 class PertNetworkAlgorithm : public INetworkAlgorithm {
