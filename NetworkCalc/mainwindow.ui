@@ -272,53 +272,44 @@
       </widget>
       <widget class="QWidget" name="tab_3">
        <attribute name="title">
-        <string>Графики</string>
+        <string>Время</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_6">
-        <item row="0" column="0" colspan="2">
-         <widget class="QWidget" name="widget" native="true">
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>40</height>
-           </size>
+        <item row="0" column="0">
+         <widget class="QMyCustomPlot" name="qcp_f" native="true"/>
+        </item>
+        <item row="0" column="1">
+         <widget class="QMyCustomPlot" name="qcp_F" native="true"/>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_4">
+       <attribute name="title">
+        <string>Отчет</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_4">
+        <item row="1" column="1">
+         <widget class="QPushButton" name="pbClearReport">
+          <property name="text">
+           <string>Очистить</string>
           </property>
-          <layout class="QGridLayout" name="gridLayout_4">
-           <item row="0" column="0">
-            <widget class="QComboBox" name="comboBox">
-             <item>
-              <property name="text">
-               <string>Время</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Стоимость</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <spacer name="horizontalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>403</width>
-               <height>19</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QMyCustomPlot" name="qcp_f" native="true"/>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
-        <item row="1" column="1">
-         <widget class="QMyCustomPlot" name="qcp_F" native="true"/>
+        <item row="0" column="0" colspan="2">
+         <widget class="QTextBrowser" name="tbReport"/>
         </item>
        </layout>
       </widget>
@@ -432,5 +423,22 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>pbClearReport</sender>
+   <signal>clicked()</signal>
+   <receiver>tbReport</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>662</x>
+     <y>341</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>597</x>
+     <y>284</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

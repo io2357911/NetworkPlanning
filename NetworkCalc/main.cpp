@@ -33,7 +33,7 @@ void testNetworkGraph() {
         &w1, &w2, &w3, &w4, &w5, &w6, &w7, &pw
     };
 
-    NetworkGraph graph(events, works);
+    NetworkGraph graph("", events, works);
 
     Debug::printGraph(graph);
 

@@ -137,8 +137,11 @@ private:
 
 class NetworkGraph : public Graph<Event, Work> {
 public:
-    NetworkGraph();
-    NetworkGraph(QVector<Event*> vertices, QVector<Work*> edges);
+    NetworkGraph(QString name = "Текущий");
+    NetworkGraph(QString name, QVector<Event*> vertices, QVector<Work*> edges);
+
+    QString name() const;
+    void setName(const QString &name);
 
     void setTime(Random* time);
     Random* time();
@@ -149,8 +152,9 @@ public:
     QVector<Work*> criticalPath();
 
 private:
-    Random*  m_time;
-    Random*  m_cost;
+    QString m_name;
+    Random* m_time;
+    Random* m_cost;
 };
 
 namespace Randoms {

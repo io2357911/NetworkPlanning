@@ -78,10 +78,9 @@ void MainWindow::on_pbCompute_clicked() {
         ui->dsbCost->setValue(graph->cost()->value());
         ui->dsbTime->setValue(graph->time()->invF(prob));
 
-        qDebug("%s: invF(%f) = %f, M = %f", ui->cbAlgorithm->currentText().toStdString().c_str(),
-               prob, graph->time()->invF(prob), graph->time()->mathExpected());
-
         Project::instance()->graphChanged();
+
+        logReport();
 
     } else {
         QMessageBox::warning(NULL, "Ошибка рассчета графа", "Невозможно найти решение");
@@ -119,6 +118,28 @@ IRandomFactory *MainWindow::currentWorkTimeRandom() {
     }
 
     return res;
+}
+
+void MainWindow::logReport() {
+    QString report;
+
+    NetworkGraph *graph = Project::instance()->graph();
+    double prob = ui->dsbProb->value();
+
+    report += QString("Граф: %1\n")
+            .arg(graph->name());
+    report += QString("Метод: %1\n")
+            .arg(ui->cbAlgorithm->currentText());
+    report += QString("З.Р. длительностей работ: %1\n")
+            .arg(ui->cbAlgorithm->currentText() == ALG_MONTE_CARLO ? ui->cbTimeRandom->currentText() : RND_BETA);
+    report += QString("Длительности проекта при доверит. вер-ти %1: %2\n")
+            .arg(prob).arg(graph->time()->invF(prob));
+    report += QString("Мат. ожидание длительности проекта: %1\n")
+            .arg(graph->time()->mathExpected());
+    report += QString("Дисперсия длительности проекта: %1\n")
+            .arg(graph->time()->dispersion());
+
+    ui->tbReport->append(report);
 }
 
 void MainWindow::on_cbAlgorithm_currentTextChanged(const QString &alg) {

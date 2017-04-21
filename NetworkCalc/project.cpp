@@ -156,6 +156,8 @@ void Project::restore(QString fileName) {
         work->restore(fileName);
     }
 
+    m_graph.setName(fileName);
+
     emit resoursesChanged();
     emit graphChanged();
 }

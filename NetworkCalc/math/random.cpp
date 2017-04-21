@@ -227,12 +227,12 @@ double Beta::random(double a, double b, double m) {
         double _a,_b,_m;
         Function(double a, double b, double m) : _a(a), _b(b), _m(m) {}
         double value(const vector<double> &args) {
-            double y = Beta::f(args[0], _a, _b, _m);
-            return y;
+            return Beta::f(args[0], _a, _b, _m);
         }
     } f(a,b,m);
 
     double mod = (2*a+b)/3; // мода
+//    double mod = mathExpected(a,b,m); // мода
     return neumannRandom(&f, a, b, mod);
 }
 

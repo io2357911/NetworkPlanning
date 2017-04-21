@@ -223,11 +223,19 @@ bool Work::isVirtual() const {
 }
 
 
-NetworkGraph::NetworkGraph() : m_time(0), m_cost(0) {}
+NetworkGraph::NetworkGraph(QString name) : m_name(name), m_time(0), m_cost(0) {}
 
-NetworkGraph::NetworkGraph(QVector<Event *> vertices, QVector<Work *> edges)
-    : Graph(vertices, edges), m_time(0), m_cost(0)
+NetworkGraph::NetworkGraph(QString name, QVector<Event *> vertices, QVector<Work *> edges)
+    : Graph(vertices, edges), m_name(name), m_time(0), m_cost(0)
 {}
+
+QString NetworkGraph::name() const {
+    return m_name;
+}
+
+void NetworkGraph::setName(const QString &name) {
+    m_name = name;
+}
 
 void NetworkGraph::setTime(Random *time) {
     if (m_time) delete m_time;
@@ -275,6 +283,7 @@ QVector<Work*> NetworkGraph::criticalPath() {
 
     return critPath;
 }
+
 
 namespace Randoms {
 

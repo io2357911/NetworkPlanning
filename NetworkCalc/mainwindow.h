@@ -34,6 +34,8 @@ private:
     IAlgorithm *currentAlgorithm(NetworkGraph* graph);
     IRandomFactory *currentWorkTimeRandom();
 
+    void logReport();
+
 private:
     Ui::MainWindow *ui;
 };
