@@ -59,15 +59,15 @@ bool PertNetworkAlgorithm::computeTime() {
 }
 
 
-MonteCarloNetworkAlgorithm::MonteCarloNetworkAlgorithm(NetworkGraph *graph, uint iterations)
-    : INetworkAlgorithm(graph), m_iterations(iterations)
+MonteCarloNetworkAlgorithm::MonteCarloNetworkAlgorithm(NetworkGraph *graph, uint iterations, uint intervals)
+    : INetworkAlgorithm(graph), m_iterations(iterations), m_intervals(intervals)
 {}
 
 bool MonteCarloNetworkAlgorithm::compute() {
     // зададим вероятностные хар-ки
     Randoms::TriangleFactory    workTime;
-    Random*                     graphTime = new Math::Randoms::Empirical;
-    Random*                     graphCost = new Math::Randoms::Empirical;
+    Random*                     graphTime = new Math::Randoms::Empirical(m_intervals);
+    Random*                     graphCost = new Math::Randoms::Empirical(m_intervals);
 
     QVector<Work*> works = m_graph->edges();
     for (int i = 0; i < works.size(); i++) {

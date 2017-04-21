@@ -6,62 +6,25 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>571</width>
-    <height>377</height>
+    <width>709</width>
+    <height>460</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Управление проектами</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QGridLayout" name="gridLayout_3">
+   <layout class="QGridLayout" name="gridLayout_7">
     <item row="0" column="0">
      <widget class="QGroupBox" name="groupBox">
       <property name="title">
-       <string>Параметры проекта</string>
+       <string>Проект</string>
       </property>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="6">
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="0" column="5">
-        <widget class="QSpinBox" name="sbTimeLimit">
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-         <property name="maximum">
-          <number>9999999</number>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2">
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>Стоимость:</string>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="0">
         <widget class="QLabel" name="label">
          <property name="text">
           <string>Время:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="4">
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>Дир. срок:</string>
          </property>
         </widget>
        </item>
@@ -81,7 +44,7 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="3">
+       <item row="1" column="1">
         <widget class="QDoubleSpinBox" name="dsbCost">
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -97,10 +60,168 @@
          </property>
         </widget>
        </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Стоимость:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Дир. срок:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QSpinBox" name="sbTimeLimit">
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="maximum">
+          <number>9999999</number>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>
-    <item row="1" column="0">
+    <item row="0" column="1">
+     <widget class="QGroupBox" name="groupBox_2">
+      <property name="title">
+       <string>Расчет</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Алгоритм:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QDoubleSpinBox" name="dsbProb">
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="readOnly">
+          <bool>false</bool>
+         </property>
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::NoButtons</enum>
+         </property>
+         <property name="maximum">
+          <double>1.000000000000000</double>
+         </property>
+         <property name="value">
+          <double>0.700000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Доверит. вер-сть:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QPushButton" name="pbCompute">
+         <property name="text">
+          <string>Рассчитать</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="cbAlgorithm">
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <item>
+          <property name="text">
+           <string>PERT</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Монте-Карло</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="3">
+        <widget class="QLabel" name="lIntervals">
+         <property name="text">
+          <string>Интервалы:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="4">
+        <widget class="QSpinBox" name="sbIntervals">
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="readOnly">
+          <bool>false</bool>
+         </property>
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::NoButtons</enum>
+         </property>
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="value">
+          <number>50</number>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QLabel" name="lIterations">
+         <property name="text">
+          <string>Итерации:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <widget class="QSpinBox" name="sbIterations">
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="readOnly">
+          <bool>false</bool>
+         </property>
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::NoButtons</enum>
+         </property>
+         <property name="maximum">
+          <number>100000</number>
+         </property>
+         <property name="value">
+          <number>1000</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="1" column="0" colspan="3">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
        <number>0</number>
@@ -186,27 +307,19 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>571</width>
+     <width>709</width>
      <height>19</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menu">
-    <property name="title">
-     <string>Рассчет</string>
-    </property>
-    <addaction name="aComputePert"/>
-    <addaction name="aComputeMonteCarlo"/>
-   </widget>
    <widget class="QMenu" name="menu_2">
     <property name="title">
-     <string>Сетевой график</string>
+     <string>Файл</string>
     </property>
     <addaction name="aGraphNew"/>
     <addaction name="aGraphOpen"/>
     <addaction name="aGraphSave"/>
    </widget>
    <addaction name="menu_2"/>
-   <addaction name="menu"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">

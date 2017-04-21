@@ -15,6 +15,10 @@ double Random::F(double) {
     return 0;
 }
 
+double Random::invF(double) {
+    return 0;
+}
+
 void Random::setMathExpected(double) {
 }
 
@@ -53,6 +57,10 @@ double Uniform::_random() {
 }
 
 
+Empirical::Empirical(uint intervals)
+    : m_intervals(intervals)
+{}
+
 double Empirical::f(double value) {
     prepareFunctions();
     int x = intervalIndex(m_xi, value);
@@ -63,6 +71,12 @@ double Empirical::F(double value) {
     prepareFunctions();
     int x = intervalIndex(m_xi, value);
     return m_F[x];
+}
+
+double Empirical::invF(double value) {
+    prepareFunctions();
+    int y = intervalIndex(m_F, value);
+    return m_xi[y];
 }
 
 double Empirical::mathExpected() {
@@ -108,7 +122,7 @@ double Empirical::_random() {
 
 void Empirical::prepareFunctions() {
     if (m_F.isEmpty()) {
-        m_xi = createIntervals(min(m_vals), max(m_vals), 10);
+        m_xi = createIntervals(min(m_vals), max(m_vals), m_intervals);
         m_f = countByIntervals(m_vals, m_xi);
         m_F = integrate(m_f);
     }
@@ -240,6 +254,13 @@ double PertNormal::F(double x) {
     return normalGaussian((x - M)/sqrt(V));
 }
 
+double PertNormal::invF(double value) {
+    double M = mathExpected();
+    double V = dispersion();
+
+    return normalGaussianInverse(value) * sqrt(V) + M;
+}
+
 double PertNormal::mathExpected() {
     return m_mathExpected;
 }
@@ -300,19 +321,7 @@ double Triangle::F(double x, double a, double b, double c) {
     }
 }
 
-double Triangle::mathExpected(double a, double b, double c) {
-    // (a+b+c)/3
-    return (a+b+c)/3;
-}
-
-double Triangle::dispersion(double a, double b, double c) {
-    // (a^2+b^2+c^2-a*b-a*c-b*c)/18
-    return (pow(a,2)+pow(b,2)+pow(c,2)-a*b-a*c-b*c)/18;
-}
-
-double Triangle::random(double a, double b, double c) {
-    double y = Uniform().random();
-
+double Triangle::invF(double y, double a, double b, double c) {
     // (c-a)*(b-a)
     double m = (c-a)*(b-a);
 
@@ -326,12 +335,31 @@ double Triangle::random(double a, double b, double c) {
     }
 }
 
+double Triangle::mathExpected(double a, double b, double c) {
+    // (a+b+c)/3
+    return (a+b+c)/3;
+}
+
+double Triangle::dispersion(double a, double b, double c) {
+    // (a^2+b^2+c^2-a*b-a*c-b*c)/18
+    return (pow(a,2)+pow(b,2)+pow(c,2)-a*b-a*c-b*c)/18;
+}
+
+double Triangle::random(double a, double b, double c) {
+    double y = Uniform().random();
+    return invF(y, a, b, c);
+}
+
 double Triangle::f(double x) {
     return f(x, m_a, m_b, m_m);
 }
 
 double Triangle::F(double x) {
     return F(x, m_a, m_b, m_m);
+}
+
+double Triangle::invF(double x) {
+    return invF(x, m_a, m_b, m_m);
 }
 
 double Triangle::mathExpected() {

@@ -17,6 +17,7 @@ public:
     // IRandom interface
     virtual double f(double value);
     virtual double F(double value);
+    virtual double invF(double value);
     virtual void setMathExpected(double value);
     virtual double mathExpected();
     virtual void setDispersion(double value);
@@ -47,9 +48,12 @@ typedef QVector<double> Intervals;
  */
 class Empirical : public Random {
 public:
+    Empirical(uint intervals = 10);
+
     // Random interface
     double f(double value);
     double F(double value);
+    double invF(double value);
     double mathExpected();
     double dispersion();
     void setValue(double value);
@@ -67,6 +71,7 @@ private:
     Intervals integrate(Intervals vals);
 
 private:
+    uint m_intervals;
     QVector<double> m_vals;
     Intervals m_xi, m_f, m_F;
 };
@@ -109,6 +114,7 @@ public:
     // Random interface
     double f(double value);
     double F(double value);
+    double invF(double value);
     void setMathExpected(double value);
     double mathExpected();
     void setDispersion(double value);
@@ -130,13 +136,15 @@ public:
 
     static double f(double val, double a, double b, double m);
     static double F(double val, double a, double b, double m);
+    static double invF(double val, double a, double b, double m);
     static double mathExpected(double a, double b, double m);
     static double dispersion(double a, double b, double m);
     static double random(double a, double b, double m);
 
     // IRandom interface
-    double f(double val);
-    double F(double val);
+    double f(double value);
+    double F(double value);
+    double invF(double value);
     double mathExpected();
     double dispersion();
     double random();

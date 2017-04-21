@@ -41,11 +41,6 @@ void testNetworkGraph() {
         return;
     }
 
-//    NetworkAlgorithm(&graph).compute();
-//    CriticalPathAlgorithm(&graph).compute();
-//    TimeAlgorithm(&graph).compute();
-//    CostAlgorithm(&graph).compute();
-
     Debug::printEvents(graph);
     Debug::printEdges(graph.edges());
     Debug::printCriticalPath(graph.criticalPath());

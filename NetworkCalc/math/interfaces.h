@@ -44,6 +44,12 @@ public:
 //    virtual IFunction* F() = 0;
     virtual double F(double value) = 0;
     /**
+     * @brief invF обратная функция распределения вероятностей
+     * @param value
+     * @return
+     */
+    virtual double invF(double value) = 0;
+    /**
      * @brief setMathExpected
      * @param value
      */
@@ -85,7 +91,10 @@ public:
  */
 class IAlgorithm {
 public:
+    virtual ~IAlgorithm() {}
+
     virtual bool compute() = 0;
+
 };
 
 }

@@ -40,7 +40,7 @@ private:
 
 class MonteCarloNetworkAlgorithm : public INetworkAlgorithm {
 public:
-    MonteCarloNetworkAlgorithm(NetworkGraph* graph, uint iterations);
+    MonteCarloNetworkAlgorithm(NetworkGraph* graph, uint iterations = 100, uint intervals = 10);
     virtual ~MonteCarloNetworkAlgorithm() {}
 
     // IAlgorithm interface
@@ -51,6 +51,7 @@ private:
 
 private:
     uint m_iterations;
+    uint m_intervals;
 };
 
 /*!

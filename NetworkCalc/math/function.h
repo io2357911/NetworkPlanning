@@ -32,6 +32,16 @@ double normalGaussianDensity(double x, double m, double v);
 double normalGaussian(double x);
 
 /**
+ * @brief normalGaussianInverse
+ * @param p
+ * @return
+ *
+ * https://www.johndcook.com/blog/normal_cdf_inverse/
+ */
+double normalGaussianInverse(double p);
+double rationalApproximation(double t);
+
+/**
  * @brief The IFunction class y = x
  */
 class Linear : public IFunction {

@@ -2,49 +2,47 @@
 #include "ui_mainwindow.h"
 #include <QFileDialog>
 
+#define ALG_PERT        QString("PERT")
+#define ALG_MONTE_CARLO QString("Монте-Карло")
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow) {
 
     ui->setupUi(this);
 
+    Project *proj = Project::instance();
+
     connect(ui->aGraphNew, SIGNAL(triggered()),
-            Project::instance(), SLOT(reset()));
+            proj, SLOT(reset()));
 
     connect(ui->aGraphOpen, SIGNAL(triggered()),
             this, SLOT(onOpenGraph()));
     connect(ui->aGraphSave, SIGNAL(triggered()),
             this, SLOT(onSaveGraph()));
 
-    connect(ui->aComputePert, SIGNAL(triggered()),
-            this, SLOT(onComputePert()));
-    connect(ui->aComputeMonteCarlo, SIGNAL(triggered()),
-            this, SLOT(onComputeMonteCarlo()));
-
-    connect(Project::instance(), SIGNAL(graphChanged()),
+    connect(proj, SIGNAL(graphChanged()),
             ui->widgetNetworkGraph, SLOT(onGraphChanged()));
-    connect(Project::instance(), SIGNAL(graphChanged()),
+    connect(proj, SIGNAL(graphChanged()),
             ui->qcp_f, SLOT(onGraphChanged()));
-    connect(Project::instance(), SIGNAL(graphChanged()),
+    connect(proj, SIGNAL(graphChanged()),
             ui->qcp_F, SLOT(onGraphChanged()));
 
-    connect(Project::instance(), SIGNAL(resoursesChanged()),
+    connect(proj, SIGNAL(resoursesChanged()),
             ui->wResourses, SLOT(onResoursesChanged()));
 
     ui->qcp_f->setFunctionType(QMyCustomPlot::f);
     ui->qcp_F->setFunctionType(QMyCustomPlot::F);
 
-    Project::instance()->setEventFactory(ui->widgetNetworkGraph);
-    Project::instance()->setWorkFactory(ui->widgetNetworkGraph);
-    Project::instance()->setResourseFactory(ui->wResourses);
+    proj->setEventFactory(ui->widgetNetworkGraph);
+    proj->setWorkFactory(ui->widgetNetworkGraph);
+    proj->setResourseFactory(ui->wResourses);
+
+    on_cbAlgorithm_currentTextChanged(ALG_PERT);
 }
 
 MainWindow::~MainWindow() {
     delete ui;
-}
-
-void MainWindow::keyPressEvent(QKeyEvent *event) {
-    ui->widgetNetworkGraph->keyPressEvent(event);
 }
 
 void MainWindow::onOpenGraph() {
@@ -63,32 +61,54 @@ void MainWindow::onSaveGraph() {
     if (!filePath.isNull()) Project::instance()->store(filePath);
 }
 
-void MainWindow::onComputePert() {
+void MainWindow::on_pbCompute_clicked() {
     NetworkGraph* graph = Project::instance()->graph();
 
-    if (!PertNetworkAlgorithm(graph).compute()) {
-        QMessageBox::warning(NULL, "Ошибка рассчета графа", "Невозможно найти решение");
+    IAlgorithm *alg = currentAlorithm(graph);
+    if (!alg) {
+        QMessageBox::warning(NULL, "Ошибка рассчета графа", "Неизвестный алгоритм");
         return;
     }
 
-    ui->dsbCost->setValue(graph->cost()->value());
-//    ui->dsbTime->setValue(graph->time()->F(0.7));
-    ui->dsbTime->setValue(graph->time()->value());
+    if (alg->compute()) {
+        double prob = ui->dsbProb->value();
+        ui->dsbCost->setValue(graph->cost()->value());
+        ui->dsbTime->setValue(graph->time()->invF(prob));
 
-    Project::instance()->graphChanged();
+        Project::instance()->graphChanged();
+
+    } else {
+        QMessageBox::warning(NULL, "Ошибка рассчета графа", "Невозможно найти решение");
+    }
+
+    delete alg;
 }
 
-void MainWindow::onComputeMonteCarlo() {
-    NetworkGraph* graph = Project::instance()->graph();
+IAlgorithm *MainWindow::currentAlorithm(NetworkGraph *graph) {
+    IAlgorithm *res = 0;
 
-    if (!MonteCarloNetworkAlgorithm(graph, 1000).compute()) {
-        QMessageBox::warning(NULL, "Ошибка рассчета графа", "Невозможно найти решение");
-        return;
+    QString alg = ui->cbAlgorithm->currentText();
+    if (alg == ALG_PERT) {
+        res = new PertNetworkAlgorithm(graph);
+
+    } else if (alg == ALG_MONTE_CARLO) {
+        uint iterations = ui->sbIterations->value();
+        uint intervals = ui->sbIntervals->value();
+        res = new MonteCarloNetworkAlgorithm(graph, iterations, intervals);
     }
 
-    ui->dsbCost->setValue(graph->cost()->value());
-//    ui->dsbTime->setValue(graph->time()->F(0.7));
-    ui->dsbTime->setValue(graph->time()->value());
+    return res;
+}
 
-    Project::instance()->graphChanged();
+void MainWindow::on_cbAlgorithm_currentTextChanged(const QString &alg) {
+    bool visible = alg == ALG_MONTE_CARLO;
+
+    ui->lIterations->setVisible(visible);
+    ui->lIntervals->setVisible(visible);
+    ui->sbIterations->setVisible(visible);
+    ui->sbIntervals->setVisible(visible);
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event) {
+    ui->widgetNetworkGraph->keyPressEvent(event);
 }

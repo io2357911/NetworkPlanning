@@ -3,8 +3,10 @@
 
 #include <QMainWindow>
 #include "math/networkgraph.h"
+#include "math/interfaces.h"
 #include "project.h"
 
+using namespace Math;
 using namespace Math::Planning;
 
 namespace Ui {
@@ -25,8 +27,12 @@ private slots:
     void onOpenGraph();
     void onSaveGraph();
 
-    void onComputePert();
-    void onComputeMonteCarlo();
+    void on_pbCompute_clicked();
+
+    void on_cbAlgorithm_currentTextChanged(const QString &arg1);
+
+private:
+    IAlgorithm *currentAlorithm(NetworkGraph* graph);
 
 private:
     Ui::MainWindow *ui;
