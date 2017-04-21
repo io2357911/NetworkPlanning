@@ -54,13 +54,6 @@ void testBeta() {
     }
 }
 
-int runGUI(int argc, char *argv[]) {
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
-    return a.exec();
-}
-
 int main(int argc, char *argv[]) {
     (void)argc;
     (void)argv;
@@ -68,6 +61,8 @@ int main(int argc, char *argv[]) {
 //    testNetworkGraph();
 //    testBeta();
 
-    return runGUI(argc, argv);
-//    return 0;
+    QApplication a(argc, argv);
+    MainWindow w;
+    w.show();
+    return a.exec();
 }

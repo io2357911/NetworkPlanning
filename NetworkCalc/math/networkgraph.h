@@ -73,6 +73,8 @@ private:
  */
 class IRandomFactory {
 public:
+    virtual ~IRandomFactory() {}
+
     virtual Random* create(Work* work) = 0;
 };
 
@@ -175,6 +177,7 @@ class BetaFactory : public IRandomFactory { \
 public:
     Random* create(Work* work) { return new Beta(work); } \
 };
+
 
 class Triangle : public WorkBased {
 public:

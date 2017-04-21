@@ -28,11 +28,11 @@ private slots:
     void onSaveGraph();
 
     void on_pbCompute_clicked();
-
     void on_cbAlgorithm_currentTextChanged(const QString &arg1);
 
 private:
-    IAlgorithm *currentAlorithm(NetworkGraph* graph);
+    IAlgorithm *currentAlgorithm(NetworkGraph* graph);
+    IRandomFactory *currentWorkTimeRandom();
 
 private:
     Ui::MainWindow *ui;

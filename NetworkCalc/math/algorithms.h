@@ -40,8 +40,10 @@ private:
 
 class MonteCarloNetworkAlgorithm : public INetworkAlgorithm {
 public:
-    MonteCarloNetworkAlgorithm(NetworkGraph* graph, uint iterations = 100, uint intervals = 10);
-    virtual ~MonteCarloNetworkAlgorithm() {}
+    MonteCarloNetworkAlgorithm(NetworkGraph* graph,
+                               IRandomFactory *workTimeRandomFactory = new Randoms::BetaFactory,
+                               uint iterations = 100, uint intervals = 10);
+    virtual ~MonteCarloNetworkAlgorithm();
 
     // IAlgorithm interface
     bool compute();
@@ -50,6 +52,7 @@ private:
     bool computeTime();
 
 private:
+    IRandomFactory *m_workTimeRandomFactory;
     uint m_iterations;
     uint m_intervals;
 };
@@ -105,19 +108,6 @@ public:
     // IAlgorithm interface
     bool compute();
 };
-
-///*!
-// * \brief Класс алгоритма нахождения времени проекта
-// * \warning Предполагается, что уже рассчитен крит. путь
-// */
-//class TimeAlgorithm : public INetworkAlgorithm {
-//public:
-//    TimeAlgorithm(NetworkGraph* graph) : INetworkAlgorithm(graph) {}
-//    virtual ~TimeAlgorithm() {}
-
-//    // IAlgorithm interface
-//    bool compute();
-//};
 
 } // namespace Algorithms
 } // namespace Planning

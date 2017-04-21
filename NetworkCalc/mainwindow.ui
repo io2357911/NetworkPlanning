@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>709</width>
-    <height>460</height>
+    <width>719</width>
+    <height>397</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -205,6 +205,30 @@
          </property>
         </widget>
        </item>
+       <item row="3" column="3">
+        <widget class="QLabel" name="lTimeRandom">
+         <property name="text">
+          <string>З.Р. работы:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="4">
+        <widget class="QComboBox" name="cbTimeRandom">
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <item>
+          <property name="text">
+           <string>Бета</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Треугольное</string>
+          </property>
+         </item>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>
@@ -307,7 +331,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>709</width>
+     <width>719</width>
      <height>19</height>
     </rect>
    </property>

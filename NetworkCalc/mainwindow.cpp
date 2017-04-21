@@ -5,6 +5,9 @@
 #define ALG_PERT        QString("PERT")
 #define ALG_MONTE_CARLO QString("Монте-Карло")
 
+#define RND_BETA        QString("Бета")
+#define RND_TRIANGLE    QString("Треугольное")
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow) {
@@ -64,7 +67,7 @@ void MainWindow::onSaveGraph() {
 void MainWindow::on_pbCompute_clicked() {
     NetworkGraph* graph = Project::instance()->graph();
 
-    IAlgorithm *alg = currentAlorithm(graph);
+    IAlgorithm *alg = currentAlgorithm(graph);
     if (!alg) {
         QMessageBox::warning(NULL, "Ошибка рассчета графа", "Неизвестный алгоритм");
         return;
@@ -87,7 +90,7 @@ void MainWindow::on_pbCompute_clicked() {
     delete alg;
 }
 
-IAlgorithm *MainWindow::currentAlorithm(NetworkGraph *graph) {
+IAlgorithm *MainWindow::currentAlgorithm(NetworkGraph *graph) {
     IAlgorithm *res = 0;
 
     QString alg = ui->cbAlgorithm->currentText();
@@ -95,9 +98,24 @@ IAlgorithm *MainWindow::currentAlorithm(NetworkGraph *graph) {
         res = new PertNetworkAlgorithm(graph);
 
     } else if (alg == ALG_MONTE_CARLO) {
+        IRandomFactory *rndWorkTime = currentWorkTimeRandom();
         uint iterations = ui->sbIterations->value();
         uint intervals = ui->sbIntervals->value();
-        res = new MonteCarloNetworkAlgorithm(graph, iterations, intervals);
+        res = new MonteCarloNetworkAlgorithm(graph, rndWorkTime, iterations, intervals);
+    }
+
+    return res;
+}
+
+IRandomFactory *MainWindow::currentWorkTimeRandom() {
+    IRandomFactory *res = 0;
+
+    QString rnd = ui->cbTimeRandom->currentText();
+    if (rnd == RND_BETA) {
+        res = new Math::Planning::Randoms::BetaFactory;
+
+    } else if (rnd == RND_TRIANGLE) {
+        res = new Math::Planning::Randoms::TriangleFactory;
     }
 
     return res;
@@ -110,6 +128,8 @@ void MainWindow::on_cbAlgorithm_currentTextChanged(const QString &alg) {
     ui->lIntervals->setVisible(visible);
     ui->sbIterations->setVisible(visible);
     ui->sbIntervals->setVisible(visible);
+    ui->lTimeRandom->setVisible(visible);
+    ui->cbTimeRandom->setVisible(visible);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {

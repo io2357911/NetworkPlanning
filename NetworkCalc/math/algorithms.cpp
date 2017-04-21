@@ -59,20 +59,27 @@ bool PertNetworkAlgorithm::computeTime() {
 }
 
 
-MonteCarloNetworkAlgorithm::MonteCarloNetworkAlgorithm(NetworkGraph *graph, uint iterations, uint intervals)
-    : INetworkAlgorithm(graph), m_iterations(iterations), m_intervals(intervals)
+MonteCarloNetworkAlgorithm::MonteCarloNetworkAlgorithm(NetworkGraph *graph,
+                                                       IRandomFactory *workTimeRandomFactory,
+                                                       uint iterations, uint intervals)
+    : INetworkAlgorithm(graph), m_workTimeRandomFactory(workTimeRandomFactory),
+      m_iterations(iterations), m_intervals(intervals)
 {}
 
+MonteCarloNetworkAlgorithm::~MonteCarloNetworkAlgorithm() {
+    if (m_workTimeRandomFactory) delete m_workTimeRandomFactory;
+}
+
 bool MonteCarloNetworkAlgorithm::compute() {
+    if (!m_workTimeRandomFactory) return false;
+
     // зададим вероятностные хар-ки
-//    Randoms::TriangleFactory    workTime;
-    Randoms::BetaFactory        workTime;
-    Random*                     graphTime = new Math::Randoms::Empirical(m_intervals);
-    Random*                     graphCost = new Math::Randoms::Empirical(m_intervals);
+    Random *graphTime = new Math::Randoms::Empirical(m_intervals);
+    Random *graphCost = new Math::Randoms::Empirical(m_intervals);
 
     QVector<Work*> works = m_graph->edges();
     for (int i = 0; i < works.size(); i++) {
-        works[i]->setTime(&workTime);
+        works[i]->setTime(m_workTimeRandomFactory);
     }
     m_graph->setTime(graphTime);
     m_graph->setCost(graphCost);
