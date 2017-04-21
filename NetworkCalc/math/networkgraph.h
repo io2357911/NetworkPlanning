@@ -161,6 +161,20 @@ protected:
     Work* m_work;
 };
 
+class Beta : public WorkBased {
+public:
+    Beta(Work* work) : WorkBased(work) {}
+
+    double f(double val);
+    double F(double val);
+    double mathExpected();
+    double dispersion();
+    double _random();
+};
+class BetaFactory : public IRandomFactory { \
+public:
+    Random* create(Work* work) { return new Beta(work); } \
+};
 
 class Triangle : public WorkBased {
 public:

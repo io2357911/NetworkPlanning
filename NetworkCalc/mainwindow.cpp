@@ -75,6 +75,9 @@ void MainWindow::on_pbCompute_clicked() {
         ui->dsbCost->setValue(graph->cost()->value());
         ui->dsbTime->setValue(graph->time()->invF(prob));
 
+        qDebug("%s: invF(%f) = %f, M = %f", ui->cbAlgorithm->currentText().toStdString().c_str(),
+               prob, graph->time()->invF(prob), graph->time()->mathExpected());
+
         Project::instance()->graphChanged();
 
     } else {

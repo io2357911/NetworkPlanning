@@ -278,6 +278,45 @@ QVector<Work*> NetworkGraph::criticalPath() {
 
 namespace Randoms {
 
+
+double Beta::f(double val) {
+    if (!m_work) return 0;
+    return Math::Randoms::Beta::f(val,
+                                  m_work->timeMin(false),
+                                  m_work->timeMax(false),
+                                  m_work->timeAvg(false));
+}
+
+double Beta::F(double val) {
+    if (!m_work) return 0;
+    return Math::Randoms::Beta::F(val,
+                                  m_work->timeMin(false),
+                                  m_work->timeMax(false),
+                                  m_work->timeAvg(false));
+}
+
+double Beta::mathExpected() {
+    if (!m_work) return 0;
+    return Math::Randoms::Beta::mathExpected(m_work->timeMin(false),
+                                             m_work->timeMax(false),
+                                             m_work->timeAvg(false));
+}
+
+double Beta::dispersion() {
+    if (!m_work) return 0;
+    return Math::Randoms::Beta::dispersion(m_work->timeMin(false),
+                                           m_work->timeMax(false),
+                                           m_work->timeAvg(false));
+}
+
+double Beta::_random() {
+    if (!m_work) return 0;
+    return Math::Randoms::Beta::random(m_work->timeMin(false),
+                                       m_work->timeMax(false),
+                                       m_work->timeAvg(false));
+}
+
+
 double Triangle::f(double val) {
     if (!m_work) return 0;
     return Math::Randoms::Triangle::f(val,

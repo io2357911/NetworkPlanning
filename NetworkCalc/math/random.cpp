@@ -7,6 +7,21 @@ namespace Math {
 
 using namespace Functions;
 
+double Random::neumannRandom(IFunction *f, double a, double b, double m) {
+    if (!f)    return 0;
+    if (a >= b) return 0;
+
+    while (1) {
+        double x1 = Randoms::Uniform().random();
+        double x2 = Randoms::Uniform().random();
+
+        x1 = a + (b - a) * x1;
+        x2 = f->value(m) * x2;
+
+        if (x2 <= f->value(x1)) return x1;
+    }
+}
+
 double Random::f(double) {
     return 0;
 }
@@ -183,12 +198,58 @@ Intervals Empirical::integrate(Intervals vals) {
     return integral;
 }
 
+
 Beta::Beta(double a, double b, double m)
     : m_a(a), m_b(b), m_m(m)
 {}
 
-double Beta::_random() {
+double Beta::f(double x, double a, double b, double /*m*/) {
+    // 12/(b-a)^4*(x-a)(b-x)^2
+    return 12 / pow(b-a, 4) * (x-a)*pow(b-x, 2);
+}
+
+double Beta::F(double /*val*/, double /*a*/, double /*b*/, double /*m*/) {
     return 0;
+}
+
+double Beta::mathExpected(double a, double b, double /*m*/) {
+    // (3*a+2*b)/5
+    return (3*a+2*b)/5;
+}
+
+double Beta::dispersion(double a, double b, double /*m*/) {
+    // 0.04*(b-a)^2
+    return 0.004*pow(b-a,2);
+}
+
+double Beta::random(double a, double b, double m) {
+    struct Function : public IFunction {
+        double _a,_b,_m;
+        Function(double a, double b, double m) : _a(a), _b(b), _m(m) {}
+        double value(const vector<double> &args) {
+            double y = Beta::f(args[0], _a, _b, _m);
+            return y;
+        }
+    } f(a,b,m);
+
+    double mod = (2*a+b)/3; // мода
+    return neumannRandom(&f, a, b, mod);
+}
+
+double Beta::f(double x) {
+    return f(x, m_a, m_b, m_m);;
+}
+
+double Beta::mathExpected() {
+    return mathExpected(m_a, m_b, m_m);
+}
+
+double Beta::dispersion() {
+    return dispersion(m_a, m_b, m_m);
+}
+
+double Beta::_random() {
+    return random(m_a, m_b, m_m);
 }
 
 
@@ -244,7 +305,8 @@ double PertNormal::f(double x) {
     double M = mathExpected();
     double V = dispersion();
 
-    return normalGaussianDensity((x - M)/sqrt(V), 0, 1);
+//    return normalGaussianDensity((x - M)/sqrt(V), 0, 1);
+    return normalGaussianDensity(x, M, V);
 }
 
 double PertNormal::F(double x) {
@@ -370,7 +432,7 @@ double Triangle::dispersion() {
     return dispersion(m_a, m_b, m_m);
 }
 
-double Triangle::random() {
+double Triangle::_random() {
     return random(m_a, m_b, m_m);
 }
 

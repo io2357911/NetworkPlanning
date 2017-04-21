@@ -13,6 +13,17 @@ namespace Math {
 class Random : public IRandom {
 public:
     virtual ~Random() {}
+    /**
+     * @brief neumannRandom Разыгрывает случайную величину методом Неймана
+     * @param f - функция плотности вероятности
+     * @param a - начало интервала
+     * @param b - конец интервала
+     * @param m - такое значение, при ктором fn->value(m) -> max
+     * @return случайная величина x распределенная по f(x)
+     *
+     * http://sernam.ru/book_dm.php?id=7
+     */
+    static double neumannRandom(IFunction *f, double a, double b, double m);
 
     // IRandom interface
     virtual double f(double value);
@@ -76,11 +87,27 @@ private:
     Intervals m_xi, m_f, m_F;
 };
 
+
+/**
+ * @brief The Beta class
+ *
+ * Голенко Д. И. Статистические методы сетевого планирования и управления. М.: Наука, 1968. (уклон на математику) - c. 97
+ */
 class Beta : public Random {
 public:
     Beta(double a, double b, double m);
 
+    static double f(double val, double a, double b, double m);
+    static double F(double val, double a, double b, double m);
+    static double mathExpected(double a, double b, double m);
+    static double dispersion(double a, double b, double m);
+    static double random(double a, double b, double m);
+
     // Random interface
+    virtual double f(double value);
+//    double F(double value);
+    virtual double mathExpected();
+    virtual double dispersion();
     virtual double _random();
 
 protected:
@@ -147,7 +174,7 @@ public:
     double invF(double value);
     double mathExpected();
     double dispersion();
-    double random();
+    double _random();
 
 private:
     double m_a;

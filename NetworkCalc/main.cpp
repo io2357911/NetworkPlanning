@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include <QApplication>
 
+#include "math/random.h"
 #include "math/networkgraph.h"
 #include "math/algorithms.h"
 #include "tools/debug.h"
@@ -46,17 +47,27 @@ void testNetworkGraph() {
     Debug::printCriticalPath(graph.criticalPath());
 }
 
+void testBeta() {
+    Math::Randoms::Beta beta(30, 55, 35);
+    for (int i = 0; i < 100; i++) {
+        qDebug("%f", beta._random());
+    }
+}
+
+int runGUI(int argc, char *argv[]) {
+    QApplication a(argc, argv);
+    MainWindow w;
+    w.show();
+    return a.exec();
+}
 
 int main(int argc, char *argv[]) {
     (void)argc;
     (void)argv;
 
 //    testNetworkGraph();
+//    testBeta();
 
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
-    return a.exec();
-
-    return 0;
+    return runGUI(argc, argv);
+//    return 0;
 }

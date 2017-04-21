@@ -65,7 +65,8 @@ MonteCarloNetworkAlgorithm::MonteCarloNetworkAlgorithm(NetworkGraph *graph, uint
 
 bool MonteCarloNetworkAlgorithm::compute() {
     // зададим вероятностные хар-ки
-    Randoms::TriangleFactory    workTime;
+//    Randoms::TriangleFactory    workTime;
+    Randoms::BetaFactory        workTime;
     Random*                     graphTime = new Math::Randoms::Empirical(m_intervals);
     Random*                     graphCost = new Math::Randoms::Empirical(m_intervals);
 

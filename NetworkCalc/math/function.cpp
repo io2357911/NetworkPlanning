@@ -1,6 +1,5 @@
 #include "function.h"
 #include <math.h>
-
 namespace Math {
 namespace Functions {
 
@@ -63,18 +62,6 @@ double normalGaussian(double x) {
     return 0.5*(1.0 + sign*y);
 }
 
-double Linear::value(const vector<double> &args) {
-    if (args.size() < 1) return 0;
-
-    return linear(args[0]);
-}
-
-double NormalGaussian::value(const vector<double> &args) {
-    if (args.size() < 1) return 0;
-
-    return normalGaussian(args[0]);
-}
-
 double normalGaussianInverse(double p) {
     if (p <= 0.0 || p >= 1.0) {
         //        std::stringstream os;
@@ -101,6 +88,18 @@ double rationalApproximation(double t) {
     double d[] = {1.432788, 0.189269, 0.001308};
     return t - ((c[2]*t + c[1])*t + c[0]) /
             (((d[2]*t + d[1])*t + d[0])*t + 1.0);
+}
+
+double Linear::value(const vector<double> &args) {
+    if (args.size() < 1) return 0;
+
+    return linear(args[0]);
+}
+
+double NormalGaussian::value(const vector<double> &args) {
+    if (args.size() < 1) return 0;
+
+    return normalGaussian(args[0]);
 }
 
 } // namespace Functions
