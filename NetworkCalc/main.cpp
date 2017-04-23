@@ -54,12 +54,33 @@ void testBeta() {
     }
 }
 
+QString toString(const QVector<uint> &vec) {
+    QString str;
+    for (int i = 0; i < vec.size(); i++) {
+        str += QString("%1, ").arg(vec[i]);
+    }
+    return QString("{%1}").arg(str);
+}
+
+void testIterator() {
+    Math::SumIterator   iter1(3, 5);
+    Math::SumIterator   iter2(2, 6);
+    Math::MetaIterator  iterMeta(QVector<IIterator*>({&iter1,&iter2}));
+
+    while (iterMeta.toNext()) {
+//        QVector<uint> vec = iter.next();
+        qDebug("1) %s", toString(iter1.next()).toStdString().c_str());
+        qDebug("2) %s", toString(iter2.next()).toStdString().c_str());
+    }
+}
+
 int main(int argc, char *argv[]) {
     (void)argc;
     (void)argv;
 
 //    testNetworkGraph();
 //    testBeta();
+    testIterator();
 
     QApplication a(argc, argv);
     MainWindow w;

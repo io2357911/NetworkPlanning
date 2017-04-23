@@ -24,6 +24,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->aGraphSave, SIGNAL(triggered()),
             this, SLOT(onSaveGraph()));
 
+    connect(ui->wResourses, SIGNAL(distributeResourses()),
+            this, SLOT(onDistributeResourses()));
+
     connect(proj, SIGNAL(graphChanged()),
             ui->widgetNetworkGraph, SLOT(onGraphChanged()));
     connect(proj, SIGNAL(graphChanged()),
@@ -62,6 +65,32 @@ void MainWindow::onSaveGraph() {
                                                     tr("ini files (*.ini)"));
 
     if (!filePath.isNull()) Project::instance()->store(filePath);
+}
+
+void MainWindow::onDistributeResourses() {
+    NetworkGraph* graph = Project::instance()->graph();
+
+    IAlgorithm *alg = currentAlgorithm(graph);
+    if (!alg) {
+        QMessageBox::warning(NULL, "Ошибка рассчета графа", "Неизвестный алгоритм");
+        return;
+    }
+
+    double prob = ui->dsbProb->value();
+    if (ResourseNetworkAlgorithm(graph, alg, prob).compute()) {
+//        double prob = ui->dsbProb->value();
+//        ui->dsbCost->setValue(graph->cost()->value());
+//        ui->dsbTime->setValue(graph->time()->invF(prob));
+
+        Project::instance()->graphChanged();
+
+//        logReport();
+
+    } else {
+        QMessageBox::warning(NULL, "Ошибка рассчета графа", "Невозможно распределить ресурсы");
+    }
+
+    delete alg;
 }
 
 void MainWindow::on_pbCompute_clicked() {

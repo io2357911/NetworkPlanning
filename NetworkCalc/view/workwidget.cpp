@@ -108,12 +108,14 @@ void WorkWidget::release() {
 }
 
 void WorkWidget::onWorkChanged() {
-    QString info = QString("%1\n{%2,%3,%4}\n%5")
+    QString info = QString("%1\n{%2,%3,%4}")
             .arg(name())
             .arg(timeMin())
             .arg(timeAvg())
-            .arg(timeMax())
-            .arg(Tools::formatDouble(time()->value()));
+            .arg(timeMax());
+
+    if (!IS_ZERO(time()->value(), 0.0001)) info += QString("\n%1").arg(Tools::formatDouble(time()->value()));
+    if (resourse()) info += QString("\n%1").arg(resourse()->name());
 
     ui->lInfo->setText(info);
     ui->lInfo->setVisible(!isVirtual());

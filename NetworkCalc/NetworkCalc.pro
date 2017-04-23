@@ -35,7 +35,6 @@ HEADERS  += \
     math/graph.h \
     math/networkgraph.h \
     math/algorithms.h \
-    math/interfaces.h \
     math/matrix.h \
     math/random.h \
     tools/ini.h \
@@ -51,7 +50,8 @@ HEADERS  += \
     view/resourseswidget.h \
     tools/tools.h \
     view/qmycustomplot.h \
-    project.h
+    project.h \
+    math/interfaces.h
 #    view/workerswidget.h
 
 

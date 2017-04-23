@@ -1,62 +1,182 @@
 #include "algorithms.h"
 
 #include <vector>
+#include <assert.h>
 
 using namespace std;
 
 #define INF INT_MAX
 
-#define IS_ZERO(dbl, eps) (dbl < eps)
-
 namespace Math {
+
+SumIterator::SumIterator(uint count, uint sum)
+    : m_vec(count), m_sum(sum) {
+
+    assert(count);
+    assert(sum >= count);
+
+    reset();
+}
+
+bool SumIterator::reset() {
+    m_vec = QVector<uint>(m_vec.size(), 1);
+    m_vec[0] = 0;
+    return true;
+}
+
+bool SumIterator::toNext() {
+    while (1) {
+        if (!nextSum()) {
+            return false;
+
+        } else if (m_sum == sum(m_vec)) {
+            return true;
+        }
+    }
+}
+
+QVector<uint> SumIterator::next() {
+    return m_vec;
+}
+
+uint SumIterator::sum(const QVector<uint> &vec) {
+    int sum = 0;
+    for (int i = 0; i < vec.size(); i++)
+        sum += m_vec[i];
+    return sum;
+}
+
+bool SumIterator::nextSum() {
+    for (int i = 0; i < m_vec.size(); i++) {
+        m_vec[i] = m_vec[i] + 1;
+
+        if (m_vec[i] == m_sum) {
+            m_vec[i] = 1;
+
+        } else {
+            return true;
+        }
+    }
+    return false;
+}
+
 namespace Planning {
 namespace Algorithms {
 
+void printRD(NetworkGraph *graph) {
+    QString str;
 
-ResourseNetworkAlgorithm::ResourseNetworkAlgorithm(NetworkGraph *graph, INetworkAlgorithm *algCalc, double prob)
+    QVector<Work*> works = graph->edges();
+    for (int i = 0; i < works.size(); i++) {
+        Work *work = works[i];
+        str += QString("%1(%2), ").arg(work->name()).arg(work->resourseCount());
+    }
+
+    qDebug(str.toStdString().c_str());
+}
+
+ResourseNetworkAlgorithm::ResourseNetworkAlgorithm(NetworkGraph *graph, IAlgorithm *algCalc, double prob)
     : INetworkAlgorithm(graph), m_algCalc(algCalc), m_prob(prob)
 {}
 
 bool ResourseNetworkAlgorithm::compute() {
     bool res = false;
     if (!m_algCalc) return res;
+    if (!setMaxResourseCount()) return false;
 
     ResourseDistribution minDist;
     double minTime = std::numeric_limits<double>::max();
 
-    ResourseIterator iter(m_graph);
-    while (iter.hasNext()) {
-        ResourseDistribution dist = iter.next();
-        m_graph->setResourseDistribution(dist);
+    uint iters = 0; // debug
 
+    ResourseIterator iter(m_graph);
+    while (iter.toNext()) {
         if (!m_algCalc->compute()) continue;
+
+        printRD(m_graph); // debug
 
         double time = m_graph->time()->invF(m_prob);
         if (time < minTime) {
             minTime = time;
-            minDist = dist;
+            minDist = m_graph->resourseDistribution();
 
             res = true;
         }
+        iters++;
     }
+
+    qDebug("ResourseNetworkAlgorithm::compute() iters: %d", iters); // debug
 
     m_graph->setResourseDistribution(minDist);
 
     return res;
 }
 
-ResourseNetworkAlgorithm::ResourseIterator::ResourseIterator(NetworkGraph *graph)
-    : m_graph(graph)
-{}
-
-bool ResourseNetworkAlgorithm::ResourseIterator::hasNext() {
-    return false;
+bool ResourseNetworkAlgorithm::setMaxResourseCount() {
+    QVector<Work*> works = m_graph->edges();
+    for (int i = 0; i < works.size(); i++) {
+        Work *work = works[i];
+        if (!work->resourse()) return false;
+        work->setResourseCount(work->resourse()->quantity());
+    }
+    return true;
 }
 
-ResourseDistribution ResourseNetworkAlgorithm::ResourseIterator::next() {
-    ResourseDistribution dist;
+ResourseNetworkAlgorithm::ResourseIterator::ResourseIterator(NetworkGraph *graph) {
+    QVector<WorkGroup> rgs = findWorkGroups(graph);
+    for (int i = 0; i < rgs.size(); i++) {
+        m_iters.append(new WorkGroupIterator(rgs[i]));
+    }
+    reset();
+}
 
-    return dist;
+ResourseNetworkAlgorithm::ResourseIterator::~ResourseIterator() {
+    for (int i = 0; i < m_iters.size(); i++) {
+        delete m_iters[i];
+    }
+    m_iters.clear();
+}
+
+QVector<ResourseNetworkAlgorithm::WorkGroup> ResourseNetworkAlgorithm::ResourseIterator::findWorkGroups(NetworkGraph* graph) {
+    QVector<WorkGroup> rgs;
+
+    QVector<Event*> events = graph->vertices();
+    for (int i = 0; i < events.size(); i++) {
+
+        QMap<Resourse*, WorkGroup> map;
+
+        QVector<Work*> works = events[i]->nextEdges();
+        for (int j = 0; j < works.size(); j++) {
+            Work *work = works[j];
+            Resourse *res = work->resourse();
+            if (!res) continue;
+            map[res].append(work);
+        }
+
+        QList<WorkGroup> _rgs = map.values();
+        for (int j = 0; j < _rgs.size(); j++) {
+            if (_rgs[j].size() > 1)
+                rgs.append(_rgs[j]);
+        }
+    }
+
+    return rgs;
+}
+
+ResourseNetworkAlgorithm::WorkGroupIterator::WorkGroupIterator(const ResourseNetworkAlgorithm::WorkGroup &group)
+    : SumIterator(group.size(), (int)group[0]->resourse()->quantity()), m_wg(group) {
+
+    reset();
+}
+
+bool ResourseNetworkAlgorithm::WorkGroupIterator::toNext() {
+    bool res = SumIterator::toNext();
+    if (res) {
+        for (int i = 0; i < m_wg.size(); i++) {
+            m_wg[i]->setResourseCount(m_vec[i]);
+        }
+    }
+    return res;
 }
 
 

@@ -1,6 +1,8 @@
 #ifndef INTERFACES_H
 #define INTERFACES_H
 
+#define IS_ZERO(dbl, eps) (dbl < eps)
+
 #include <vector>
 
 using namespace std;
@@ -95,6 +97,22 @@ public:
 
     virtual bool compute() = 0;
 
+};
+
+class IIterator {
+public:
+    virtual ~IIterator() {}
+
+    virtual bool reset() = 0;
+    virtual bool toNext() = 0;
+};
+
+template <typename T>
+class Iterator : public IIterator {
+public:
+    virtual ~Iterator() {}
+
+    virtual T next() = 0;
 };
 
 }

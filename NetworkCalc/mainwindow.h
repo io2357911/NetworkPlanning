@@ -26,6 +26,7 @@ public:
 private slots:
     void onOpenGraph();
     void onSaveGraph();
+    void onDistributeResourses();
 
     void on_pbCompute_clicked();
     void on_cbAlgorithm_currentTextChanged(const QString &arg1);

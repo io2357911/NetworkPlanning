@@ -24,6 +24,9 @@ public:
     // ProjectResourseFactory interface
     ProjectResourse *createResourse();
 
+signals:
+    void distributeResourses();
+
 public slots:
     void on_pbAdd_clicked();
     void on_pbDelete_clicked();

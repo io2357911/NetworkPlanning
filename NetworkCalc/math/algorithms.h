@@ -8,6 +8,65 @@
 using namespace std;
 
 namespace Math {
+
+/**
+ * @brief The SumIterator class Перебирает множество векторов длины count, сумма элементов которого равна sum
+ */
+class SumIterator : public Iterator<QVector<uint>> {
+public:
+    SumIterator(uint count, uint sum);
+
+    // Iterator interface
+    virtual bool reset();
+    virtual bool toNext();
+    virtual QVector<uint> next();
+
+protected:
+    uint sum(const QVector<uint> &vec);
+    bool nextSum();
+
+protected:
+    QVector<uint> m_vec;
+    uint m_sum;
+};
+
+class MetaIterator : public IIterator {
+public:
+    MetaIterator(const QVector<IIterator*> iters = QVector<IIterator*>())
+        : m_iters(iters) {
+
+        reset();
+    }
+
+    // Iterator interface
+    bool reset() {
+        if (m_iters.empty()) return false;
+
+        m_iters[0]->reset();
+        for (int i = 1; i < m_iters.size(); i++) {
+            m_iters[i]->reset();
+            m_iters[i]->toNext();
+        }
+        return true;
+    }
+
+    bool toNext() {
+        for (int i = 0; i < m_iters.size(); i++) {
+            if (!m_iters[i]->toNext()) {
+                m_iters[i]->reset();
+                m_iters[i]->toNext();
+
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
+
+protected:
+    QVector<IIterator*> m_iters;
+};
+
 namespace Planning {
 namespace Algorithms {
 
@@ -32,26 +91,50 @@ protected:
  */
 class ResourseNetworkAlgorithm : public INetworkAlgorithm {
 public:
-    ResourseNetworkAlgorithm(NetworkGraph* graph, INetworkAlgorithm *algCalc, double prob);
+    ResourseNetworkAlgorithm(NetworkGraph* graph, IAlgorithm *algCalc, double prob);
     virtual ~ResourseNetworkAlgorithm() {}
 
     // IAlgorithm interface
     bool compute();
 
 private:
-    INetworkAlgorithm *m_algCalc;
+    bool setMaxResourseCount();
+
+private:
+    IAlgorithm *m_algCalc;
     double m_prob;
 
 private:
-    class ResourseIterator {
+    /**
+     * @brief WorkGroup Группа работ с ресурсом одного типа, выполняемых одновременно
+     */
+    typedef QVector<Work*> WorkGroup;
+    /**
+     * @brief The ResourseIterator class Итератор для перебора вариантов распределения ресурсов
+     */
+    class ResourseIterator : public MetaIterator {
     public:
-        ResourseIterator(NetworkGraph* graph = 0);
-
-        bool hasNext();
-        ResourseDistribution next();
+        ResourseIterator(NetworkGraph *graph = 0);
+        ~ResourseIterator();
 
     private:
-        NetworkGraph* m_graph;
+        QVector<WorkGroup> findWorkGroups(NetworkGraph* graph);
+    };
+    /**
+     * @brief The WorkGroupIterator class Итератор для перебора вариантов распределения ресурсов одного типа для одновременно выполняемых работ
+     *
+     * Перебор осуществляется между работами, выполняемыми одновременно (выходят из одного события).
+     * При этом количество ресурсов работ выбирается так, чтобы их сумма был равна количеству доступного ресурса данного типа
+     */
+    class WorkGroupIterator : public SumIterator {
+    public:
+        WorkGroupIterator(const WorkGroup &group);
+
+        // IIterator interface
+        bool toNext();
+
+    private:
+        WorkGroup m_wg;
     };
 };
 

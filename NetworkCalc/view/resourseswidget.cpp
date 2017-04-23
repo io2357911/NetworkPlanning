@@ -9,6 +9,9 @@ ResoursesWidget::ResoursesWidget(QWidget *parent) :
 
     connect(ui->tlwResourses, SIGNAL(itemChanged(QTableWidgetItem*)),
             this, SLOT(onItemChanged(QTableWidgetItem*)));
+
+    connect(ui->pbDistribute, SIGNAL(clicked()),
+            this, SIGNAL(distributeResourses()));
 }
 
 ResoursesWidget::~ResoursesWidget() {

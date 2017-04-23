@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>719</width>
-    <height>397</height>
+    <width>724</width>
+    <height>443</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -265,7 +265,7 @@
         <string>Ресурсы</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_5">
-        <item row="0" column="0">
+        <item row="0" column="0" colspan="2">
          <widget class="ResoursesWidget" name="wResourses" native="true"/>
         </item>
        </layout>
@@ -288,14 +288,17 @@
         <string>Отчет</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_4">
-        <item row="1" column="1">
+        <item row="1" column="0" colspan="2">
+         <widget class="QTextBrowser" name="tbReport"/>
+        </item>
+        <item row="0" column="0">
          <widget class="QPushButton" name="pbClearReport">
           <property name="text">
            <string>Очистить</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
+        <item row="0" column="1">
          <spacer name="horizontalSpacer_2">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -308,9 +311,6 @@
           </property>
          </spacer>
         </item>
-        <item row="0" column="0" colspan="2">
-         <widget class="QTextBrowser" name="tbReport"/>
-        </item>
        </layout>
       </widget>
      </widget>
@@ -322,7 +322,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>719</width>
+     <width>724</width>
      <height>19</height>
     </rect>
    </property>
