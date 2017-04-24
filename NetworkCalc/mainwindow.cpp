@@ -140,10 +140,10 @@ IRandomFactory *MainWindow::currentWorkTimeRandom() {
 
     QString rnd = ui->cbTimeRandom->currentText();
     if (rnd == RND_BETA) {
-        res = new Math::Planning::Randoms::BetaFactory;
+        res = new Math::Randoms::BetaFactory;
 
     } else if (rnd == RND_TRIANGLE) {
-        res = new Math::Planning::Randoms::TriangleFactory;
+        res = new Math::Randoms::TriangleFactory;
     }
 
     return res;
@@ -157,16 +157,22 @@ void MainWindow::logReport() {
 
     report += QString("Граф: %1\n")
             .arg(graph->name());
+
     report += QString("Метод: %1\n")
             .arg(ui->cbAlgorithm->currentText());
+
     report += QString("З.Р. длительностей работ: %1\n")
             .arg(ui->cbAlgorithm->currentText() == ALG_MONTE_CARLO ? ui->cbTimeRandom->currentText() : RND_BETA);
-    report += QString("Длительности проекта при доверит. вер-ти %1: %2\n")
-            .arg(prob).arg(graph->time()->invF(prob));
-    report += QString("Мат. ожидание длительности проекта: %1\n")
-            .arg(graph->time()->mathExpected());
-    report += QString("Дисперсия длительности проекта: %1\n")
+
+    report += QString("Время:\n     invF(%1) = %2\n     M[X] = %3\n     Var[X] = %4\n")
+            .arg(prob).arg(graph->time()->invF(prob))
+            .arg(graph->time()->mathExpected())
             .arg(graph->time()->dispersion());
+
+    report += QString("Стоимость:\n     invF(%1) = %2\n     M[X] = %3\n     Var[X] = %4\n")
+            .arg(prob).arg(graph->cost()->invF(prob))
+            .arg(graph->cost()->mathExpected())
+            .arg(graph->cost()->dispersion());
 
     ui->tbReport->append(report);
 }

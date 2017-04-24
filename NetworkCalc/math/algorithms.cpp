@@ -186,6 +186,7 @@ bool ResourseNetworkAlgorithm::WorkGroupIterator::toNext() {
 bool PertNetworkAlgorithm::compute() {
     // зададим вероятностные хар-ки
     Randoms::PertBetaFactory    workTime;
+    Randoms::PertBetaFactory    workCost;
     Random*                     graphTime = new Math::Randoms::PertNormal;
     Random*                     graphCost = new Math::Randoms::PertNormal;
 
@@ -193,6 +194,9 @@ bool PertNetworkAlgorithm::compute() {
     for (int i = 0; i < works.size(); i++) {
         works[i]->setTime(&workTime);
         works[i]->time()->random();
+
+        works[i]->setCost(&workCost);
+        works[i]->cost()->random();
     }
     m_graph->setTime(graphTime);
     m_graph->setCost(graphCost);
@@ -204,7 +208,7 @@ bool PertNetworkAlgorithm::compute() {
     if (!CriticalPathAlgorithm(m_graph).compute()) return false;
 
     // расчет стоимости
-    if (!CostAlgorithm(m_graph).compute()) return false;
+    if (!computeCost()) return false;
 
     // расчет времени
     if (!computeTime()) return false;
@@ -229,20 +233,40 @@ bool PertNetworkAlgorithm::computeTime() {
     return true;
 }
 
+bool PertNetworkAlgorithm::computeCost() {
+    double value = 0;
+    double mathExpected = 0;
+    double dispersion = 0;
+
+    QVector<Work*> works = m_graph->edges();
+    for (int i = 0; i < works.size(); i++) {
+        if (works[i]->isVirtual()) continue;
+
+        value += works[i]->cost()->value();
+        mathExpected += works[i]->cost()->mathExpected();
+        dispersion += works[i]->cost()->dispersion();
+    }
+    m_graph->cost()->setValue(value);
+    m_graph->cost()->setMathExpected(mathExpected);
+    m_graph->cost()->setDispersion(dispersion);
+
+    return true;
+}
+
 
 MonteCarloNetworkAlgorithm::MonteCarloNetworkAlgorithm(NetworkGraph *graph,
-                                                       IRandomFactory *workTimeRandomFactory,
+                                                       IRandomFactory *workRandomFactory,
                                                        uint iterations, uint intervals)
-    : INetworkAlgorithm(graph), m_workTimeRandomFactory(workTimeRandomFactory),
+    : INetworkAlgorithm(graph), m_workRandomFactory(workRandomFactory),
       m_iterations(iterations), m_intervals(intervals)
 {}
 
 MonteCarloNetworkAlgorithm::~MonteCarloNetworkAlgorithm() {
-    if (m_workTimeRandomFactory) delete m_workTimeRandomFactory;
+    if (m_workRandomFactory) delete m_workRandomFactory;
 }
 
 bool MonteCarloNetworkAlgorithm::compute() {
-    if (!m_workTimeRandomFactory) return false;
+    if (!m_workRandomFactory) return false;
 
     // зададим вероятностные хар-ки
     Random *graphTime = new Math::Randoms::Empirical(m_intervals);
@@ -250,7 +274,8 @@ bool MonteCarloNetworkAlgorithm::compute() {
 
     QVector<Work*> works = m_graph->edges();
     for (int i = 0; i < works.size(); i++) {
-        works[i]->setTime(m_workTimeRandomFactory);
+        works[i]->setTime(m_workRandomFactory);
+        works[i]->setCost(m_workRandomFactory);
     }
     m_graph->setTime(graphTime);
     m_graph->setCost(graphCost);
@@ -259,6 +284,7 @@ bool MonteCarloNetworkAlgorithm::compute() {
         // имитация случайных длительностей работ
         for (int i = 0; i < works.size(); i++) {
             works[i]->time()->random();
+            works[i]->cost()->random();
         }
 
         // расчет сетевого графа
@@ -268,7 +294,7 @@ bool MonteCarloNetworkAlgorithm::compute() {
         if (!CriticalPathAlgorithm(m_graph).compute()) return false;
 
         // расчет стоимости
-        if (!CostAlgorithm(m_graph).compute()) return false;
+        if (!computeCost()) return false;
 
         // расчет времени
         if (!computeTime()) return false;
@@ -284,6 +310,19 @@ bool MonteCarloNetworkAlgorithm::computeTime() {
         value += critPath[i]->time()->value();
     }
     m_graph->time()->setValue(value);
+
+    return true;
+}
+
+bool MonteCarloNetworkAlgorithm::computeCost() {
+    double value = 0;
+    QVector<Work*> works = m_graph->edges();
+    for (int i = 0; i < works.size(); i++) {
+        if (works[i]->isVirtual()) continue;
+
+        value += works[i]->cost()->value();
+    }
+    m_graph->cost()->setValue(value);
 
     return true;
 }
@@ -425,19 +464,6 @@ bool CriticalPathAlgorithm::compute() {
                             IS_ZERO(secondEvent->reserve(), 0.001) &&
                             IS_ZERO(work->fullReserve(), 0.001));
     }
-
-    return true;
-}
-
-bool CostAlgorithm::compute() {
-    double value = 0;
-    QVector<Work*> works = m_graph->edges();
-    for (int i = 0; i < works.size(); i++) {
-        if (works[i]->isVirtual()) continue;
-
-        value += works[i]->cost();
-    }
-    m_graph->cost()->setValue(value);
 
     return true;
 }

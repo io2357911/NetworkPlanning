@@ -26,9 +26,6 @@ public:
     // Work interface
     void setName(QString value);
     void setResourseCount(double value);
-    void setTimeMin(double value);
-    void setTimeMax(double value);
-    void setTimeAvg(double value);
     void setFullReserve(double value);
     void setIsCritical(bool value);
     void setIsVirtual(bool value);

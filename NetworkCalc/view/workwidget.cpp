@@ -73,21 +73,6 @@ void WorkWidget::setResourseCount(double value) {
     onWorkChanged();
 }
 
-void WorkWidget::setTimeMin(double value) {
-    Work::setTimeMin(value);
-    onWorkChanged();
-}
-
-void WorkWidget::setTimeMax(double value) {
-    Work::setTimeMax(value);
-    onWorkChanged();
-}
-
-void WorkWidget::setTimeAvg(double value) {
-    Work::setTimeAvg(value);
-    onWorkChanged();
-}
-
 void WorkWidget::setFullReserve(double value) {
     Work::setFullReserve(value);
     onWorkChanged();
@@ -112,7 +97,7 @@ void WorkWidget::onWorkChanged() {
 
     info += QString("%1").arg(name());
 
-    info += QString("\n{%1,%2,%3}").arg(timeMin()).arg(timeAvg()).arg(timeMax());
+    info += QString("\n{%1,%2,%3}").arg(timeEstimation()->min()).arg(timeEstimation()->avg()).arg(timeEstimation()->max());
     if (!IS_ZERO(time()->value(), 0.0001)) info += QString(" %1").arg(Tools::formatDouble(time()->value()));
 
     if (resourse()) info += QString("\n%1(%2)").arg(resourse()->name()).arg(resourseCount());
@@ -153,9 +138,9 @@ void WorkWidget::store(QString fileName) {
         setts["resourseName"] = resourse()->name();
 
     setts["resourseCount"] = resourseCount();
-    setts["timeMin"] = timeMin();
-    setts["timeAvg"] = timeAvg();
-    setts["timeMax"] = timeMax();
+    setts["timeMin"] = timeEstimation()->min();
+    setts["timeAvg"] = timeEstimation()->avg();
+    setts["timeMax"] = timeEstimation()->max();
     setts["virtual"] = isVirtual();
 
     INI::store(setts, fileName, QString("Work_%1").arg(name()));
@@ -176,13 +161,13 @@ void WorkWidget::restore(QString fileName) {
         setResourseCount(setts["resourseCount"].toDouble());
 
     if (setts["timeMin"].isValid())
-        setTimeMin(setts["timeMin"].toDouble());
+        timeEstimation()->setMin(setts["timeMin"].toDouble());
 
     if (setts["timeAvg"].isValid())
-        setTimeAvg(setts["timeAvg"].toDouble());
+        timeEstimation()->setAvg(setts["timeAvg"].toDouble());
 
     if (setts["timeMax"].isValid())
-        setTimeMax(setts["timeMax"].toDouble());
+        timeEstimation()->setMax(setts["timeMax"].toDouble());
 
     if (setts["virtual"].isValid())
         setIsVirtual(setts["virtual"].toBool());

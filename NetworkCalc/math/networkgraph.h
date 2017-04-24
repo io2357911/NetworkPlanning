@@ -12,6 +12,8 @@
 namespace Math {
 namespace Planning {
 
+using namespace Randoms;
+
 class Work;
 class Event;
 
@@ -69,14 +71,43 @@ private:
 };
 
 /**
- * @brief The IRandomFactory class Фабрика случайных величин
+ * @brief The TimeEstimation class Оценка времени с учетом выделенного ресурса
  */
-class IRandomFactory {
+class TimeEstimation : public Estimation {
 public:
-    virtual ~IRandomFactory() {}
+    TimeEstimation(Work *work);
 
-    virtual Random* create(Work* work) = 0;
+    // Estimation interface
+    double min();
+    void setMin(double value);
+    double max();
+    void setMax(double value);
+    double avg();
+    void setAvg(double value);
+
+private:
+    Work *m_work;
 };
+
+/**
+ * @brief The TimeEstimation class Оценка стоимости с учетом выделенного ресурса
+ */
+class CostEstimation : public Estimation {
+public:
+    CostEstimation(Work *work);
+
+    // Estimation interface
+    double min();
+    void setMin(double value);
+    double max();
+    void setMax(double value);
+    double avg();
+    void setAvg(double value);
+
+private:
+    Work *m_work;
+};
+
 
 class Work : public GraphEdge<Event, Work> {
 public:
@@ -93,17 +124,16 @@ public:
     virtual Resourse *resourse();
     virtual void setResourseCount(double value);
     virtual double resourseCount();
-    virtual double cost();
+    Random *cost();
+    void setCost(IRandomFactory *factory);
+    IEstimation *costEstimation();
 
     // временные характеристики
-    virtual void setTimeMin(double value);
-    virtual double timeMin(bool unitResourse = true);
-    virtual void setTimeMax(double value);
-    virtual double timeMax(bool unitResourse = true);
-    virtual void setTimeAvg(double value);
-    virtual double timeAvg(bool unitResourse = true);
-    virtual void setTime(IRandomFactory* factory);
-    virtual Random* time();
+    Random* time();
+    void setTime(IRandomFactory *factory);
+    IEstimation *timeEstimation();
+    IFunction *timeSpeed();
+    void setTimeSpeed(IFunction *speed);
 
     // сетевые характеристики
     virtual void setFullReserve(double value);
@@ -117,15 +147,17 @@ private:
     QString         m_name;             // Наименование работы
 
     // ресурсные характеристики
-    Resourse*       m_resourse;         // тип ресурса для данной работы
+    Resourse       *m_resourse;         // тип ресурса для данной работы
     double          m_resourseCount;    // количество выделенного ресурса
+    CostEstimation  m_costEstimation;   // оценка стоимости выполнения с учетом ресурсов
+    Random         *m_cost;             // стоимость выполнения с учетом ресурсов
+
 
     // временные характеристики
-    double          m_timeMin;          // минимальная оценка времени выполнения
-    double          m_timeMax;          // максимальная оценка времени выполнения
-    double          m_timeAvg;          // ожидаемая оценка времени выполнения
-    Random*         m_time;             // время выполнения с учетом ресурсов
-    IFunction*      m_timeSpeed;        // скорость выполения в зависимости от кол-ва ресурсов
+    Estimation      m_timeEstimation;   // временные оценки времени
+    TimeEstimation  m_timeResEstimation;// временные оценки времени с учетом выделенного ресурса
+    Random         *m_time;             // время выполнения с учетом ресурсов
+    IFunction      *m_timeSpeed;        // скорость выполения в зависимости от кол-ва ресурсов
 
     // сетевые характеристики
     double          m_fullReserve;      // полный резерв работы
@@ -160,65 +192,6 @@ private:
     Random* m_time;
     Random* m_cost;
 };
-
-namespace Randoms {
-
-class WorkBased : public Random {
-public:
-    WorkBased(Work* work) : m_work(work) {}
-
-protected:
-    Work* m_work;
-};
-
-class Beta : public WorkBased {
-public:
-    Beta(Work* work) : WorkBased(work) {}
-
-    double f(double val);
-    double F(double val);
-    double mathExpected();
-    double dispersion();
-    double _random();
-};
-class BetaFactory : public IRandomFactory { \
-public:
-    Random* create(Work* work) { return new Beta(work); } \
-};
-
-
-class Triangle : public WorkBased {
-public:
-    Triangle(Work* work) : WorkBased(work) {}
-
-    double f(double val);
-    double F(double val);
-    double mathExpected();
-    double dispersion();
-    double _random();
-};
-class TriangleFactory : public IRandomFactory { \
-public:
-    Random* create(Work* work) { return new Triangle(work); } \
-};
-
-
-class PertBeta : public WorkBased {
-public:
-    PertBeta(Work* work) : WorkBased(work) {}
-
-    double f(double val);
-    double F(double val);
-    double mathExpected();
-    double dispersion();
-    double _random();
-};
-class PertBetaFactory : public IRandomFactory { \
-public: \
-    Random* create(Work* work) { return new PertBeta(work); } \
-};
-
-} // namespace Randoms
 
 } // namespace Planning
 } // namespace Math

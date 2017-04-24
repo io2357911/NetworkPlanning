@@ -148,12 +148,13 @@ public:
 
 private:
     bool computeTime();
+    bool computeCost();
 };
 
 class MonteCarloNetworkAlgorithm : public INetworkAlgorithm {
 public:
     MonteCarloNetworkAlgorithm(NetworkGraph* graph,
-                               IRandomFactory *workTimeRandomFactory = new Randoms::BetaFactory,
+                               IRandomFactory *workRandomFactory = new Randoms::BetaFactory,
                                uint iterations = 100, uint intervals = 10);
     virtual ~MonteCarloNetworkAlgorithm();
 
@@ -162,9 +163,10 @@ public:
 
 private:
     bool computeTime();
+    bool computeCost();
 
 private:
-    IRandomFactory *m_workTimeRandomFactory;
+    IRandomFactory *m_workRandomFactory;
     uint m_iterations;
     uint m_intervals;
 };
@@ -204,18 +206,6 @@ class CriticalPathAlgorithm : public INetworkAlgorithm {
 public:
     CriticalPathAlgorithm(NetworkGraph* graph) : INetworkAlgorithm(graph) {}
     virtual ~CriticalPathAlgorithm() {}
-
-    // IAlgorithm interface
-    bool compute();
-};
-
-/*!
- * \brief Класс алгоритма нахождения стоимости проекта
- */
-class CostAlgorithm : public INetworkAlgorithm {
-public:
-    CostAlgorithm(NetworkGraph* graph) : INetworkAlgorithm(graph) {}
-    virtual ~CostAlgorithm() {}
 
     // IAlgorithm interface
     bool compute();

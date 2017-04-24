@@ -9,7 +9,6 @@
 using namespace Math;
 using namespace Math::Planning;
 using namespace Math::Planning::Algorithms;
-using namespace Math::Planning::Randoms;
 
 void testNetworkGraph() {
     Resourse res("People", 20, 1);
@@ -48,7 +47,8 @@ void testNetworkGraph() {
 }
 
 void testBeta() {
-    Math::Randoms::Beta beta(30, 55, 35);
+    Estimation est(30, 55, 35);
+    Math::Randoms::Beta beta(&est);
     for (int i = 0; i < 100; i++) {
         qDebug("%f", beta._random());
     }

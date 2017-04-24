@@ -47,13 +47,57 @@ protected:
 
 namespace Randoms {
 
+/**
+ * @brief The IEstimation class Оценка случайной величины по 3-м параметрам - min,max,average
+ */
+class IEstimation {
+public:
+    virtual ~IEstimation() {}
+
+    virtual double min() = 0;
+    virtual void setMin(double value) = 0;
+    virtual double max() = 0;
+    virtual void setMax(double value) = 0;
+    virtual double avg() = 0;
+    virtual void setAvg(double value) = 0;
+};
+
+
+class Estimation : public IEstimation {
+public:
+    Estimation(double min = 0, double max = 0, double avg = 0);
+    virtual ~Estimation() {}
+
+    // Estimation interface
+    double min();
+    void setMin(double value);
+    double max();
+    void setMax(double value);
+    double avg();
+    void setAvg(double value);
+private:
+    double m_min, m_max, m_avg;
+};
+
+
+/**
+ * @brief The IRandomFactory class Фабрика случайных величин
+ */
+class IRandomFactory {
+public:
+    virtual ~IRandomFactory() {}
+
+    virtual Random* create(IEstimation* est) = 0;
+};
+
+
 class Uniform : public Random {
 protected:
     double _random();
 };
 
-typedef QVector<double> Intervals;
 
+typedef QVector<double> Intervals;
 /**
  * @brief The Empirical class Случайная величина, полученная вследствии эксперимента
  */
@@ -95,7 +139,7 @@ private:
  */
 class Beta : public Random {
 public:
-    Beta(double a, double b, double m);
+    Beta(IEstimation *est);
 
     static double f(double val, double a, double b, double m);
     static double F(double val, double a, double b, double m);
@@ -111,14 +155,18 @@ public:
     virtual double _random();
 
 protected:
-    double m_a;
-    double m_b;
-    double m_m;
+    IEstimation *m_est;
 };
+class BetaFactory : public IRandomFactory {
+public:
+    // IRandomFactory interface
+    Random *create(IEstimation *est) { return new Beta(est); }
+};
+
 
 class PertBeta : public Beta {
 public:
-    PertBeta(double a, double b, double m);
+    PertBeta(IEstimation *est);
 
     static double f(double val, double a, double b, double m);
     static double F(double val, double a, double b, double m);
@@ -133,6 +181,12 @@ public:
     double dispersion();
     double _random();
 };
+class PertBetaFactory : public IRandomFactory {
+public:
+    // IRandomFactory interface
+    Random *create(IEstimation *est) { return new PertBeta(est); }
+};
+
 
 class PertNormal : public Random {
 public:
@@ -152,6 +206,12 @@ private:
     double m_mathExpected;
     double m_dispersion;
 };
+class PertNormalFactory : public IRandomFactory {
+public:
+    // IRandomFactory interface
+    Random *create(IEstimation */*est*/) { return new PertNormal(); }
+};
+
 
 /**
  * @brief The Triangle class Треугольное распределение
@@ -159,7 +219,7 @@ private:
  */
 class Triangle : public Random {
 public:
-    Triangle(double a, double b, double m);
+    Triangle(IEstimation *est);
 
     static double f(double val, double a, double b, double m);
     static double F(double val, double a, double b, double m);
@@ -176,11 +236,15 @@ public:
     double dispersion();
     double _random();
 
-private:
-    double m_a;
-    double m_b;
-    double m_m;
+protected:
+    IEstimation *m_est;
 };
+class TriangleFactory : public IRandomFactory {
+public:
+    // IRandomFactory interface
+    Random *create(IEstimation *est) { return new Triangle(est); }
+};
+
 
 } // namespace Random
 } // namespace Math

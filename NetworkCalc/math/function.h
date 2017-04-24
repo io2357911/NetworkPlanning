@@ -46,8 +46,6 @@ double rationalApproximation(double t);
  */
 class Linear : public IFunction {
 public:
-    static IFunction* instance() { static Linear f; return &f; }
-
     double value(const vector<double> &args);
 };
 
@@ -57,8 +55,6 @@ public:
  */
 class NormalGaussian : public IFunction {
 public:
-    static IFunction* instance() { static NormalGaussian f; return &f; }
-
     double value(const vector<double> &args);
 };
 

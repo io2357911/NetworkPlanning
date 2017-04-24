@@ -67,6 +67,34 @@ namespace Randoms {
 using namespace Functions;
 
 
+Estimation::Estimation(double min, double max, double avg)
+    : m_min(min), m_max(max), m_avg(avg)
+{}
+
+double Estimation::min() {
+    return m_min;
+}
+
+void Estimation::setMin(double value) {
+    m_min = value;
+}
+
+double Estimation::max() {
+    return m_max;
+}
+
+void Estimation::setMax(double value) {
+    m_max = value;
+}
+
+double Estimation::avg() {
+    return m_avg;
+}
+
+void Estimation::setAvg(double value) {
+    m_avg = value;
+}
+
 double Uniform::_random() {
     return ((double)::rand() / (double)(RAND_MAX));
 }
@@ -199,8 +227,8 @@ Intervals Empirical::integrate(Intervals vals) {
 }
 
 
-Beta::Beta(double a, double b, double m)
-    : m_a(a), m_b(b), m_m(m)
+Beta::Beta(IEstimation *est)
+    : m_est(est)
 {}
 
 double Beta::f(double x, double a, double b, double /*m*/) {
@@ -237,24 +265,24 @@ double Beta::random(double a, double b, double m) {
 }
 
 double Beta::f(double x) {
-    return f(x, m_a, m_b, m_m);;
+    return f(x, m_est->min(), m_est->max(), m_est->avg());
 }
 
 double Beta::mathExpected() {
-    return mathExpected(m_a, m_b, m_m);
+    return mathExpected(m_est->min(), m_est->max(), m_est->avg());
 }
 
 double Beta::dispersion() {
-    return dispersion(m_a, m_b, m_m);
+    return dispersion(m_est->min(), m_est->max(), m_est->avg());
 }
 
 double Beta::_random() {
-    return random(m_a, m_b, m_m);
+    return random(m_est->min(), m_est->max(), m_est->avg());
 }
 
 
-PertBeta::PertBeta(double a, double b, double m)
-    : Beta(a, b, m)
+PertBeta::PertBeta(IEstimation *est)
+    : Beta(est)
 {}
 
 double PertBeta::f(double /*val*/, double /*a*/, double /*b*/, double /*m*/) {
@@ -278,23 +306,23 @@ double PertBeta::random(double a, double b, double m) {
 }
 
 double PertBeta::f(double val) {
-    return f(val, m_a, m_b, m_m);
+    return f(val, m_est->min(), m_est->max(), m_est->avg());
 }
 
 double PertBeta::F(double val) {
-    return F(val, m_a, m_b, m_m);
+    return F(val, m_est->min(), m_est->max(), m_est->avg());
 }
 
 double PertBeta::mathExpected() {
-    return mathExpected(m_a, m_b, m_m);
+    return mathExpected(m_est->min(), m_est->max(), m_est->avg());
 }
 
 double PertBeta::dispersion() {
-    return dispersion(m_a, m_b, m_m);
+    return dispersion(m_est->min(), m_est->max(), m_est->avg());
 }
 
 double PertBeta::_random() {
-    return random(m_a, m_b, m_m);
+    return random(m_est->min(), m_est->max(), m_est->avg());
 }
 
 
@@ -345,8 +373,8 @@ void PertNormal::setDispersion(double value) {
 
 
 
-Triangle::Triangle(double a, double b, double m)
-    : m_a(a), m_b(b), m_m(m)
+Triangle::Triangle(IEstimation *est)
+    : m_est(est)
 {}
 
 double Triangle::f(double x, double a, double b, double c) {
@@ -413,27 +441,27 @@ double Triangle::random(double a, double b, double c) {
 }
 
 double Triangle::f(double x) {
-    return f(x, m_a, m_b, m_m);
+    return f(x, m_est->min(), m_est->max(), m_est->avg());
 }
 
 double Triangle::F(double x) {
-    return F(x, m_a, m_b, m_m);
+    return F(x, m_est->min(), m_est->max(), m_est->avg());
 }
 
 double Triangle::invF(double x) {
-    return invF(x, m_a, m_b, m_m);
+    return invF(x, m_est->min(), m_est->max(), m_est->avg());
 }
 
 double Triangle::mathExpected() {
-    return mathExpected(m_a, m_b, m_m);
+    return mathExpected(m_est->min(), m_est->max(), m_est->avg());
 }
 
 double Triangle::dispersion() {
-    return dispersion(m_a, m_b, m_m);
+    return dispersion(m_est->min(), m_est->max(), m_est->avg());
 }
 
 double Triangle::_random() {
-    return random(m_a, m_b, m_m);
+    return random(m_est->min(), m_est->max(), m_est->avg());
 }
 
 } // namespace Randoms

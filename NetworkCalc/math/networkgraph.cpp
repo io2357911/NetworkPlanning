@@ -80,7 +80,6 @@ void Event::setIsCalculated(bool isCalculated) {
 }
 
 
-
 Work::Work(Event *event1,
            Event *event2,
            QString name,
@@ -98,10 +97,11 @@ Work::Work(Event *event1,
       m_name(name),
       m_resourse(resourse),
       m_resourseCount(resourseCount),
-      m_timeMin(timeMin),
-      m_timeMax(timeMax),
-      m_timeAvg(timeAvg),
-      m_time(timeRandom == 0 ? new Randoms::PertBeta(this) : timeRandom->create(this)),
+      m_costEstimation(this),
+      m_cost(timeRandom == 0 ? new PertBeta(&m_costEstimation) : timeRandom->create(&m_costEstimation)),
+      m_timeEstimation(timeMin, timeMax, timeAvg),
+      m_timeResEstimation(this),
+      m_time(timeRandom == 0 ? new PertBeta(&m_timeResEstimation) : timeRandom->create(&m_timeResEstimation)),
       m_timeSpeed(timeSpeed == 0 ? new Math::Functions::Linear : timeSpeed),
       m_fullReserve(fullReserve),
       m_isCritical(isCritical),
@@ -132,70 +132,44 @@ double Work::resourseCount() {
     return m_resourseCount;
 }
 
-double Work::cost() {
-    if (!m_time) return 0;
-    if (!m_resourse) return 0;
-
-    return m_time->value() * m_resourse->cost() * m_resourseCount;
+Random *Work::cost() {
+    return m_cost;
 }
 
-void Work::setTimeMin(double value) {
-    m_timeMin = value;
+void Work::setCost(IRandomFactory *factory) {
+    if (!factory) return;
+    if (m_cost) delete m_cost;
+
+    m_cost = factory->create(&m_costEstimation);
 }
 
-double Work::timeMin(bool unitResourse) {
-    if (unitResourse) return m_timeMin;
-
-    if (m_resourseCount <= 0) return 0;
-    if (!m_timeSpeed) return 0;
-    // t = W/w(r);
-    // w(r) - скорость, в простейшем случае число - resourse
-    // W - общая трудоемкость
-    // t - время выполнения
-    return m_timeMin / m_timeSpeed->value(m_resourseCount);
-}
-
-void Work::setTimeMax(double value) {
-    m_timeMax = value;
-}
-
-double Work::timeMax(bool unitResourse) {
-    if (unitResourse) return m_timeMax;
-
-    if (m_resourseCount <= 0) return 0;
-    if (!m_timeSpeed) return 0;
-    // t = W/w(r);
-    // w(r) - скорость, в простейшем случае число - resourse
-    // W - общая трудоемкость
-    // t - время выполнения
-    return m_timeMax / m_timeSpeed->value(m_resourseCount);
-}
-
-void Work::setTimeAvg(double value) {
-    m_timeAvg = value;
-}
-
-double Work::timeAvg(bool unitResourse) {
-    if (unitResourse) return m_timeAvg;
-
-    if (m_resourseCount <= 0) return 0;
-    if (!m_timeSpeed) return 0;
-    // t = W/w(r);
-    // w(r) - скорость, в простейшем случае число - resourse
-    // W - общая трудоемкость
-    // t - время выполнения
-    return m_timeAvg / m_timeSpeed->value(m_resourseCount);
+IEstimation *Work::costEstimation() {
+    return &m_costEstimation;
 }
 
 void Work::setTime(IRandomFactory* factory) {
     if (!factory) return;
     if (m_time) delete m_time;
 
-    m_time = factory->create(this);
+    m_time = factory->create(&m_timeResEstimation);
 }
 
 Math::Random *Work::time() {
     return m_time;
+}
+
+IEstimation *Work::timeEstimation() {
+    return &m_timeEstimation;
+}
+
+IFunction *Work::timeSpeed() {
+    return m_timeSpeed;
+}
+
+void Work::setTimeSpeed(IFunction *speed) {
+    if (m_timeSpeed) delete m_timeSpeed;
+
+    m_timeSpeed = speed;
 }
 
 double Work::fullReserve() const {
@@ -305,124 +279,115 @@ void NetworkGraph::setResourseDistribution(const ResourseDistribution &res) {
 }
 
 
-namespace Randoms {
 
 
-double Beta::f(double val) {
+TimeEstimation::TimeEstimation(Work *work) : m_work(work)
+{}
+
+double TimeEstimation::min() {
     if (!m_work) return 0;
-    return Math::Randoms::Beta::f(val,
-                                  m_work->timeMin(false),
-                                  m_work->timeMax(false),
-                                  m_work->timeAvg(false));
+
+    double time = m_work->timeEstimation()->min();
+    double resCount = m_work->resourseCount();
+    IFunction *timeSpeed = m_work->timeSpeed();
+
+    if (resCount <= 0) return 0;
+    if (!timeSpeed) return 0;
+    // t = W/w(r);
+    // w(r) - скорость, в простейшем случае число - resourse
+    // W - общая трудоемкость
+    // t - время выполнения
+    return time / timeSpeed->value(resCount);
 }
 
-double Beta::F(double val) {
+void TimeEstimation::setMin(double) {}
+
+double TimeEstimation::max() {
     if (!m_work) return 0;
-    return Math::Randoms::Beta::F(val,
-                                  m_work->timeMin(false),
-                                  m_work->timeMax(false),
-                                  m_work->timeAvg(false));
+
+    double time = m_work->timeEstimation()->max();
+    double resCount = m_work->resourseCount();
+    IFunction *timeSpeed = m_work->timeSpeed();
+
+    if (resCount <= 0) return 0;
+    if (!timeSpeed) return 0;
+    // t = W/w(r);
+    // w(r) - скорость, в простейшем случае число - resourse
+    // W - общая трудоемкость
+    // t - время выполнения
+    return time / timeSpeed->value(resCount);
 }
 
-double Beta::mathExpected() {
+void TimeEstimation::setMax(double) {}
+
+double TimeEstimation::avg() {
     if (!m_work) return 0;
-    return Math::Randoms::Beta::mathExpected(m_work->timeMin(false),
-                                             m_work->timeMax(false),
-                                             m_work->timeAvg(false));
+
+    double time = m_work->timeEstimation()->avg();
+    double resCount = m_work->resourseCount();
+    IFunction *timeSpeed = m_work->timeSpeed();
+
+    if (resCount <= 0) return 0;
+    if (!timeSpeed) return 0;
+    // t = W/w(r);
+    // w(r) - скорость, в простейшем случае число - resourse
+    // W - общая трудоемкость
+    // t - время выполнения
+    return time / timeSpeed->value(resCount);
 }
 
-double Beta::dispersion() {
+void TimeEstimation::setAvg(double) {}
+
+CostEstimation::CostEstimation(Work *work)
+    : m_work(work)
+{}
+
+double CostEstimation::min() {
     if (!m_work) return 0;
-    return Math::Randoms::Beta::dispersion(m_work->timeMin(false),
-                                           m_work->timeMax(false),
-                                           m_work->timeAvg(false));
+
+    double time = m_work->timeEstimation()->min();
+    Resourse *resourse = m_work->resourse();
+    double resourseCount = m_work->resourseCount();
+
+    if (!resourse) return 0;
+
+    return time * resourse->cost() * resourseCount;
 }
 
-double Beta::_random() {
+void CostEstimation::setMin(double /*value*/)
+{}
+
+double CostEstimation::max() {
     if (!m_work) return 0;
-    return Math::Randoms::Beta::random(m_work->timeMin(false),
-                                       m_work->timeMax(false),
-                                       m_work->timeAvg(false));
+
+    double time = m_work->timeEstimation()->max();
+    Resourse *resourse = m_work->resourse();
+    double resourseCount = m_work->resourseCount();
+
+    if (!resourse) return 0;
+
+    return time * resourse->cost() * resourseCount;
 }
 
+void CostEstimation::setMax(double /*value*/)
+{}
 
-double Triangle::f(double val) {
+double CostEstimation::avg() {
     if (!m_work) return 0;
-    return Math::Randoms::Triangle::f(val,
-                                     m_work->timeMin(false),
-                                     m_work->timeMax(false),
-                                     m_work->timeAvg(false));
+
+    double time = m_work->timeEstimation()->avg();
+    Resourse *resourse = m_work->resourse();
+    double resourseCount = m_work->resourseCount();
+
+    if (!resourse) return 0;
+
+    return time * resourse->cost() * resourseCount;
 }
 
-double Triangle::F(double val) {
-    if (!m_work) return 0;
-    return Math::Randoms::Triangle::F(val,
-                                     m_work->timeMin(false),
-                                     m_work->timeMax(false),
-                                     m_work->timeAvg(false));
-}
+void CostEstimation::setAvg(double /*value*/)
+{}
 
-double Triangle::mathExpected() {
-    if (!m_work) return 0;
-    return Math::Randoms::Triangle::mathExpected(m_work->timeMin(false),
-                                                m_work->timeMax(false),
-                                                m_work->timeAvg(false));
-}
-
-double Triangle::dispersion() {
-    if (!m_work) return 0;
-    return Math::Randoms::Triangle::dispersion(m_work->timeMin(false),
-                                              m_work->timeMax(false),
-                                              m_work->timeAvg(false));
-}
-
-double Triangle::_random() {
-    if (!m_work) return 0;
-    return Math::Randoms::Triangle::random(m_work->timeMin(false),
-                                          m_work->timeMax(false),
-                                          m_work->timeAvg(false));
-}
-
-
-double PertBeta::f(double val) {
-    if (!m_work) return 0;
-    return Math::Randoms::PertBeta::f(val,
-                                     m_work->timeMin(false),
-                                     m_work->timeMax(false),
-                                     m_work->timeAvg(false));
-}
-
-double PertBeta::F(double val) {
-    if (!m_work) return 0;
-    return Math::Randoms::PertBeta::F(val,
-                                     m_work->timeMin(false),
-                                     m_work->timeMax(false),
-                                     m_work->timeAvg(false));
-}
-
-double PertBeta::mathExpected() {
-    if (!m_work) return 0;
-    return Math::Randoms::PertBeta::mathExpected(m_work->timeMin(false),
-                                                m_work->timeMax(false),
-                                                m_work->timeAvg(false));
-}
-
-double PertBeta::dispersion() {
-    if (!m_work) return 0;
-    return Math::Randoms::PertBeta::dispersion(m_work->timeMin(false),
-                                              m_work->timeMax(false),
-                                              m_work->timeAvg(false));
-}
-
-double PertBeta::_random() {
-    if (!m_work) return 0;
-    return Math::Randoms::PertBeta::random(m_work->timeMin(false),
-                                          m_work->timeMax(false),
-                                          m_work->timeAvg(false));
-}
-
-
-} // namespace Random
+// namespace Random
 
 } // namespace Planning
 } // namespace Math

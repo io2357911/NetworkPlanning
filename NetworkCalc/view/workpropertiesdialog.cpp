@@ -18,9 +18,9 @@ void WorkPropertiesDialog::on_buttonBox_accepted() {
 
     work->setName(ui->leName->text());
 
-    work->setTimeMin(ui->dsbTimeMin->value());
-    work->setTimeAvg(ui->dsbTimeAvg->value());
-    work->setTimeMax(ui->dsbTimeMax->value());
+    work->timeEstimation()->setMin(ui->dsbTimeMin->value());
+    work->timeEstimation()->setAvg(ui->dsbTimeAvg->value());
+    work->timeEstimation()->setMax(ui->dsbTimeMax->value());
 
     work->setResourse(currentResourse());
     work->setResourseCount(ui->dsbResoursCount->value());
@@ -57,11 +57,11 @@ void WorkPropertiesDialog::onUpdateWork() {
     ui->leName->setText(work->name());
 
     ui->dsbResoursCount->setValue(work->resourseCount());
-    ui->dsbCost->setValue(work->cost());
+    ui->dsbCost->setValue(work->costEstimation()->avg());
 
-    ui->dsbTimeMin->setValue(work->timeMin());
-    ui->dsbTimeAvg->setValue(work->timeAvg());
-    ui->dsbTimeMax->setValue(work->timeMax());
+    ui->dsbTimeMin->setValue(work->timeEstimation()->min());
+    ui->dsbTimeAvg->setValue(work->timeEstimation()->avg());
+    ui->dsbTimeMax->setValue(work->timeEstimation()->max());
     ui->dsbFullReserve->setValue(work->fullReserve());
     ui->dsbTime->setValue(work->time()->value());
 

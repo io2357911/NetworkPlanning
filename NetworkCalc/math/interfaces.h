@@ -17,6 +17,8 @@ namespace Math {
  */
 class IFunction {
 public:
+    virtual ~IFunction() {}
+
     virtual double value(const vector<double> &args) = 0;
     double value(const double &arg) { return value(vector<double>({arg})); }
 };
