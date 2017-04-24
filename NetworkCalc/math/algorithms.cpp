@@ -81,8 +81,11 @@ ResourseNetworkAlgorithm::ResourseNetworkAlgorithm(NetworkGraph *graph, IAlgorit
 
 bool ResourseNetworkAlgorithm::compute() {
     bool res = false;
+
     if (!m_algCalc) return res;
-    if (!setMaxResourseCount()) return false;
+    if (!setMaxResourseCount()) return res;
+
+    res = true;
 
     ResourseDistribution minDist;
     double minTime = std::numeric_limits<double>::max();
@@ -99,8 +102,6 @@ bool ResourseNetworkAlgorithm::compute() {
         if (time < minTime) {
             minTime = time;
             minDist = m_graph->resourseDistribution();
-
-            res = true;
         }
         iters++;
     }
@@ -116,7 +117,9 @@ bool ResourseNetworkAlgorithm::setMaxResourseCount() {
     QVector<Work*> works = m_graph->edges();
     for (int i = 0; i < works.size(); i++) {
         Work *work = works[i];
+        if (work->isVirtual()) continue;
         if (!work->resourse()) return false;
+
         work->setResourseCount(work->resourse()->quantity());
     }
     return true;
@@ -413,6 +416,8 @@ bool CriticalPathAlgorithm::compute() {
         Event *secondEvent = works[i]->vertex2();
         Work *work = works[i];
 
+        if (work->isVirtual()) continue;
+
         int fullReserve = secondEvent->lateTime() - firstEvent->earlyTime() - work->time()->value();
 
         work->setFullReserve(fullReserve);
@@ -428,6 +433,8 @@ bool CostAlgorithm::compute() {
     double value = 0;
     QVector<Work*> works = m_graph->edges();
     for (int i = 0; i < works.size(); i++) {
+        if (works[i]->isVirtual()) continue;
+
         value += works[i]->cost();
     }
     m_graph->cost()->setValue(value);

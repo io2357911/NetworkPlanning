@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
 
 //    testNetworkGraph();
 //    testBeta();
-    testIterator();
+//    testIterator();
 
     QApplication a(argc, argv);
     MainWindow w;
