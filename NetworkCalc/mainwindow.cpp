@@ -174,6 +174,39 @@ void MainWindow::logReport() {
             .arg(graph->cost()->mathExpected())
             .arg(graph->cost()->dispersion());
 
+    QVector<Work*> works = graph->edges();
+    for (int i = 0; i < works.size(); i++) {
+        Work *work = works[i];
+
+        QString e1 = work->vertex1()->name();
+        QString e2 = work->vertex2()->name();
+        QString res;
+        double resCount = 0, time = 0, timeMin = 0, timeMax = 0, timeAvg = 0, cost = 0;
+        if (!work->isVirtual()) {
+            res = work->resourse()->name();
+            resCount = work->resourseCount();
+            time = work->time()->value();
+            timeMin = work->timeEstimation()->min();
+            timeMax = work->timeEstimation()->max();
+            timeAvg = work->timeEstimation()->avg();
+            cost = work->costEstimation()->avg();
+        }
+
+        report += QString("Работа: '%1'(%2,%3)   Ресурс: '%4'(%5)   Время: %6{%7,%8,%9}   Стоимость: %10\n")
+                .arg(work->name()).arg(e1).arg(e2)
+                .arg(res).arg(resCount)
+                .arg(time).arg(timeMin).arg(timeAvg).arg(timeMax)
+                .arg(cost);
+    }
+
+    QVector<ProjectResourse*> *resourses = Project::instance()->resourses();
+    for (int i = 0; i < resourses->size(); i++) {
+        Resourse *resourse = resourses->at(i);
+
+        report += QString("Ресурс: '%1'   Количество: %2   Стоимость: %3\n")
+                .arg(resourse->name()).arg(resourse->quantity()).arg(resourse->cost());
+    }
+
     ui->tbReport->append(report);
 }
 
