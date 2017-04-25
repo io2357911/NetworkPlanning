@@ -127,11 +127,13 @@ public:
     Random *cost();
     void setCost(IRandomFactory *factory);
     IEstimation *costEstimation();
+    double costValue();
 
     // временные характеристики
     Random* time();
     void setTime(IRandomFactory *factory);
     IEstimation *timeEstimation();
+    IEstimation *timeResourseEstimation();
     IFunction *timeSpeed();
     void setTimeSpeed(IFunction *speed);
 

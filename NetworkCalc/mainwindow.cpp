@@ -189,7 +189,7 @@ void MainWindow::logReport() {
             timeMin = work->timeEstimation()->min();
             timeMax = work->timeEstimation()->max();
             timeAvg = work->timeEstimation()->avg();
-            cost = work->costEstimation()->avg();
+            cost = work->costValue();
         }
 
         report += QString("Работа: '%1'(%2,%3)   Ресурс: '%4'(%5)   Время: %6{%7,%8,%9}   Стоимость: %10\n")

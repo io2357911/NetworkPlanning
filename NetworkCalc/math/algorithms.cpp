@@ -242,7 +242,7 @@ bool PertNetworkAlgorithm::computeCost() {
     for (int i = 0; i < works.size(); i++) {
         if (works[i]->isVirtual()) continue;
 
-        value += works[i]->cost()->value();
+        value += works[i]->costValue();
         mathExpected += works[i]->cost()->mathExpected();
         dispersion += works[i]->cost()->dispersion();
     }
@@ -320,7 +320,7 @@ bool MonteCarloNetworkAlgorithm::computeCost() {
     for (int i = 0; i < works.size(); i++) {
         if (works[i]->isVirtual()) continue;
 
-        value += works[i]->cost()->value();
+        value += works[i]->costValue();
     }
     m_graph->cost()->setValue(value);
 

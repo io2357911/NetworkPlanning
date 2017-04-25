@@ -57,7 +57,7 @@ void WorkPropertiesDialog::onUpdateWork() {
     ui->leName->setText(work->name());
 
     ui->dsbResoursCount->setValue(work->resourseCount());
-    ui->dsbCost->setValue(work->costEstimation()->avg());
+    ui->dsbCost->setValue(work->costValue());
 
     ui->dsbTimeMin->setValue(work->timeEstimation()->min());
     ui->dsbTimeAvg->setValue(work->timeEstimation()->avg());

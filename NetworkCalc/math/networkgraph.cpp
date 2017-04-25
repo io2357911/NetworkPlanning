@@ -147,6 +147,13 @@ IEstimation *Work::costEstimation() {
     return &m_costEstimation;
 }
 
+double Work::costValue() {
+    if (!m_time) return 0;
+    if (!m_resourse) return 0;
+
+    return m_time->value() * m_resourse->cost() * m_resourseCount;
+}
+
 void Work::setTime(IRandomFactory* factory) {
     if (!factory) return;
     if (m_time) delete m_time;
@@ -160,6 +167,10 @@ Math::Random *Work::time() {
 
 IEstimation *Work::timeEstimation() {
     return &m_timeEstimation;
+}
+
+IEstimation *Work::timeResourseEstimation() {
+    return &m_timeResEstimation;
 }
 
 IFunction *Work::timeSpeed() {
@@ -345,7 +356,7 @@ CostEstimation::CostEstimation(Work *work)
 double CostEstimation::min() {
     if (!m_work) return 0;
 
-    double time = m_work->timeEstimation()->min();
+    double time = m_work->timeResourseEstimation()->min();
     Resourse *resourse = m_work->resourse();
     double resourseCount = m_work->resourseCount();
 
@@ -360,7 +371,7 @@ void CostEstimation::setMin(double /*value*/)
 double CostEstimation::max() {
     if (!m_work) return 0;
 
-    double time = m_work->timeEstimation()->max();
+    double time = m_work->timeResourseEstimation()->max();
     Resourse *resourse = m_work->resourse();
     double resourseCount = m_work->resourseCount();
 
@@ -375,7 +386,7 @@ void CostEstimation::setMax(double /*value*/)
 double CostEstimation::avg() {
     if (!m_work) return 0;
 
-    double time = m_work->timeEstimation()->avg();
+    double time = m_work->timeResourseEstimation()->avg();
     Resourse *resourse = m_work->resourse();
     double resourseCount = m_work->resourseCount();
 
