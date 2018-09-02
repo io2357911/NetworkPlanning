@@ -183,7 +183,7 @@ void MainWindow::logReport() {
         QString res;
         double resCount = 0, time = 0, timeMin = 0, timeMax = 0, timeAvg = 0, cost = 0;
         if (!work->isVirtual()) {
-            res = work->resourse()->name();
+            res = work->resourse() ? work->resourse()->name() : "";
             resCount = work->resourseCount();
             time = work->time()->value();
             timeMin = work->timeEstimation()->min();

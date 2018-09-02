@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <assert.h>
+#include <math.h>
 
 using namespace std;
 

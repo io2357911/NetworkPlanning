@@ -1,6 +1,6 @@
 Makefile
 build/
-#*.pro.user
+*.pro.user
 *.ini
 moc_*
 ui_*
